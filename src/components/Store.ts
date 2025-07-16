@@ -8,7 +8,7 @@ export let listeners: Array<any> = []
 
 export const i_state = {
     auth:                               false,
-    login:                              "",
+    login:                              { userId: "", fullName: "", role: "", token: "" },
     route:                              "",         
     back:                               0,
     message:                            '',
@@ -186,5 +186,3 @@ export async function exec( method, params, name ){
     console.log( res );
     Store.dispatch({ type: name, data: res.data})
 }
-
-
