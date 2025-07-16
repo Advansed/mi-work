@@ -1,0 +1,7 @@
+{
+  "name": "mobile-inspector",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
