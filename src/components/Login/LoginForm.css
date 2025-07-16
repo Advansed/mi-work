@@ -1,0 +1,495 @@
+/* ============================================
+   ОСНОВНЫЕ СТИЛИ
+   ============================================ */
+
+.login-page {
+    --ion-background-color: transparent;
+}
+
+.login-content {
+    --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.login-grid {
+    height: 100%;
+    padding: 20px;
+}
+
+.login-card {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    border-radius: 20px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+/* ============================================
+   ЗАГОЛОВОК И ЛОГОТИП
+   ============================================ */
+
+.login-header {
+    text-align: center;
+    padding: 30px 20px 20px;
+}
+
+.logo-container {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 25px;
+    background: var(--ion-color-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+}
+
+.login-logo {
+    font-size: 50px;
+    color: white;
+}
+
+.login-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--ion-text-color);
+    margin-bottom: 10px;
+}
+
+.login-subtitle {
+    font-size: 14px;
+    color: var(--ion-color-medium);
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* ============================================
+   ФОРМА И ПОЛЯ
+   ============================================ */
+
+.login-form {
+    padding: 10px 0;
+}
+
+.login-field {
+    --background: var(--ion-color-light);
+    --padding-start: 15px;
+    --padding-end: 10px;
+    --inner-padding-end: 0;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    height: 56px;
+}
+
+.login-field ion-icon[slot="start"] {
+    margin-inline-end: 15px;
+    color: var(--ion-color-medium);
+    font-size: 22px;
+}
+
+.login-field.ion-invalid {
+    --border-color: var(--ion-color-danger);
+    --border-width: 2px;
+    --border-style: solid;
+}
+
+.field-error {
+    display: block;
+    padding: 5px 15px 15px;
+    margin-top: -15px;
+    font-size: 12px;
+}
+
+/* ============================================
+   ОПЦИИ ФОРМЫ
+   ============================================ */
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0 25px;
+}
+
+.remember-me {
+    --padding-start: 0;
+    --inner-padding-start: 0;
+    --min-height: 30px;
+}
+
+.remember-me ion-checkbox {
+    --size: 20px;
+    margin-inline-end: 10px;
+}
+
+.remember-me ion-label {
+    font-size: 14px;
+}
+
+.forgot-password {
+    color: var(--ion-color-primary);
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.forgot-password:hover {
+    opacity: 0.8;
+}
+
+/* ============================================
+   КНОПКИ
+   ============================================ */
+
+.login-button {
+    --border-radius: 12px;
+    height: 50px;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 10px;
+    text-transform: none;
+}
+
+.back-button {
+    margin-top: 15px;
+    --color: var(--ion-color-medium);
+}
+
+.password-toggle {
+    --padding-start: 5px;
+    --padding-end: 5px;
+    margin: 0;
+    height: 40px;
+}
+
+.password-toggle ion-icon {
+    font-size: 20px;
+}
+
+/* ============================================
+   СООБЩЕНИЯ ОБ ОШИБКАХ
+   ============================================ */
+
+.login-error {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.login-error p {
+    background: var(--ion-color-danger-tint);
+    color: var(--ion-color-danger-shade);
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin: 0;
+    font-size: 14px;
+}
+
+/* ============================================
+   ПОДВАЛ
+   ============================================ */
+
+.login-footer {
+    color: white;
+    text-align: center;
+    margin-top: 30px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.login-footer p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.version-text {
+    font-size: 12px !important;
+    opacity: 0.8;
+}
+
+/* ============================================
+   ВОССТАНОВЛЕНИЕ ПАРОЛЯ
+   ============================================ */
+
+.reset-card {
+    padding: 20px;
+}
+
+.step-icon {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.step-icon ion-icon {
+    font-size: 64px;
+    color: var(--ion-color-primary);
+}
+
+.reset-card h2 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.step-description {
+    text-align: center;
+    color: var(--ion-color-medium);
+    margin-bottom: 30px;
+    font-size: 14px;
+}
+
+/* СМС КОД */
+.sms-code-inputs {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 30px 0;
+}
+
+.sms-code-input {
+    --background: var(--ion-color-light);
+    --padding-start: 0;
+    --padding-end: 0;
+    width: 50px;
+    height: 60px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.sms-code-input:focus {
+    --background: white;
+    box-shadow: 0 0 0 2px var(--ion-color-primary);
+}
+
+.sms-timer {
+    text-align: center;
+    color: var(--ion-color-medium);
+    margin: 20px 0;
+    font-size: 14px;
+}
+
+/* ИНДИКАТОР СИЛЫ ПАРОЛЯ */
+.password-strength-container {
+    margin: -10px 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.password-strength {
+    height: 4px;
+    background: var(--ion-color-light);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    flex-grow: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.password-strength::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    transition: all 0.3s ease;
+}
+
+.password-strength.strength-weak::after {
+    background: var(--ion-color-danger);
+    width: 33%;
+}
+
+.password-strength.strength-medium::after {
+    background: var(--ion-color-warning);
+    width: 66%;
+}
+
+.password-strength.strength-strong::after {
+    background: var(--ion-color-success);
+    width: 100%;
+}
+
+.strength-text {
+    font-size: 12px;
+    color: var(--ion-color-medium);
+    min-width: 70px;
+}
+
+/* ТРЕБОВАНИЯ К ПАРОЛЮ */
+.password-requirements {
+    background: var(--ion-color-light);
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.password-requirements p {
+    margin: 0 0 10px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.password-requirements ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.password-requirements li {
+    font-size: 13px;
+    color: var(--ion-color-medium);
+    margin-bottom: 5px;
+    transition: color 0.2s;
+}
+
+.password-requirements li.valid {
+    color: var(--ion-color-success);
+}
+
+.password-requirements li.valid::marker {
+    content: "✓ ";
+}
+
+/* ЭКРАН УСПЕХА */
+.success-screen {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.success-icon ion-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+}
+
+.success-screen h2 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.success-screen p {
+    color: var(--ion-color-medium);
+    margin-bottom: 30px;
+}
+
+/* ============================================
+   АДАПТИВНОСТЬ
+   ============================================ */
+
+@media (max-width: 576px) {
+    .login-grid {
+        padding: 15px;
+    }
+    
+    .login-card {
+        margin: 0;
+        border-radius: 15px;
+    }
+    
+    .login-header {
+        padding: 20px 15px 15px;
+    }
+    
+    .logo-container {
+        width: 70px;
+        height: 70px;
+        margin-bottom: 20px;
+    }
+    
+    .login-logo {
+        font-size: 40px;
+    }
+    
+    .login-title {
+        font-size: 22px;
+    }
+    
+    .login-subtitle {
+        font-size: 13px;
+    }
+    
+    .sms-code-input {
+        width: 45px;
+        height: 55px;
+        font-size: 20px;
+    }
+    
+    .form-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
+/* ============================================
+   ТЕМНАЯ ТЕМА
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+    .login-content {
+        --background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
+    
+    .login-card {
+        background: rgba(30, 30, 30, 0.95);
+        --ion-background-color: #1e1e1e;
+        --ion-text-color: #ffffff;
+    }
+    
+    .login-field {
+        --background: rgba(255, 255, 255, 0.08);
+        --color: #ffffff;
+    }
+    
+    .login-field ion-icon[slot="start"] {
+        color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .password-requirements {
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .sms-code-input {
+        --background: rgba(255, 255, 255, 0.08);
+        --color: #ffffff;
+    }
+    
+    .sms-code-input:focus {
+        --background: rgba(255, 255, 255, 0.12);
+    }
+}
+
+/* ============================================
+   АНИМАЦИИ
+   ============================================ */
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutLeft {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+}
+
+.slide-in-right {
+    animation: slideInRight 0.3s ease;
+}
+
+.slide-out-left {
+    animation: slideOutLeft 0.3s ease;
+}
