@@ -1,8 +1,11 @@
 import { IonApp, IonRouterOutlet, IonSplitPane, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { Redirect, Route } from 'react-router-dom';
+import { useEffect } from 'react';
 import Menu from './components/Menu';
 import Page from './pages/Page';
+import LoginForm from './components/Login/LoginForm';
+import { Store, useStoreField } from './components/Store';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -37,6 +40,37 @@ import './theme/variables.css';
 setupIonicReact();
 
 const App: React.FC = () => {
+  // Используем хук для получения состояния авторизации из Store
+  const isAuthenticated = useStoreField('auth', 1);
+
+  // При инициализации приложения проверяем сохраненную авторизацию
+  useEffect(() => {
+    const loginDataStr = localStorage.getItem('loginData');
+    
+    if (loginDataStr) {
+      try {
+        const loginData = JSON.parse(loginDataStr);
+        // Восстанавливаем состояние в Store
+        Store.dispatch({ type: 'auth', data: true });
+        Store.dispatch({ type: 'login', data: loginData });
+      } catch (e) {
+        console.error('Error parsing saved login data:', e);
+        // Если данные повреждены, очищаем localStorage
+        localStorage.removeItem('loginData');
+      }
+    }
+  }, []);
+
+  // Если пользователь не авторизован, показываем форму логина
+  if (!isAuthenticated) {
+    return (
+      <IonApp>
+        <LoginForm />
+      </IonApp>
+    );
+  }
+
+  // Если пользователь авторизован, показываем основное приложение
   return (
     <IonApp>
       <IonReactRouter>

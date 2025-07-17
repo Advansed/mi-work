@@ -263,7 +263,11 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ onBack }) => {
                             {smsCode.map((digit, index) => (
                                 <IonInput
                                     key={index}
-                                    ref={el => smsRefs.current[index] = el}
+                                    ref={(el: HTMLIonInputElement | null) => {
+                                        if (smsRefs.current) {
+                                            smsRefs.current[index] = el;
+                                        }
+                                    }}
                                     type="tel"
                                     inputmode="numeric"
                                     maxlength={1}

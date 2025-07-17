@@ -1,2 +1,15 @@
 /* For information on how to create your own theme, please see:
 http://ionicframework.com/docs/theming/ */
+:root {
+  /* Основные цвета */
+  --color-primary-dark: #1E3A8A;   /* Темно-синий */
+  --color-primary: #3B82F6;        /* Ярко-голубой */
+
+  /* Дополнительные цвета */
+  --color-secondary-light: #E5E7EB; /* Светло-серый */
+  --color-white: #FFFFFF;            /* Белый */
+  --color-accent: #F97316;           /* Оранжевый */
+
+  /* Текст */
+  --color-text-primary: #1F2937;     /* Темно-серый */
+}
