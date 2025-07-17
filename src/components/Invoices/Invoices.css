@@ -1,0 +1,489 @@
+/* ============================================
+   ОСНОВНЫЕ СТИЛИ СТРАНИЦЫ ЗАЯВОК
+   ============================================ */
+
+.invoices-page {
+    --ion-background-color: #f8fafc;
+}
+
+.invoices-content {
+    padding: 0 16px 100px;
+}
+
+.search-container {
+    padding: 16px;
+    background: var(--ion-background-color);
+    border-bottom: 1px solid var(--ion-color-step-100);
+}
+
+.filters-container {
+    padding: 0 16px 16px;
+    background: var(--ion-background-color);
+}
+
+.invoices-list {
+    background: transparent;
+}
+
+/* ============================================
+   КАРТОЧКИ ЗАЯВОК
+   ============================================ */
+
+.invoice-card {
+    margin-bottom: 16px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.invoice-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.invoice-card--overdue {
+    border-left: 4px solid var(--ion-color-danger);
+}
+
+.invoice-card--urgent {
+    border-left: 4px solid var(--ion-color-warning);
+}
+
+.invoice-card--normal {
+    border-left: 4px solid var(--ion-color-success);
+}
+
+.invoice-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.invoice-card__number {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--ion-color-primary);
+}
+
+.invoice-card__number ion-icon {
+    font-size: 18px;
+}
+
+.invoice-card__status {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.invoice-card__status ion-icon {
+    font-size: 14px;
+}
+
+.invoice-card__content {
+    margin-bottom: 16px;
+}
+
+.invoice-card__item {
+    --padding-start: 0;
+    --inner-padding-end: 0;
+    --min-height: 44px;
+    margin-bottom: 8px;
+}
+
+.invoice-card__item ion-icon[slot="start"] {
+    margin-right: 12px;
+    font-size: 18px;
+}
+
+.invoice-card__item h3 {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ion-color-medium);
+    margin: 0 0 4px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.invoice-card__item p {
+    font-size: 14px;
+    margin: 0;
+    color: var(--ion-color-dark);
+    line-height: 1.4;
+}
+
+.phone-button {
+    --padding-start: 8px;
+    --padding-end: 8px;
+    height: 36px;
+    width: 36px;
+}
+
+.invoice-card__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--ion-color-step-100);
+}
+
+.invoice-card__term {
+    flex: 1;
+}
+
+.invoice-card__line {
+    font-size: 12px;
+}
+
+/* ============================================
+   ФИЛЬТРЫ
+   ============================================ */
+
+.invoice-filters {
+    margin-bottom: 16px;
+}
+
+.quick-filters {
+    margin-bottom: 12px;
+}
+
+.status-chip {
+    --border-radius: 20px;
+    height: 32px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 2px;
+}
+
+.status-chip--active {
+    transform: scale(1.05);
+}
+
+.status-chip ion-icon {
+    font-size: 14px;
+    margin-right: 4px;
+}
+
+.advanced-filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.filters-active {
+    --background: var(--ion-color-primary);
+    --color: white;
+}
+
+.results-counter {
+    margin-left: 12px;
+}
+
+.advanced-filters-content {
+    padding: 16px;
+    min-width: 300px;
+}
+
+.filter-actions {
+    padding-top: 16px;
+    border-top: 1px solid var(--ion-color-step-100);
+}
+
+.active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.active-filters ion-chip {
+    --border-radius: 16px;
+}
+
+/* ============================================
+   МОДАЛЬНОЕ ОКНО
+   ============================================ */
+
+.invoice-modal {
+    --background: #f8fafc;
+}
+
+.status-card {
+    margin: 16px;
+    border-radius: 12px;
+}
+
+.status-card--overdue {
+    --background: linear-gradient(135deg, var(--ion-color-danger-tint), var(--ion-color-danger));
+    --color: white;
+}
+
+.status-card--urgent {
+    --background: linear-gradient(135deg, var(--ion-color-warning-tint), var(--ion-color-warning));
+    --color: white;
+}
+
+.status-card--normal {
+    --background: linear-gradient(135deg, var(--ion-color-success-tint), var(--ion-color-success));
+    --color: white;
+}
+
+.status-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.status-icon {
+    font-size: 48px;
+}
+
+.status-info h2 {
+    margin: 0 0 4px 0;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.status-info p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 14px;
+}
+
+.status-badge {
+    margin-left: auto;
+}
+
+.modal-actions {
+    padding: 16px;
+    gap: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.call-button {
+    --background: var(--ion-color-success);
+}
+
+.close-button {
+    --border-color: var(--ion-color-medium);
+    --color: var(--ion-color-medium);
+}
+
+/* ============================================
+   СОСТОЯНИЯ ЗАГРУЗКИ И ОШИБОК
+   ============================================ */
+
+.invoices-skeleton {
+    padding: 0 16px;
+}
+
+.invoices-skeleton ion-card {
+    margin-bottom: 16px;
+}
+
+.invoices-error,
+.invoices-empty {
+    padding: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50vh;
+}
+
+.error-content,
+.empty-content {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.error-icon,
+.empty-icon {
+    font-size: 64px;
+    color: var(--ion-color-medium);
+    margin-bottom: 16px;
+}
+
+.error-content h2,
+.empty-content h2 {
+    margin: 0 0 12px 0;
+    font-size: 20px;
+    color: var(--ion-color-dark);
+}
+
+.error-content p,
+.empty-content p {
+    margin: 0 0 24px 0;
+    color: var(--ion-color-medium);
+    line-height: 1.5;
+}
+
+/* ============================================
+   АДАПТИВНОСТЬ
+   ============================================ */
+
+@media (max-width: 576px) {
+    .invoices-content {
+        padding: 0 8px 100px;
+    }
+    
+    .search-container,
+    .filters-container {
+        padding: 12px 8px;
+    }
+    
+    .invoice-card {
+        margin-bottom: 12px;
+    }
+    
+    .invoice-card__header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .invoice-card__status {
+        align-self: flex-end;
+    }
+    
+    .quick-filters ion-col {
+        padding: 2px;
+    }
+    
+    .status-chip {
+        font-size: 12px;
+        height: 28px;
+    }
+    
+    .advanced-filters {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    
+    .status-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .status-icon {
+        font-size: 40px;
+    }
+    
+    .modal-actions {
+        position: sticky;
+        bottom: 0;
+        background: var(--ion-background-color);
+        border-top: 1px solid var(--ion-color-step-100);
+    }
+}
+
+/* ============================================
+   ТЕМНАЯ ТЕМА
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+    .invoices-page {
+        --ion-background-color: #1a1a1a;
+    }
+    
+    .invoice-card {
+        --background: #2a2a2a;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    .invoice-card:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+    
+    .invoice-card__item h3 {
+        color: var(--ion-color-medium);
+    }
+    
+    .invoice-card__item p {
+        color: var(--ion-color-light);
+    }
+    
+    .search-container,
+    .filters-container {
+        background: var(--ion-background-color);
+        border-bottom: 1px solid var(--ion-color-step-150);
+    }
+    
+    .invoice-card__footer {
+        border-top: 1px solid var(--ion-color-step-150);
+    }
+    
+    .status-card--overdue {
+        --background: linear-gradient(135deg, #dc2626, #b91c1c);
+    }
+    
+    .status-card--urgent {
+        --background: linear-gradient(135deg, #d97706, #b45309);
+    }
+    
+    .status-card--normal {
+        --background: linear-gradient(135deg, #059669, #047857);
+    }
+}
+
+/* ============================================
+   АНИМАЦИИ
+   ============================================ */
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.invoice-card {
+    animation: slideInUp 0.3s ease;
+}
+
+.modal-actions {
+    animation: slideInUp 0.4s ease;
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    .invoice-card,
+    .status-chip,
+    .modal-actions {
+        animation: none;
+        transition: none;
+    }
+    
+    .invoice-card:hover {
+        transform: none;
+    }
+}
+
+/* Увеличение размера кнопок для touch */
+@media (pointer: coarse) {
+    .phone-button {
+        height: 44px;
+        width: 44px;
+    }
+    
+    .status-chip {
+        height: 36px;
+        min-height: 36px;
+    }
+}
