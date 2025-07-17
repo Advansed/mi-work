@@ -7,7 +7,7 @@
 }
 
 .login-content {
-    --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
 }
 
 .login-grid {
@@ -36,23 +36,23 @@
     width: 90px;
     height: 90px;
     margin: 0 auto 25px;
-    background: var(--ion-color-primary);
+    background: var(--color-primary);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 5px 20px rgba(59, 130, 246, 0.3);
 }
 
 .login-logo {
     font-size: 50px;
-    color: white;
+    color: var(--color-white);
 }
 
 .login-title {
     font-size: 26px;
     font-weight: 700;
-    color: var(--ion-text-color);
+    color: var(--color-text-primary);
     margin-bottom: 10px;
 }
 
@@ -72,7 +72,7 @@
 }
 
 .login-field {
-    --background: var(--ion-color-light);
+    --background: var(--color-secondary-light);
     --padding-start: 15px;
     --padding-end: 10px;
     --inner-padding-end: 0;
@@ -127,7 +127,7 @@
 }
 
 .forgot-password {
-    color: var(--ion-color-primary);
+    color: var(--color-primary);
     text-decoration: none;
     font-size: 14px;
     cursor: pointer;
@@ -144,6 +144,10 @@
 
 .login-button {
     --border-radius: 12px;
+    --background: var(--color-primary);
+    --background-activated: var(--color-primary-dark);
+    --background-hover: var(--color-primary-dark);
+    --color: var(--color-white);
     height: 50px;
     font-size: 16px;
     font-weight: 600;
@@ -177,12 +181,12 @@
 }
 
 .login-error p {
-    background: var(--ion-color-danger-tint);
-    color: var(--ion-color-danger-shade);
-    padding: 12px 15px;
-    border-radius: 8px;
-    margin: 0;
-    font-size: 14px;
+    background:     var(--ion-color-danger-tint);
+    color:          white;
+    padding:        12px 15px;
+    border-radius:  8px;
+    margin:         0;
+    font-size:      14px;
 }
 
 /* ============================================
@@ -190,7 +194,7 @@
    ============================================ */
 
 .login-footer {
-    color: white;
+    color: var(--color-white);
     text-align: center;
     margin-top: 30px;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -221,13 +225,14 @@
 
 .step-icon ion-icon {
     font-size: 64px;
-    color: var(--ion-color-primary);
+    color: var(--color-primary);
 }
 
 .reset-card h2 {
     text-align: center;
     font-size: 24px;
     margin-bottom: 10px;
+    color: var(--color-text-primary);
 }
 
 .step-description {
@@ -246,7 +251,8 @@
 }
 
 .sms-code-input {
-    --background: var(--ion-color-light);
+    --background: var(--color-secondary-light);
+    --color: var(--color-text-primary);
     --padding-start: 0;
     --padding-end: 0;
     width: 50px;
@@ -259,8 +265,8 @@
 }
 
 .sms-code-input:focus {
-    --background: white;
-    box-shadow: 0 0 0 2px var(--ion-color-primary);
+    --background: var(--color-white);
+    box-shadow: 0 0 0 2px var(--color-primary);
 }
 
 .sms-timer {
@@ -280,7 +286,7 @@
 
 .password-strength {
     height: 4px;
-    background: var(--ion-color-light);
+    background: var(--color-secondary-light);
     border-radius: 2px;
     transition: all 0.3s ease;
     flex-grow: 1;
@@ -303,7 +309,7 @@
 }
 
 .password-strength.strength-medium::after {
-    background: var(--ion-color-warning);
+    background: var(--color-accent);
     width: 66%;
 }
 
@@ -320,7 +326,7 @@
 
 /* ТРЕБОВАНИЯ К ПАРОЛЮ */
 .password-requirements {
-    background: var(--ion-color-light);
+    background: var(--color-secondary-light);
     padding: 15px;
     border-radius: 8px;
     margin: 20px 0;
@@ -330,6 +336,7 @@
     margin: 0 0 10px;
     font-weight: 600;
     font-size: 14px;
+    color: var(--color-text-primary);
 }
 
 .password-requirements ul {
@@ -366,6 +373,7 @@
 .success-screen h2 {
     font-size: 22px;
     margin-bottom: 10px;
+    color: var(--color-text-primary);
 }
 
 .success-screen p {
@@ -428,18 +436,18 @@
 
 @media (prefers-color-scheme: dark) {
     .login-content {
-        --background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        --background: linear-gradient(135deg, var(--color-primary-dark) 0%, #0f172a 100%);
     }
     
     .login-card {
         background: rgba(30, 30, 30, 0.95);
         --ion-background-color: #1e1e1e;
-        --ion-text-color: #ffffff;
+        --ion-text-color: var(--color-white);
     }
     
     .login-field {
         --background: rgba(255, 255, 255, 0.08);
-        --color: #ffffff;
+        --color: var(--color-white);
     }
     
     .login-field ion-icon[slot="start"] {
@@ -450,13 +458,29 @@
         background: rgba(255, 255, 255, 0.05);
     }
     
+    .password-requirements p {
+        color: var(--color-white);
+    }
+    
     .sms-code-input {
         --background: rgba(255, 255, 255, 0.08);
-        --color: #ffffff;
+        --color: var(--color-white);
     }
     
     .sms-code-input:focus {
         --background: rgba(255, 255, 255, 0.12);
+    }
+    
+    .login-title {
+        color: var(--color-white);
+    }
+    
+    .reset-card h2 {
+        color: var(--color-white);
+    }
+    
+    .success-screen h2 {
+        color: var(--color-white);
     }
 }
 

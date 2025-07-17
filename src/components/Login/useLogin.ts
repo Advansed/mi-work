@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useHistory } from 'react-router';
-import { Store, getData, Phone } from '../../components/Store';
+import { Store, getData, Phone } from '../Store';
 
 // Интерфейсы
 interface LoginRequest {
@@ -9,7 +9,7 @@ interface LoginRequest {
 }
 
 interface LoginResponse {
-    Код: number;
+    success: boolean;
     data?: {
         id: string;
         fullName: string;
@@ -83,17 +83,17 @@ export const useLogin = () => {
             const formattedPhone = Phone(phone);
             
             const response = await getData('AUTHORIZATION', {
-                Логин: formattedPhone,
-                Пинкод: password
+                login:      formattedPhone,
+                password:   password
             }) as LoginResponse;
-
-            if (response.Код === 200 && response.data) {
+            console.log(response)
+            if (response.success) {
                 // Формируем объект login
                 const loginData: LoginData = {
-                    userId: response.data.id,
-                    fullName: response.data.fullName,
-                    role: response.data.role,
-                    token: response.data.token || ''
+                    userId:     response.data?.id   || '',
+                    fullName:   response.data?.fullName || '',
+                    role:       response.data?.role || '',
+                    token:      response.data?.token || ''
                 };
 
                 // Сохраняем в Store
@@ -114,8 +114,6 @@ export const useLogin = () => {
                     'subcontractor': '/subcontractor/dashboard'
                 };
 
-                const route = roleRoutes[response.data.role] || '/dashboard';
-                history.push(route);
 
                 return true;
             } else {
@@ -146,20 +144,6 @@ export const useLogin = () => {
     const checkSavedAuth = useCallback(() => {
         const savedAuth = localStorage.getItem('auth') === 'true';
         const savedPhone = localStorage.getItem('rememberedPhone');
-        
-        if (savedAuth) {
-            const loginDataStr = localStorage.getItem('loginData');
-            if (loginDataStr) {
-                try {
-                    const loginData = JSON.parse(loginDataStr);
-                    Store.dispatch({ type: 'auth', data: true });
-                    Store.dispatch({ type: 'login', data: loginData });
-                    return true;
-                } catch (e) {
-                    console.error('Error parsing saved login data:', e);
-                }
-            }
-        }
         
         return savedPhone || null;
     }, []);

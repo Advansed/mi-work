@@ -43,25 +43,9 @@ const App: React.FC = () => {
   // Используем хук для получения состояния авторизации из Store
   const isAuthenticated = useStoreField('auth', 1);
 
-  // При инициализации приложения проверяем сохраненную авторизацию
-  useEffect(() => {
-    const loginDataStr = localStorage.getItem('loginData');
-    
-    if (loginDataStr) {
-      try {
-        const loginData = JSON.parse(loginDataStr);
-        // Восстанавливаем состояние в Store
-        Store.dispatch({ type: 'auth', data: true });
-        Store.dispatch({ type: 'login', data: loginData });
-      } catch (e) {
-        console.error('Error parsing saved login data:', e);
-        // Если данные повреждены, очищаем localStorage
-        localStorage.removeItem('loginData');
-      }
-    }
-  }, []);
 
   // Если пользователь не авторизован, показываем форму логина
+  console.log( isAuthenticated )
   if (!isAuthenticated) {
     return (
       <IonApp>

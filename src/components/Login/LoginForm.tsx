@@ -46,7 +46,9 @@ const LoginForm: React.FC = () => {
 
     // При монтировании проверяем сохраненные данные
     useEffect(() => {
-        const savedPhone = checkSavedAuth();
+        const savedPhone = localStorage.getItem('rememberedPhone');
+
+        console.log(savedPhone)
         if (typeof savedPhone === 'string' && savedPhone) {
             setPhone(savedPhone);
             setRememberMe(true);
@@ -105,6 +107,7 @@ const LoginForm: React.FC = () => {
             setPasswordError(error || '');
         }
         if (error) clearError();
+        console.log(newPassword)
     };
 
     // Обработка отправки формы
@@ -170,7 +173,8 @@ const LoginForm: React.FC = () => {
                                                 type="tel"
                                                 value={phone}
                                                 placeholder="+7 (999) 123-45-67"
-                                                onIonChange={e => handlePhoneChange(e.detail.value)}
+                                                debounce={ 500 }
+                                                onIonInput={e => handlePhoneChange(e.detail.value)}
                                                 onKeyPress={(e) => {
                                                     if (e.key === 'Enter') {
                                                         passwordInputRef.current?.setFocus();
@@ -197,7 +201,7 @@ const LoginForm: React.FC = () => {
                                                 type={showPassword ? 'text' : 'password'}
                                                 value={password}
                                                 placeholder="Пароль"
-                                                onIonChange={e => handlePasswordChange(e.detail.value)}
+                                                onIonInput={e => handlePasswordChange(e.detail.value)}
                                                 disabled={loading}
                                                 required
                                             />
