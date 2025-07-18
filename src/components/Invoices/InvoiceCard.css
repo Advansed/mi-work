@@ -98,7 +98,8 @@
 }
 
 .invoice-card-compact__status {
-    height: 20px;
+    color: white;
+    /* height: 20px;
     font-size: 9px;
     font-weight: 600;
     text-transform: uppercase;
@@ -108,7 +109,7 @@
     --background: rgba(255, 255, 255, 0.9) !important;
     --color: #1F2937 !important;
     background: rgba(255, 255, 255, 0.9) !important;
-    color: #1F2937 !important;
+    color: #1F2937 !important; */
 }
 
 /* ============================================
@@ -235,9 +236,9 @@
     }
     
     .invoice-card-compact__status {
-        height: 18px;
+        /* height: 18px;
         font-size: 8px;
-        padding: 0 5px;
+        padding: 0 5px; */
     }
     
     .invoice-card-compact__service {
@@ -289,9 +290,9 @@
     }
     
     .invoice-card-compact__status {
-        height: 16px;
+        /* height: 16px;
         font-size: 7px;
-        padding: 0 4px;
+        padding: 0 4px; */
     }
     
     .invoice-card-compact__time span,

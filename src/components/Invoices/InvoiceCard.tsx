@@ -84,7 +84,7 @@ const InvoiceCard: React.FC<InvoiceCardProps> = ({
                     </div>
                     <IonBadge 
                         color={ status.color }
-                        // className="invoice-card-compact__status"
+                        className="invoice-card-compact__status"
                     >
                         { status.label }
                     </IonBadge>
@@ -122,7 +122,7 @@ const InvoiceCard: React.FC<InvoiceCardProps> = ({
                         </IonButton>
                     </div>
                     <div className="invoice-card-compact__time">
-                        <span>{formatDate( invoice.term_end )}</span>
+                        <span>{formatDate( invoice.term_begin )}</span>
                     </div>
                 </div>
             </IonCardContent>

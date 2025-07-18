@@ -82,7 +82,7 @@ export const useInvoices = (): UseInvoicesReturn => {
     // Определение статуса заявки по срокам
     const getInvoiceStatus = useCallback((invoice: Invoice): InvoiceStatus => {
         const now = new Date();
-        const termDate = new Date(invoice.term);
+        const termDate = new Date(invoice.term_end);
         const diffHours = (termDate.getTime() - now.getTime()) / (1000 * 60 * 60);
 
         if (diffHours < 0) {
@@ -114,7 +114,9 @@ export const useInvoices = (): UseInvoicesReturn => {
         if (!dateString) return '';
         
         const date = new Date(dateString);
+        console.log(date)
         const now = new Date();
+        console.log()
         const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
 
         if (diffDays === 0) {
