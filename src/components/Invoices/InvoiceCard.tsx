@@ -101,7 +101,7 @@ const InvoiceCard: React.FC<InvoiceCardProps> = ({
 
                 {/* Адрес */}
                 <div className="invoice-card-compact__address">
-                    <IonIcon icon={locationOutline} />
+                    <IonIcon icon={locationOutline} className='w-15 h-15' color='warning'/>
                     <span title={invoice.address}>
                         {truncateText(invoice.address, 45)}
                     </span>
@@ -110,18 +110,10 @@ const InvoiceCard: React.FC<InvoiceCardProps> = ({
                 {/* Нижняя строка: время и телефон */}
                 <div className="invoice-card-compact__footer">
                     <div className="invoice-card-compact__phone">
-                        <IonIcon icon={ callOutline} className='w-15 h-15'/>
+                        <IonIcon icon={ callOutline} className='w-15 h-15' color='success'/>
                         <span>{formatPhone(invoice.phone)}</span>
-                        <IonButton
-                            fill="clear"
-                            size="small"
-                            className="phone-button"
-                            onClick={handlePhoneClick}
-                        >
-                            <IonIcon icon={callOutline} />
-                        </IonButton>
                     </div>
-                    <div className="invoice-card-compact__time">
+                    <div >
                         <span>{formatDate( invoice.term_begin )}</span>
                     </div>
                 </div>
