@@ -1,0 +1,350 @@
+/* ============================================
+   КОМПАКТНАЯ КАРТОЧКА ЗАЯВКИ (КАК ПЛАСТИКОВАЯ КАРТА)
+   ============================================ */
+
+.invoice-card-compact {
+    margin-bottom: 12px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    background: #1E3A8A !important; /* var(--color-primary-dark) */
+    color: #FFFFFF !important; /* var(--color-white) */
+    border: none;
+    overflow: hidden;
+    position: relative;
+    --background: #1E3A8A !important;
+}
+
+.invoice-card-compact:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    background: #0f172a !important;
+    --background: #0f172a !important;
+}
+
+/* Цветовые акценты по статусам - только углы */
+.invoice-card-compact--overdue {
+    background: #1E3A8A !important;
+    --background: #1E3A8A !important;
+}
+
+.invoice-card-compact--urgent {
+    background: #1E3A8A !important;
+    --background: #1E3A8A !important;
+}
+
+.invoice-card-compact--normal {
+    background: #1E3A8A !important;
+    --background: #1E3A8A !important;
+}
+
+/* Декоративный элемент в углу */
+.invoice-card-compact::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 20px solid transparent;
+}
+
+.invoice-card-compact--overdue::after {
+    border-right-color: var(--ion-color-danger);
+}
+
+.invoice-card-compact--urgent::after {
+    border-right-color: var(--ion-color-warning);
+}
+
+.invoice-card-compact--normal::after {
+    border-right-color: var(--ion-color-success);
+}
+
+/* ============================================
+   СОДЕРЖИМОЕ КАРТОЧКИ
+   ============================================ */
+
+.invoice-card-compact__content {
+    padding-bottom: 1em !important;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: transparent !important;
+    --background: transparent !important;
+}
+
+/* ============================================
+   ЗАГОЛОВОК КАРТОЧКИ
+   ============================================ */
+
+.invoice-card-compact__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.invoice-card-compact__number {
+    font-weight: 600;
+    font-size: 13px;
+    color: #FFFFFF !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.invoice-card-compact__status {
+    height: 20px;
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    --border-radius: 10px;
+    padding: 0 6px;
+    --background: rgba(255, 255, 255, 0.9) !important;
+    --color: #1F2937 !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    color: #1F2937 !important;
+}
+
+/* ============================================
+   НАИМЕНОВАНИЕ УСЛУГИ
+   ============================================ */
+
+.invoice-card-compact__service {
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.2;
+    min-height: 16px;
+}
+
+.invoice-card-compact__service span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+}
+
+/* ============================================
+   АДРЕС
+   ============================================ */
+
+.invoice-card-compact__address {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 12px;
+    line-height: 1.2;
+}
+
+.invoice-card-compact__address ion-icon {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    flex-shrink: 0;
+}
+
+.invoice-card-compact__address span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+}
+
+/* ============================================
+   ФУТЕР КАРТОЧКИ
+   ============================================ */
+
+.invoice-card-compact__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+.invoice-card-compact__time {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+}
+
+.invoice-card-compact__time ion-icon {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.invoice-card-compact__time span {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+}
+
+.invoice-card-compact__phone {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.invoice-card-compact__phone span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100px;
+}
+
+.phone-button {
+    --padding-start: 4px;
+    --padding-end: 4px;
+    height: 24px;
+    width: 24px;
+    flex-shrink: 0;
+    --color: rgba(255, 255, 255, 0.9);
+    --background: rgba(255, 255, 255, 0.1);
+    --border-radius: 6px;
+}
+
+.phone-button ion-icon {
+    font-size: 12px;
+}
+
+/* ============================================
+   АДАПТИВНОСТЬ
+   ============================================ */
+
+@media (max-width: 576px) {
+    .invoice-card-compact {
+        /* height: 110px; */
+    }
+    
+    .invoice-card-compact__content {
+        padding-bottom: 1em;
+    }
+    
+    .invoice-card-compact__number {
+        font-size: 12px;
+    }
+    
+    .invoice-card-compact__status {
+        height: 18px;
+        font-size: 8px;
+        padding: 0 5px;
+    }
+    
+    .invoice-card-compact__service {
+        font-size: 12px;
+        margin-bottom: 6px;
+    }
+    
+    .invoice-card-compact__address {
+        font-size: 12px;
+        margin-bottom: 10px;
+    }
+    
+    .invoice-card-compact__time span,
+    .invoice-card-compact__phone {
+        font-size: 14px;
+    }
+    
+    .phone-button {
+        height: 22px;
+        width: 22px;
+    }
+}
+
+/* ============================================
+   ОЧЕНЬ МАЛЕНЬКИЕ ЭКРАНЫ
+   ============================================ */
+
+@media (max-width: 320px) {
+    .invoice-card-compact {
+        height: 100px;
+    }
+    
+    .invoice-card-compact__header {
+        margin-bottom: 8px;
+    }
+    
+    .invoice-card-compact__service {
+        margin-bottom: 6px;
+        font-size: 11px;
+    }
+    
+    .invoice-card-compact__address {
+        margin-bottom: 8px;
+        font-size: 10px;
+    }
+    
+    .invoice-card-compact__number {
+        font-size: 11px;
+    }
+    
+    .invoice-card-compact__status {
+        height: 16px;
+        font-size: 7px;
+        padding: 0 4px;
+    }
+    
+    .invoice-card-compact__time span,
+    .invoice-card-compact__phone {
+        font-size: 9px;
+    }
+    
+    .phone-button {
+        height: 20px;
+        width: 20px;
+    }
+}
+
+/* ============================================
+   ТЕМНАЯ ТЕМА
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+    .invoice-card-compact {
+        background: var(--color-primary-dark);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    .invoice-card-compact:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+        background: #0f172a;
+    }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    .invoice-card-compact {
+        transition: none;
+    }
+    
+    .invoice-card-compact:hover {
+        transform: none;
+    }
+}
+
+/* Увеличение размера для touch */
+@media (pointer: coarse) {
+    .phone-button {
+        height: 28px;
+        width: 28px;
+        --padding-start: 6px;
+        --padding-end: 6px;
+    }
+    
+    .phone-button ion-icon {
+        font-size: 14px;
+    }
+}

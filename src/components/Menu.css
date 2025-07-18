@@ -11,8 +11,8 @@
   --menu-corporate-text: var(--color-text-primary);        /* #1F2937 */
   --menu-corporate-blue: var(--color-primary);             /* #3B82F6 */
   
-  /* Дополнительные цвета для меню - используем тот же фон что и на страницах */
-  --menu-corporate-bg: var(--color-secondary-light);       /* #E5E7EB - такой же как на страницах */
+  /* Единый фон для всего меню */
+  --menu-corporate-bg: var(--color-primary-dark);          /* #1E3A8A */
   --menu-corporate-border: #d1d5db;
   --menu-corporate-shadow: rgba(0, 0, 0, 0.1);
   --menu-corporate-hover: #f3f4f6;
@@ -41,22 +41,11 @@
    ============================================ */
 
 .menu-corporate .menu-header {
-  background: linear-gradient(135deg, var(--menu-corporate-primary) 0%, var(--menu-corporate-blue) 100%);
+  background: var(--menu-corporate-bg);
   color: var(--menu-corporate-white);
   padding: 24px 20px;
-  border-bottom: 4px solid var(--menu-corporate-accent);
+  border-bottom: 2px solid var(--menu-corporate-accent);
   position: relative;
-  box-shadow: 0 4px 12px var(--menu-corporate-shadow);
-}
-
-.menu-corporate .menu-header::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 20px;
-  width: 100px;
-  height: 4px;
-  background: var(--menu-corporate-accent);
 }
 
 /* ============================================
@@ -74,8 +63,8 @@
 
 .menu-corporate .menu-company-logo ion-icon {
   font-size: 32px;
-  color: var(--menu-corporate-accent);
-  background: var(--menu-corporate-white);
+  color: var(--menu-corporate-white);
+  background: var(--menu-corporate-accent);
   padding: 8px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -109,10 +98,11 @@
 }
 
 .menu-corporate .user-item {
-  --background: rgba(255, 255, 255, 0.1) !important;
-  --color: var(--menu-corporate-white) !important;
-  --border-color: transparent !important;
-  background: rgba(255, 255, 255, 0.1) !important;
+  --background: var(--menu-corporate-white) !important;
+  --color: var(--menu-corporate-text) !important;
+  --border-color: var(--menu-corporate-border) !important;
+  background: var(--menu-corporate-white) !important;
+  border: 1px solid var(--menu-corporate-border) !important;
   border-radius: 8px;
   padding: 12px 16px;
   margin: 0;
@@ -120,6 +110,7 @@
   --inner-padding-end: 0;
   --padding-start: 0;
   --padding-end: 0;
+  box-shadow: 0 2px 4px var(--menu-corporate-shadow);
 }
 
 .menu-corporate .user-avatar {
@@ -128,17 +119,19 @@
   background: var(--menu-corporate-accent);
   border: 2px solid var(--menu-corporate-white);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
 }
 
 .menu-corporate .user-avatar ion-icon {
   font-size: 24px;
   color: var(--menu-corporate-white);
+  margin: auto;
 }
 
 .menu-corporate .user-name {
   font-size: 16px;
   font-weight: 700;
-  color: var(--menu-corporate-white) !important;
+  color: var(--menu-corporate-text) !important;
   margin: 0 0 4px 0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -146,7 +139,8 @@
 
 .menu-corporate .user-role {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.8) !important;
+  color: var(--menu-corporate-text) !important;
+  opacity: 0.8;
   margin: 0;
   font-weight: 500;
   text-transform: uppercase;
@@ -160,6 +154,7 @@
 .menu-corporate .menu-content {
   padding: 20px 0;
   flex: 1;
+  background: var(--menu-corporate-bg);
 }
 
 /* ============================================
@@ -169,33 +164,8 @@
 .menu-corporate .menu-group {
   --background: transparent !important;
   background: transparent !important;
-  margin-bottom: 24px;
+  margin-bottom: 0;
   padding: 0 20px;
-}
-
-.menu-corporate .menu-group-header {
-  --background: transparent !important;
-  --color: var(--menu-corporate-primary) !important;
-  background: transparent !important;
-  color: var(--menu-corporate-primary) !important;
-  font-size: 14px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  padding: 0 0 12px 0;
-  margin-bottom: 8px;
-  border-bottom: 2px solid var(--menu-corporate-accent);
-  position: relative;
-}
-
-.menu-corporate .menu-group-header::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 40px;
-  height: 2px;
-  background: var(--menu-corporate-primary);
 }
 
 /* ============================================
@@ -250,7 +220,7 @@
 
 .menu-corporate .menu-item-label {
   --color: var(--menu-corporate-text) !important;
-  color: var(--menu-corporate-text) !important;
+  color: var(--menu-corporate-white) !important;
   font-weight: 600 !important;
   font-size: 14px !important;
   text-transform: uppercase !important;
@@ -259,7 +229,7 @@
 
 .menu-corporate .menu-item.selected .menu-item-label {
   --color: var(--menu-corporate-primary) !important;
-  color: var(--menu-corporate-primary) !important;
+  color: var(--menu-corporate-white) !important;
   font-weight: 700 !important;
 }
 
@@ -284,17 +254,8 @@
 }
 
 /* ============================================
-   СИСТЕМНЫЕ ДЕЙСТВИЯ
+   КНОПКА ВЫХОДА
    ============================================ */
-
-.menu-corporate .menu-system {
-  --background: transparent !important;
-  background: transparent !important;
-  margin-top: 24px;
-  padding: 0 20px;
-  border-top: 1px solid var(--menu-corporate-border);
-  padding-top: 20px;
-}
 
 .menu-corporate .logout-item {
   --background: rgba(220, 38, 38, 0.1) !important;
@@ -302,6 +263,7 @@
   background: rgba(220, 38, 38, 0.1) !important;
   border-color: rgba(220, 38, 38, 0.2) !important;
   border-left-color: #dc2626 !important;
+  margin-top: 16px !important;
 }
 
 .menu-corporate .logout-item:hover {
@@ -325,7 +287,7 @@
    ============================================ */
 
 .menu-corporate .menu-footer {
-  background: var(--menu-corporate-primary);
+  background: var(--menu-corporate-bg);
   color: var(--menu-corporate-white);
   padding: 16px 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -364,8 +326,8 @@
 }
 
 .menu-corporate .company-text {
-  --color: rgba(255, 255, 255, 0.9) !important;
-  color: rgba(255, 255, 255, 0.9) !important;
+  --color: var(--menu-corporate-white) !important;
+  color: var(--menu-corporate-white) !important;
 }
 
 .menu-corporate .company-name {
@@ -374,7 +336,7 @@
   margin: 0 0 2px 0 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.5px !important;
-  color: rgba(255, 255, 255, 0.9) !important;
+  color: var(--menu-corporate-white) !important;
 }
 
 .menu-corporate .company-year {
@@ -395,6 +357,7 @@
   align-items: center;
   justify-content: center;
   min-height: 200px;
+  background: var(--menu-corporate-bg);
 }
 
 .menu-corporate .loading-skeleton {
@@ -433,11 +396,6 @@
   .menu-corporate .menu-header {
     padding: 20px 16px;
   }
-  
-  .menu-corporate .menu-header::after {
-    left: 16px;
-    width: 80px;
-  }
 
   .menu-corporate .menu-content {
     padding: 16px 0;
@@ -445,12 +403,7 @@
 
   .menu-corporate .menu-group {
     padding: 0 16px;
-    margin-bottom: 20px;
-  }
-
-  .menu-corporate .menu-system {
-    padding: 0 16px;
-    padding-top: 16px;
+    margin-bottom: 0;
   }
 
   .menu-corporate .menu-footer {
@@ -483,12 +436,7 @@
 
   .menu-corporate .menu-group {
     padding: 0 12px;
-    margin-bottom: 16px;
-  }
-
-  .menu-corporate .menu-system {
-    padding: 0 12px;
-    padding-top: 12px;
+    margin-bottom: 0;
   }
 
   .menu-corporate .menu-footer {
@@ -509,10 +457,6 @@
 
   .menu-corporate .user-role {
     font-size: 11px;
-  }
-
-  .menu-corporate .menu-group-header {
-    font-size: 12px;
   }
 
   .menu-corporate .menu-item-label {
@@ -571,10 +515,6 @@
   .menu-corporate .menu-item.selected {
     border-width: 3px !important;
   }
-  
-  .menu-corporate .menu-header {
-    border-bottom: 6px solid var(--menu-corporate-accent);
-  }
 }
 
 /* ============================================
@@ -588,6 +528,18 @@
     --menu-corporate-border: #404040;
     --menu-corporate-hover: #2a2a2a;
     --menu-corporate-selected: rgba(59, 130, 246, 0.2);
+  }
+  
+  .menu-corporate .menu-header {
+    background: #1a1a1a;
+  }
+  
+  .menu-corporate .menu-content {
+    background: #1a1a1a;
+  }
+  
+  .menu-corporate .menu-footer {
+    background: #1a1a1a;
   }
   
   .menu-corporate .menu-item {

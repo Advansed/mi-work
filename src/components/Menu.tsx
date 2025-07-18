@@ -69,6 +69,9 @@ const Menu: React.FC = () => {
         );
     }
 
+    // Объединяем все пункты меню в один массив
+    const allMenuPages = menuItems.reduce((acc, group) => [...acc, ...group.pages], [] as string[]);
+
     return (
         <IonMenu contentId="main" type="overlay" className="menu-corporate">
             <IonContent>
@@ -95,61 +98,50 @@ const Menu: React.FC = () => {
                     </IonList>
                 </div>
 
-                {/* Основное меню */}
+                {/* Основное меню - все пункты в одном списке */}
                 <div className="menu-content">
-                    {menuItems.map((group, groupIndex) => (
-                        <IonList key={groupIndex} className="menu-group">
-                            <IonListHeader className="menu-group-header">
-                                {group.title}
-                            </IonListHeader>
-                            
-                            {group.pages.map((pageName) => {
-                                const pageConfig = getPageConfig(pageName);
-                                if (!pageConfig) return null;
+                    <IonList className="menu-group">
+                        {/* Все страницы приложения */}
+                        {allMenuPages.map((pageName) => {
+                            const pageConfig = getPageConfig(pageName);
+                            if (!pageConfig) return null;
 
-                                const isSelected = activePage === pageName;
-                                const pageUrl = `/page/${pageName}`;
+                            const isSelected = activePage === pageName;
+                            const pageUrl = `/page/${pageName}`;
 
-                                return (
-                                    <IonMenuToggle key={pageName} autoHide={false}>
-                                        <IonItem
-                                            className={`menu-item ${isSelected ? 'selected' : ''}`}
-                                            routerLink={pageUrl}
-                                            routerDirection="none"
-                                            lines="none"
-                                            detail={false}
-                                            button
-                                        >
-                                            <IonIcon
-                                                aria-hidden="true"
-                                                slot="start"
-                                                icon={pageConfig.icon}
-                                                className="menu-item-icon"
-                                            />
-                                            <IonLabel className="menu-item-label">
-                                                {pageConfig.title}
-                                            </IonLabel>
-                                            {pageConfig.badge && (
-                                                <IonBadge 
-                                                    className="menu-badge"
-                                                    slot="end"
-                                                >
-                                                    {pageConfig.badge}
-                                                </IonBadge>
-                                            )}
-                                        </IonItem>
-                                    </IonMenuToggle>
-                                );
-                            })}
-                        </IonList>
-                    ))}
-
-                    {/* Системные действия */}
-                    <IonList className="menu-system">
-                        <IonListHeader className="menu-group-header">
-                            Система
-                        </IonListHeader>
+                            return (
+                                <IonMenuToggle key={pageName} autoHide={false}>
+                                    <IonItem
+                                        className={`menu-item ${isSelected ? 'selected' : ''}`}
+                                        routerLink={pageUrl}
+                                        routerDirection="none"
+                                        lines="none"
+                                        detail={false}
+                                        button
+                                    >
+                                        <IonIcon
+                                            aria-hidden="true"
+                                            slot="start"
+                                            icon={pageConfig.icon}
+                                            className="menu-item-icon"
+                                        />
+                                        <IonLabel className="menu-item-label">
+                                            {pageConfig.title}
+                                        </IonLabel>
+                                        {pageConfig.badge && (
+                                            <IonBadge 
+                                                className="menu-badge"
+                                                slot="end"
+                                            >
+                                                {pageConfig.badge}
+                                            </IonBadge>
+                                        )}
+                                    </IonItem>
+                                </IonMenuToggle>
+                            );
+                        })}
                         
+                        {/* Кнопка выхода */}
                         <IonMenuToggle autoHide={false}>
                             <IonItem
                                 button

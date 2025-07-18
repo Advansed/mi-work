@@ -193,14 +193,14 @@ const InvoicesPage: React.FC = () => {
                 </div>
 
                 {/* Фильтры */}
-                <div className="filters-container">
+                {/* <div className="filters-container">
                     <InvoiceFiltersComponent
                         filters={filters}
                         onFiltersChange={setFilters}
                         totalCount={filteredInvoices.length}
                         filteredCount={filteredInvoices.length}
                     />
-                </div>
+                </div> */}
 
                 {/* Контент */}
                 <div className="invoices-content">

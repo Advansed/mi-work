@@ -7,7 +7,8 @@ import {
     IonBadge,
     IonIcon,
     IonButton,
-    IonText
+    IonText,
+    IonChip
 } from '@ionic/react';
 import { 
     timeOutline, 
@@ -18,6 +19,7 @@ import {
     checkmarkCircleOutline
 } from 'ionicons/icons';
 import { Invoice, InvoiceStatus } from './types';
+import './InvoiceCard.css'
 
 interface InvoiceCardProps {
     invoice: Invoice;
@@ -38,7 +40,6 @@ const InvoiceCard: React.FC<InvoiceCardProps> = ({
 }) => {
     
     const handleCardClick = (e: React.MouseEvent) => {
-        // Предотвращаем всплытие события если кликнули на кнопку звонка
         if ((e.target as HTMLElement).closest('.phone-button')) {
             return;
         }
@@ -63,99 +64,65 @@ const InvoiceCard: React.FC<InvoiceCardProps> = ({
         }
     };
 
-    const truncateAddress = (address: string, maxLength: number = 50) => {
-        return address.length > maxLength 
-            ? address.substring(0, maxLength) + '...'
-            : address;
+    const truncateText = (text: string, maxLength: number = 30) => {
+        return text.length > maxLength 
+            ? text.substring(0, maxLength) + '...'
+            : text;
     };
 
     return (
         <IonCard 
-            className={`invoice-card invoice-card--${status.type}`}
+            className={`invoice-card-compact invoice-card-compact--${status.type}`}
             onClick={handleCardClick}
             button
         >
-            <IonCardContent>
-                {/* Заголовок с номером заявки и статусом */}
-                <div className="invoice-card__header">
-                    <div className="invoice-card__number">
-                        <IonIcon icon={documentTextOutline} />
-                        <span>№ {invoice.number}</span>
+            <IonCardContent className="invoice-card-compact__content">
+                {/* Верхняя строка: номер заявки и статус */}
+                <div className="invoice-card-compact__header">
+                    <div className="invoice-card-compact__number">
+                        № {invoice.number}
                     </div>
                     <IonBadge 
-                        color={status.color}
-                        className="invoice-card__status"
+                        color={ status.color }
+                        // className="invoice-card-compact__status"
                     >
-                        <IonIcon icon={getStatusIcon()} />
-                        {status.label}
+                        { status.label }
                     </IonBadge>
                 </div>
 
-                {/* Основная информация */}
-                <div className="invoice-card__content">
-                    {/* Дата создания */}
-                    <IonItem lines="none" className="invoice-card__item">
-                        <IonIcon icon={timeOutline} slot="start" color="medium" />
-                        <IonLabel>
-                            <h3>Создана</h3>
-                            <p>{formatDate(invoice.date)}</p>
-                        </IonLabel>
-                    </IonItem>
+                {/* Наименование услуги */}
+                {invoice.service && (
+                    <div className="invoice-card-compact__service">
+                        <span title={invoice.service}>
+                            {truncateText(invoice.service, 40)}
+                        </span>
+                    </div>
+                )}
 
-                    {/* Адрес */}
-                    <IonItem lines="none" className="invoice-card__item">
-                        <IonIcon icon={locationOutline} slot="start" color="medium" />
-                        <IonLabel>
-                            <h3>Адрес</h3>
-                            <p title={invoice.address}>
-                                {truncateAddress(invoice.address)}
-                            </p>
-                        </IonLabel>
-                    </IonItem>
+                {/* Адрес */}
+                <div className="invoice-card-compact__address">
+                    <IonIcon icon={locationOutline} />
+                    <span title={invoice.address}>
+                        {truncateText(invoice.address, 45)}
+                    </span>
+                </div>
 
-                    {/* Телефон */}
-                    <IonItem lines="none" className="invoice-card__item">
-                        <IonIcon icon={callOutline} slot="start" color="medium" />
-                        <IonLabel>
-                            <h3>Телефон</h3>
-                            <p>{formatPhone(invoice.phone)}</p>
-                        </IonLabel>
+                {/* Нижняя строка: время и телефон */}
+                <div className="invoice-card-compact__footer">
+                    <div className="invoice-card-compact__phone">
+                        <IonIcon icon={ callOutline} className='w-15 h-15'/>
+                        <span>{formatPhone(invoice.phone)}</span>
                         <IonButton
                             fill="clear"
                             size="small"
                             className="phone-button"
                             onClick={handlePhoneClick}
-                            color="primary"
                         >
                             <IonIcon icon={callOutline} />
                         </IonButton>
-                    </IonItem>
-
-                    {/* Вид услуги */}
-                    {invoice.service && (
-                        <IonItem lines="none" className="invoice-card__item">
-                            <IonLabel>
-                                <h3>Услуга</h3>
-                                <p>{invoice.service}</p>
-                            </IonLabel>
-                        </IonItem>
-                    )}
-                </div>
-
-                {/* Футер с информацией о сроках */}
-                <div className="invoice-card__footer">
-                    <div className="invoice-card__term">
-                        <IonText color={status.color}>
-                            <small>
-                                <strong>Выполнить до:</strong> {formatDate(invoice.term)}
-                            </small>
-                        </IonText>
                     </div>
-                    
-                    <div className="invoice-card__line">
-                        <IonText color="medium">
-                            <small>№ {invoice.lineno}</small>
-                        </IonText>
+                    <div className="invoice-card-compact__time">
+                        <span>{formatDate( invoice.term_end )}</span>
                     </div>
                 </div>
             </IonCardContent>
