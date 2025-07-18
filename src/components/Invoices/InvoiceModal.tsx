@@ -8,15 +8,9 @@ import {
     IonButton,
     IonButtons,
     IonIcon,
-    IonItem,
-    IonLabel,
-    IonList,
     IonBadge,
-    IonText,
     IonCard,
-    IonCardContent,
-    IonCardHeader,
-    IonCardTitle
+    IonCardContent
 } from '@ionic/react';
 import {
     close,
@@ -31,7 +25,6 @@ import {
     businessOutline
 } from 'ionicons/icons';
 import { Invoice, InvoiceStatus } from './types';
-import './InvoiceModal.css'
 
 interface InvoiceModalProps {
     isOpen: boolean;
@@ -87,10 +80,10 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
     };
 
     return (
-        <IonModal isOpen={isOpen} onDidDismiss={onDismiss} className="invoice-modal-corporate">
+        <IonModal isOpen={isOpen} onDidDismiss={onDismiss} className="invoice-modal-compact">
             <IonHeader>
-                <IonToolbar className="modal-header-corporate">
-                    <IonTitle className="modal-title-corporate">
+                <IonToolbar className="modal-header-compact">
+                    <IonTitle className="modal-title-compact">
                         <div className="modal-title-content">
                             <IonIcon icon={businessOutline} className="modal-title-icon" />
                             <span>Заявка № {invoice.number}</span>
@@ -104,147 +97,105 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
                 </IonToolbar>
             </IonHeader>
 
-            <IonContent className="modal-content-corporate">
-                {/* Заголовочная карточка со статусом - корпоративный стиль */}
-                <div className="modal-status-header">
-                    <div className="status-header-content">
-                        <div className="status-icon-container">
-                            <IonIcon icon={getStatusIcon()} className="status-icon-large" />
-                        </div>
-                        <div className="status-details">
-                            <h1>Заявка № {invoice.number}</h1>
-                            <div className="status-badge-container">
-                                <IonBadge 
-                                    color={status.color} 
-                                    className="status-badge-large"
-                                >
-                                    {status.label}
-                                </IonBadge>
+            <IonContent className="modal-content-compact">
+                {/* Основная информационная карточка */}
+                <IonCard className="invoice-info-card">
+                    <IonCardContent className="invoice-info-content">
+                        {/* Заголовок с номером и статусом */}
+                        <div className="invoice-header-section">
+                            <div className="invoice-number">
+                                <IonIcon icon={getStatusIcon()} className="status-icon" />
+                                <span>Заявка № {invoice.number}</span>
                             </div>
-                            <p className="status-description">
-                                Линия: {invoice.lineno} • {formatDateFull(invoice.date)}
-                            </p>
+                            <IonBadge color={status.color} className="status-badge-compact">
+                                {status.label}
+                            </IonBadge>
                         </div>
-                    </div>
-                </div>
 
-                {/* Основная информация */}
-                <IonCard className="info-card-corporate">
-                    <IonCardHeader className="card-header-corporate">
-                        <IonCardTitle className="card-title-corporate">
-                            <IonIcon icon={informationCircleOutline} />
-                            Основная информация
-                        </IonCardTitle>
-                    </IonCardHeader>
-                    <IonCardContent className="card-content-corporate">
-                        <div className="info-grid">
-                            <div className="info-item">
-                                <div className="info-icon">
+                        {/* Основная информация */}
+                        <div className="invoice-details-section">
+                            <div className="detail-item">
+                                <div className="detail-icon">
                                     <IonIcon icon={locationOutline} />
                                 </div>
-                                <div className="info-content">
-                                    <h3>Адрес</h3>
-                                    <p>{invoice.address}</p>
+                                <div className="detail-content">
+                                    <span className="detail-label">Адрес</span>
+                                    <span className="detail-value">{invoice.address}</span>
                                 </div>
                             </div>
 
-                            <div className="info-item">
-                                <div className="info-icon">
+                            <div className="detail-item clickable" onClick={handlePhoneClick}>
+                                <div className="detail-icon phone-icon">
                                     <IonIcon icon={callOutline} />
                                 </div>
-                                <div className="info-content">
-                                    <h3>Контактный телефон</h3>
-                                    <p className="phone-clickable" onClick={handlePhoneClick}>
-                                        {formatPhone(invoice.phone)}
-                                    </p>
+                                <div className="detail-content">
+                                    <span className="detail-label">Телефон</span>
+                                    <span className="detail-value phone-value">{formatPhone(invoice.phone)}</span>
                                 </div>
                             </div>
 
                             {invoice.service && (
-                                <div className="info-item">
-                                    <div className="info-icon">
+                                <div className="detail-item">
+                                    <div className="detail-icon">
                                         <IonIcon icon={informationCircleOutline} />
                                     </div>
-                                    <div className="info-content">
-                                        <h3>Вид услуги</h3>
-                                        <p>{invoice.service}</p>
+                                    <div className="detail-content">
+                                        <span className="detail-label">Услуга</span>
+                                        <span className="detail-value">{invoice.service}</span>
                                     </div>
                                 </div>
                             )}
-                        </div>
-                    </IonCardContent>
-                </IonCard>
 
-                {/* Временные рамки */}
-                <IonCard className="info-card-corporate">
-                    <IonCardHeader className="card-header-corporate">
-                        <IonCardTitle className="card-title-corporate">
-                            <IonIcon icon={calendarOutline} />
-                            Временные рамки
-                        </IonCardTitle>
-                    </IonCardHeader>
-                    <IonCardContent className="card-content-corporate">
-                        <div className="info-grid">
-                            <div className="info-item priority">
-                                <div className="info-icon">
-                                    <IonIcon icon={timeOutline} />
+                            <div className="detail-item">
+                                <div className="detail-icon">
+                                    <IonIcon icon={calendarOutline} />
                                 </div>
-                                <div className="info-content">
-                                    <h3>Срок выполнения</h3>
-                                    <p className={`term-date term-${status.type}`}>
+                                <div className="detail-content">
+                                    <span className="detail-label">Срок выполнения</span>
+                                    <span className={`detail-value term-${status.type}`}>
                                         {formatDateFull(invoice.term)}
-                                    </p>
+                                    </span>
                                 </div>
                             </div>
 
-                            {invoice.term_begin && new Date(invoice.term_begin).getFullYear() > 2001 && (
-                                <div className="info-item">
-                                    <div className="info-icon">
-                                        <IonIcon icon={calendarOutline} />
-                                    </div>
-                                    <div className="info-content">
-                                        <h3>Начало периода</h3>
-                                        <p>{formatDateFull(invoice.term_begin)}</p>
-                                    </div>
+                            <div className="detail-item">
+                                <div className="detail-icon">
+                                    <IonIcon icon={documentTextOutline} />
                                 </div>
-                            )}
+                                <div className="detail-content">
+                                    <span className="detail-label">Линия / Дата создания</span>
+                                    <span className="detail-value">
+                                        {invoice.lineno} • {formatDateFull(invoice.date)}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
 
-                            {invoice.term_end && new Date(invoice.term_end).getFullYear() > 2001 && (
-                                <div className="info-item">
-                                    <div className="info-icon">
-                                        <IonIcon icon={calendarOutline} />
-                                    </div>
-                                    <div className="info-content">
-                                        <h3>Окончание периода</h3>
-                                        <p>{formatDateFull(invoice.term_end)}</p>
-                                    </div>
-                                </div>
-                            )}
+                        {/* Кнопки действий */}
+                        <div className="invoice-actions-section">
+                            <IonButton
+                                expand="block"
+                                onClick={handlePhoneClick}
+                                className="action-button-call"
+                                size="default"
+                            >
+                                <IonIcon icon={callOutline} slot="start" />
+                                Позвонить
+                            </IonButton>
+
+                            <IonButton
+                                expand="block"
+                                fill="outline"
+                                onClick={onDismiss}
+                                className="action-button-close"
+                                size="default"
+                            >
+                                <IonIcon icon={close} slot="start" />
+                                Закрыть
+                            </IonButton>
                         </div>
                     </IonCardContent>
                 </IonCard>
-
-                {/* Кнопки действий - корпоративный стиль */}
-                <div className="modal-actions-corporate">
-                    <IonButton
-                        expand="block"
-                        onClick={handlePhoneClick}
-                        className="action-button-primary"
-                    >
-                        <IonIcon icon={callOutline} slot="start" />
-                        Позвонить клиенту
-                    </IonButton>
-
-                    <IonButton
-                        expand="block"
-                        fill="outline"
-                        onClick={onDismiss}
-                        className="action-button-secondary"
-                    >
-                        <IonIcon icon={close} slot="start" />
-                        Закрыть
-                    </IonButton>
-                </div>
             </IonContent>
         </IonModal>
     );

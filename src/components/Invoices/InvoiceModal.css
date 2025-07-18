@@ -1,60 +1,46 @@
 /* ============================================
-   КОРПОРАТИВНЫЙ СТИЛЬ ДЛЯ INVOICE MODAL
+   КОМПАКТНОЕ МОДАЛЬНОЕ ОКНО - КОРПОРАТИВНЫЙ СТИЛЬ
    ============================================ */
 
 /* Основные переменные */
-:root {
-    --modal-corporate-primary: #1E3A8A;       /* var(--color-primary-dark) */
-    --modal-corporate-white: #FFFFFF;         /* var(--color-white) */
-    --modal-corporate-accent: #F97316;        /* var(--color-accent) */
-    --modal-corporate-text: #1F2937;         /* var(--color-text-primary) */
-    --modal-corporate-blue: #3B82F6;         /* var(--color-primary) */
-    --modal-corporate-background: #f8fafc;
-    --modal-corporate-border: #e5e7eb;
-    --modal-corporate-shadow: rgba(0, 0, 0, 0.1);
-}
+.invoice-modal-compact {
+    --modal-primary: #1E3A8A;        /* var(--color-primary-dark) */
+    --modal-accent: #F97316;         /* var(--color-accent) */
+    --modal-white: #FFFFFF;          /* var(--color-white) */
+    --modal-light: #f8fafc;          /* Светлый фон */
 
-/* ============================================
-   ОСНОВНЫЕ СТИЛИ МОДАЛЬНОГО ОКНА
-   ============================================ */
-
-.invoice-modal-corporate {
-    --background: var(--modal-corporate-background);
-}
-
-.invoice-modal-corporate ion-backdrop {
-    --background: rgba(30, 58, 138, 0.4);
 }
 
 /* ============================================
    ЗАГОЛОВОК МОДАЛЬНОГО ОКНА
    ============================================ */
 
-.modal-header-corporate {
-    --background: var(--modal-corporate-primary) !important;
-    --color: var(--modal-corporate-white) !important;
-    background: var(--modal-corporate-primary) !important;
-    color: var(--modal-corporate-white) !important;
-    border-bottom: 4px solid var(--modal-corporate-accent);
+.invoice-modal-compact .modal-header-compact {
+    --background: var(--modal-primary) !important;
+    --color: var(--modal-white) !important;
+    background: var(--modal-primary) !important;
+    color: var(--modal-white) !important;
+    border-bottom: 4px solid var(--modal-accent);
     position: relative;
 }
 
-.modal-header-corporate::after {
+.invoice-modal-compact .modal-header-compact::after {
     content: '';
     position: absolute;
     bottom: -4px;
-    left: 16px;
-    width: 60px;
+    left: 20px;
+    width: 120px;
     height: 4px;
-    background: var(--modal-corporate-blue);
+    background: #3B82F6;
+    z-index: 1;
 }
 
-.modal-title-corporate {
-    --color: var(--modal-corporate-white) !important;
-    color: var(--modal-corporate-white) !important;
+.invoice-modal-compact .modal-title-compact {
+    --color: var(--modal-white) !important;
+    color: var(--modal-white) !important;
 }
 
-.modal-title-content {
+.invoice-modal-compact .modal-title-content {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -63,470 +49,407 @@
     letter-spacing: 0.5px;
 }
 
-.modal-title-icon {
+.invoice-modal-compact .modal-title-icon {
     font-size: 24px;
-    color: var(--modal-corporate-accent);
-    background: var(--modal-corporate-white);
+    color: var(--modal-accent);
+    background: var(--modal-white);
     padding: 6px;
     border-radius: 6px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.modal-close-button {
-    --color: var(--modal-corporate-white) !important;
-    color: var(--modal-corporate-white) !important;
-    --background: rgba(255, 255, 255, 0.1);
-    --background-hover: rgba(255, 255, 255, 0.2);
-    --border-radius: 8px;
+.invoice-modal-compact .modal-close-btn {
+    --color: var(--modal-white) !important;
+    color: var(--modal-white) !important;
 }
 
 /* ============================================
    КОНТЕНТ МОДАЛЬНОГО ОКНА
    ============================================ */
 
-.modal-content-corporate {
-    --background: var(--modal-corporate-background);
-    --color: var(--modal-corporate-text);
-    background: var(--modal-corporate-background);
-    padding: 0 16px 100px;
+.invoice-modal-compact .modal-content-compact {
+    --background: var(--modal-light) !important;
+    background: var(--modal-light) !important;
+    padding: 16px;
 }
 
 /* ============================================
-   КАРТОЧКА СТАТУСА
+   ОСНОВНАЯ ИНФОРМАЦИОННАЯ КАРТОЧКА
    ============================================ */
 
-.modal-status-card {
-    background: var(--modal-corporate-primary);
-    color: var(--modal-corporate-white);
+.invoice-modal-compact .invoice-info-card {
+    --background: var(--modal-primary) !important;
+    background: var(--modal-primary) !important;
+    color: var(--modal-white);
     border-radius: 12px;
-    padding: 20px;
-    margin: 16px 0;
+    box-shadow: 0 4px 16px rgba(30, 58, 138, 0.3);
+    transition: all 0.2s ease;
+    margin: 1em;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 4px 16px rgba(30, 58, 138, 0.2);
 }
 
-.modal-status-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    z-index: 2;
+.invoice-modal-compact .invoice-info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(30, 58, 138, 0.4);
 }
 
-.modal-status-left {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex: 1;
-}
-
-.modal-status-icon {
-    font-size: 48px;
-    color: var(--modal-corporate-white);
-    background: var(--modal-corporate-accent);
-    padding: 12px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.modal-status-info {
-    flex: 1;
-}
-
-.modal-status-title {
-    font-size: 24px;
-    font-weight: 700;
-    margin: 0 0 4px 0;
-    color: var(--modal-corporate-white);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.modal-status-subtitle {
-    font-size: 14px;
-    margin: 0;
-    color: rgba(255, 255, 255, 0.8);
-    font-weight: 400;
-}
-
-.modal-status-badge {
-    background: var(--modal-corporate-accent) !important;
-    color: var(--modal-corporate-white) !important;
-    --background: var(--modal-corporate-accent) !important;
-    --color: var(--modal-corporate-white) !important;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 8px 16px;
-    border-radius: 8px;
-    z-index: 3;
-    position: relative;
-}
-
-/* Декоративные элементы статуса */
-.modal-status-decoration {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 0;
-    height: 0;
-    border-left: 30px solid transparent;
-    border-right: 30px solid;
-    border-bottom: 30px solid transparent;
-    opacity: 0.3;
-    z-index: 1;
-}
-
-.modal-status-decoration--overdue {
-    border-right-color: var(--ion-color-danger);
-}
-
-.modal-status-decoration--urgent {
-    border-right-color: var(--ion-color-warning);
-}
-
-.modal-status-decoration--normal {
-    border-right-color: var(--ion-color-success);
-}
-
-/* ============================================
-   ИНФОРМАЦИОННЫЕ КАРТОЧКИ
-   ============================================ */
-
-.modal-info-card {
-    --background: var(--modal-corporate-white);
-    background: var(--modal-corporate-white);
-    border: 2px solid var(--modal-corporate-border);
-    border-radius: 12px;
-    box-shadow: 0 2px 8px var(--modal-corporate-shadow);
-    border-left: 6px solid var(--modal-corporate-primary);
-    margin-bottom: 16px;
-    overflow: hidden;
-    position: relative;
-}
-
-.modal-info-card::before {
+/* Декоративный элемент в углу */
+.invoice-modal-compact .invoice-info-card::after {
     content: '';
     position: absolute;
     top: 0;
     right: 0;
     width: 0;
     height: 0;
-    border-left: 20px solid transparent;
-    border-right: 20px solid var(--modal-corporate-primary);
-    border-bottom: 20px solid transparent;
-    opacity: 0.05;
+    border-left: 30px solid transparent;
+    border-right: 30px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 30px solid transparent;
 }
 
-.modal-info-card ion-card-header {
-    --background: var(--modal-corporate-white);
-    --color: var(--modal-corporate-primary);
-    background: var(--modal-corporate-white);
-    padding: 16px 20px 12px;
-    border-bottom: 2px solid var(--modal-corporate-accent);
+.invoice-modal-compact .invoice-info-content {
+    padding: 20px !important;
+    background: transparent !important;
+    --background: transparent !important;
+    margin-top: 1em;
+    margin-left: 1em;
+    margin-right: 1em;
 }
 
-.modal-card-title {
+/* ============================================
+   ЗАГОЛОВОЧНАЯ СЕКЦИЯ
+   ============================================ */
+
+.invoice-modal-compact .invoice-header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.invoice-modal-compact .invoice-number {
     display: flex;
     align-items: center;
     gap: 12px;
     font-size: 18px;
-    font-weight: 600;
-    color: var(--modal-corporate-primary) !important;
-    --color: var(--modal-corporate-primary) !important;
+    font-weight: 700;
+    color: var(--modal-white);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin: 0;
 }
 
-.modal-card-title ion-icon {
-    font-size: 20px;
-    color: var(--modal-corporate-accent);
+.invoice-modal-compact .status-icon {
+    font-size: 24px;
+    color: var(--modal-accent);
+    background: var(--modal-white);
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.modal-card-content {
-    --background: var(--modal-corporate-white);
-    --color: var(--modal-corporate-text);
-    background: var(--modal-corporate-white);
-    padding: 20px;
+.invoice-modal-compact .status-badge-compact {
+    --background: var(--modal-white) !important;
+    --color: var(--modal-primary) !important;
+    background: var(--modal-white) !important;
+    color: var(--modal-primary) !important;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 /* ============================================
-   СЕТКА ИНФОРМАЦИИ
+   СЕКЦИЯ ДЕТАЛЕЙ
    ============================================ */
 
-.modal-info-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
+.invoice-modal-compact .invoice-details-section {
+    margin-bottom: 20px;
 }
 
-.modal-info-item {
+.invoice-modal-compact .detail-item {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 16px;
-    padding: 16px;
-    background: rgba(30, 58, 138, 0.03);
-    border: 1px solid var(--modal-corporate-border);
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    position: relative;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
 }
 
-.modal-info-item:hover {
-    background: rgba(30, 58, 138, 0.05);
-    border-color: var(--modal-corporate-accent);
-    transform: translateX(2px);
+.invoice-modal-compact .detail-item:last-child {
+    border-bottom: none;
 }
 
-.modal-info-item-phone {
+.invoice-modal-compact .detail-item.clickable {
     cursor: pointer;
-    border-left: 4px solid var(--ion-color-success);
+    padding: 12px 8px;
+    margin: 0 -8px;
+    border-radius: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.modal-info-item-phone:hover {
-    border-left-color: var(--modal-corporate-accent);
-    background: rgba(16, 185, 129, 0.05);
+.invoice-modal-compact .detail-item.clickable:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(4px);
 }
 
-.modal-info-item-priority {
-    border-left: 4px solid var(--ion-color-warning);
-}
-
-.modal-info-item-full {
-    grid-column: 1 / -1;
-}
-
-.modal-info-icon {
-    font-size: 20px;
-    color: var(--modal-corporate-primary);
-    background: var(--modal-corporate-white);
-    padding: 8px;
-    border-radius: 6px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.invoice-modal-compact .detail-icon {
+    background: var(--modal-accent);
+    border-radius: 8px;
+    padding: 10px;
     flex-shrink: 0;
-    margin-top: 2px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.modal-info-icon-phone {
-    color: var(--ion-color-success);
+.invoice-modal-compact .detail-icon.phone-icon {
+    background: #10b981; /* Success green */
 }
 
-.modal-info-text {
+.invoice-modal-compact .detail-icon ion-icon {
+    font-size: 18px;
+    color: var(--modal-white);
+}
+
+.invoice-modal-compact .detail-content {
+    display: flex;
+    flex-direction: column;
     flex: 1;
+    min-width: 0;
 }
 
-.modal-info-text h3 {
+.invoice-modal-compact .detail-label {
     font-size: 12px;
     font-weight: 600;
-    color: var(--modal-corporate-primary);
-    margin: 0 0 6px 0;
+    color: rgba(255, 255, 255, 0.7);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    margin-bottom: 4px;
 }
 
-.modal-info-text p {
+.invoice-modal-compact .detail-value {
     font-size: 15px;
-    color: var(--modal-corporate-text);
-    margin: 0;
-    line-height: 1.4;
     font-weight: 500;
+    color: var(--modal-white);
+    line-height: 1.3;
+    word-break: break-word;
 }
 
-.modal-priority-text p {
-    font-size: 16px;
+.invoice-modal-compact .phone-value {
+    color: var(--modal-accent);
     font-weight: 600;
+    text-decoration: underline;
 }
 
-.modal-phone-action-icon {
-    font-size: 16px;
-    color: var(--ion-color-success);
-    background: rgba(16, 185, 129, 0.1);
-    padding: 6px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    margin-top: 2px;
+.invoice-modal-compact .detail-item.clickable:hover .phone-value {
+    color: var(--modal-white);
 }
 
 /* ============================================
-   КНОПКИ ДЕЙСТВИЙ
+   СПЕЦИАЛЬНЫЕ СТИЛИ ДЛЯ СРОКОВ
    ============================================ */
 
-.modal-actions-corporate {
-    position: sticky;
-    bottom: 0;
-    background: var(--modal-corporate-background);
-    padding: 16px;
-    border-top: 1px solid var(--modal-corporate-border);
-    margin: 0 -16px -100px -16px;
+.invoice-modal-compact .term-overdue {
+    color: #f87171 !important; /* Danger light */
+    font-weight: 700 !important;
+}
+
+.invoice-modal-compact .term-urgent {
+    color: #fbbf24 !important; /* Warning light */
+    font-weight: 700 !important;
+}
+
+.invoice-modal-compact .term-normal {
+    color: #34d399 !important; /* Success light */
+    font-weight: 600 !important;
+}
+
+/* ============================================
+   СЕКЦИЯ ДЕЙСТВИЙ
+   ============================================ */
+
+.invoice-modal-compact .invoice-actions-section {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.modal-action-button {
-    --border-radius: 12px;
-    --padding-start: 24px;
-    --padding-end: 24px;
-    --padding-top: 16px;
-    --padding-bottom: 16px;
-    height: 56px;
-    font-size: 16px;
+.invoice-modal-compact .action-button-call {
+    --background: var(--modal-accent) !important;
+    --color: var(--modal-white) !important;
+    --border-radius: 8px;
+    background: var(--modal-accent) !important;
+    color: var(--modal-white) !important;
+    height: 48px;
+    font-size: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 12px rgba(249, 115, 22, 0.4);
+}
+
+.invoice-modal-compact .action-button-call:hover {
+    --background: #ea580c !important;
+    background: #ea580c !important;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 16px rgba(249, 115, 22, 0.5);
+}
+
+.invoice-modal-compact .action-button-close {
+    --border-color: rgba(255, 255, 255, 0.4) !important;
+    --color: rgba(255, 255, 255, 0.9) !important;
+    --border-radius: 8px;
+    --background: transparent !important;
+    --border-width: 2px;
+    height: 48px;
+    font-size: 15px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     transition: all 0.3s ease;
 }
 
-.modal-action-button-primary {
-    --background: var(--ion-color-success);
-    --background-activated: #047857;
-    --background-hover: #047857;
-    --color: var(--modal-corporate-white);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-}
-
-.modal-action-button-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
-}
-
-.modal-action-button-secondary {
-    --background: var(--modal-corporate-white);
-    --color: var(--modal-corporate-text);
-    --border-color: var(--modal-corporate-border);
-    --border-width: 2px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.modal-action-button-secondary:hover {
-    --background: rgba(30, 58, 138, 0.05);
-    --border-color: var(--modal-corporate-primary);
-    transform: translateY(-1px);
+.invoice-modal-compact .action-button-close:hover {
+    --background: rgba(255, 255, 255, 0.1) !important;
+    --border-color: var(--modal-white) !important;
+    --color: var(--modal-white) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: var(--modal-white) !important;
+    color: var(--modal-white) !important;
 }
 
 /* ============================================
-   АДАПТИВНОСТЬ
+   МОБИЛЬНАЯ АДАПТАЦИЯ
    ============================================ */
 
-@media (min-width: 768px) {
-    .modal-info-grid {
-        grid-template-columns: repeat(2, 1fr);
+@media (max-width: 768px) {
+    .invoice-modal-compact .modal-header-compact::after {
+        left: 16px;
+        width: 80px;
     }
-    
-    .modal-actions-corporate {
-        flex-direction: row;
-        gap: 16px;
-    }
-    
-    .modal-action-button {
-        flex: 1;
-    }
-}
 
-@media (max-width: 576px) {
-    .modal-content-corporate {
-        padding: 0 12px 100px;
+    .invoice-modal-compact .modal-content-compact {
+        padding: 12px;
     }
-    
-    .modal-status-card {
-        padding: 16px;
-        margin: 12px 0;
+
+    .invoice-modal-compact .invoice-info-content {
+        padding: 16px !important;
     }
-    
-    .modal-status-left {
+
+    .invoice-modal-compact .invoice-header-section {
         flex-direction: column;
         align-items: flex-start;
         gap: 12px;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
     }
-    
-    .modal-status-icon {
-        font-size: 40px;
-        padding: 10px;
-    }
-    
-    .modal-status-title {
-        font-size: 20px;
-    }
-    
-    .modal-status-badge {
+
+    .invoice-modal-compact .status-badge-compact {
         align-self: flex-end;
-        margin-top: -40px;
+        margin-top: -36px;
     }
-    
-    .modal-info-card {
-        margin-bottom: 12px;
+
+    .invoice-modal-compact .invoice-number {
+        font-size: 16px;
     }
-    
-    .modal-card-content {
-        padding: 16px;
-    }
-    
-    .modal-info-item {
-        padding: 12px;
-        gap: 12px;
-    }
-    
-    .modal-info-icon {
-        font-size: 18px;
+
+    .invoice-modal-compact .status-icon {
+        font-size: 20px;
         padding: 6px;
     }
-    
-    .modal-info-text h3 {
+
+    .invoice-modal-compact .detail-item {
+        padding: 10px 0;
+        gap: 12px;
+    }
+
+    .invoice-modal-compact .detail-icon {
+        padding: 8px;
+    }
+
+    .invoice-modal-compact .detail-icon ion-icon {
+        font-size: 16px;
+    }
+
+    .invoice-modal-compact .detail-label {
         font-size: 11px;
     }
-    
-    .modal-info-text p {
+
+    .invoice-modal-compact .detail-value {
         font-size: 14px;
     }
-    
-    .modal-actions-corporate {
-        padding: 12px;
-    }
-    
-    .modal-action-button {
-        --padding-top: 14px;
-        --padding-bottom: 14px;
-        height: 52px;
+
+    .invoice-modal-compact .action-button-call,
+    .invoice-modal-compact .action-button-close {
+        height: 44px;
         font-size: 14px;
+    }
+
+    .invoice-modal-compact .invoice-actions-section {
+        flex-direction: row;
+        gap: 8px;
     }
 }
 
-@media (max-width: 320px) {
-    .modal-status-card {
-        padding: 12px;
-    }
-    
-    .modal-status-icon {
-        font-size: 32px;
+@media (max-width: 480px) {
+    .invoice-modal-compact .modal-content-compact {
         padding: 8px;
     }
-    
-    .modal-status-title {
+
+    .invoice-modal-compact .invoice-info-content {
+        padding: 12px !important;
+    }
+
+    .invoice-modal-compact .invoice-number {
+        font-size: 14px;
+        gap: 8px;
+    }
+
+    .invoice-modal-compact .status-icon {
         font-size: 18px;
-    }
-    
-    .modal-card-content {
-        padding: 12px;
-    }
-    
-    .modal-info-item {
-        padding: 10px;
-        gap: 10px;
-    }
-    
-    .modal-info-icon {
-        font-size: 16px;
         padding: 5px;
     }
-    
-    .modal-info-text h3 {
+
+    .invoice-modal-compact .status-badge-compact {
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+
+    .invoice-modal-compact .detail-item {
+        padding: 8px 0;
+        gap: 10px;
+    }
+
+    .invoice-modal-compact .detail-icon {
+        padding: 6px;
+    }
+
+    .invoice-modal-compact .detail-icon ion-icon {
+        font-size: 14px;
+    }
+
+    .invoice-modal-compact .detail-label {
         font-size: 10px;
     }
-    
-    .modal-info-text p {
+
+    .invoice-modal-compact .detail-value {
         font-size: 13px;
+    }
+
+    .invoice-modal-compact .action-button-call,
+    .invoice-modal-compact .action-button-close {
+        height: 40px;
+        font-size: 13px;
+    }
+
+    .invoice-modal-compact .invoice-actions-section {
+        flex-direction: column;
+        gap: 8px;
     }
 }
 
@@ -535,58 +458,21 @@
    ============================================ */
 
 @media (prefers-color-scheme: dark) {
-    .invoice-modal-corporate {
-        --modal-corporate-background: #1a1a1a;
-        --modal-corporate-border: #404040;
-        --modal-corporate-text: #e5e5e5;
+    .invoice-modal-compact {
+        --modal-light: #1a1a1a;
     }
-    
-    .modal-status-card {
-        background: #0f172a;
+
+    .invoice-modal-compact .modal-content-compact {
+        --background: #1a1a1a !important;
+        background: #1a1a1a !important;
+    }
+
+    .invoice-modal-compact .invoice-info-card {
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
     }
-    
-    .modal-info-card {
-        --background: #2a2a2a;
-        background: #2a2a2a;
-        border-color: #404040;
-    }
-    
-    .modal-info-card::before {
-        border-right-color: #404040;
-    }
-    
-    .modal-card-content {
-        --background: #2a2a2a;
-        background: #2a2a2a;
-    }
-    
-    .modal-info-item {
-        background: rgba(255, 255, 255, 0.03);
-        border-color: #404040;
-    }
-    
-    .modal-info-item:hover {
-        background: rgba(255, 255, 255, 0.05);
-    }
-    
-    .modal-info-text h3 {
-        color: var(--modal-corporate-blue);
-    }
-    
-    .modal-info-text p {
-        color: #e5e5e5;
-    }
-    
-    .modal-actions-corporate {
-        background: #1a1a1a;
-        border-color: #404040;
-    }
-    
-    .modal-action-button-secondary {
-        --background: #2a2a2a;
-        --color: #e5e5e5;
-        --border-color: #404040;
+
+    .invoice-modal-compact .invoice-info-card:hover {
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
     }
 }
 
@@ -595,57 +481,38 @@
    ============================================ */
 
 @media (prefers-reduced-motion: reduce) {
-    .modal-info-item,
-    .modal-action-button {
-        transition: none;
+    .invoice-modal-compact .invoice-info-card,
+    .invoice-modal-compact .detail-item,
+    .invoice-modal-compact .action-button-call,
+    .invoice-modal-compact .action-button-close {
+        transition: none !important;
     }
     
-    .modal-info-item:hover,
-    .modal-action-button-primary:hover,
-    .modal-action-button-secondary:hover {
-        transform: none;
+    .invoice-modal-compact .invoice-info-card:hover,
+    .invoice-modal-compact .detail-item.clickable:hover,
+    .invoice-modal-compact .action-button-call:hover,
+    .invoice-modal-compact .action-button-close:hover {
+        transform: none !important;
     }
 }
 
-/* Увеличение размера для touch-устройств */
+/* Увеличенные размеры для touch-устройств */
 @media (pointer: coarse) {
-    .modal-action-button {
-        --padding-top: 18px;
-        --padding-bottom: 18px;
-        height: 60px;
+    .invoice-modal-compact .action-button-call,
+    .invoice-modal-compact .action-button-close {
+        height: 52px;
         font-size: 16px;
     }
     
-    .modal-info-item-phone {
-        min-height: 60px;
+    .invoice-modal-compact .detail-item.clickable {
+        min-height: 56px;
+        padding: 16px 8px;
     }
     
-    .modal-close-button {
+    .invoice-modal-compact .modal-close-btn {
         --padding-start: 12px;
         --padding-end: 12px;
         --padding-top: 12px;
         --padding-bottom: 12px;
-    }
-}
-
-/* ============================================
-   ВЫСОКОКОНТРАСТНЫЙ РЕЖИМ
-   ============================================ */
-
-@media (prefers-contrast: high) {
-    .modal-info-card {
-        border-width: 3px;
-    }
-    
-    .modal-info-item {
-        border-width: 2px;
-    }
-    
-    .modal-info-item:hover {
-        border-width: 3px;
-    }
-    
-    .modal-action-button-secondary {
-        --border-width: 3px;
     }
 }
