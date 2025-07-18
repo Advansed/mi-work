@@ -11,10 +11,11 @@ import {
     IonNote,
     IonBadge,
     IonAvatar,
-    IonText
+    IonText,
+    IonButton
 } from '@ionic/react';
 import { useLocation } from 'react-router-dom';
-import { logOutOutline, personOutline } from 'ionicons/icons';
+import { logOutOutline, personOutline, businessOutline } from 'ionicons/icons';
 import { useStoreField, Store } from '../components/Store';
 import { getMenuItems, getRoleDisplayName, getPageConfig } from '../pages/PageConfig';
 import { UserRole } from '../pages/pageTypes';
@@ -57,10 +58,11 @@ const Menu: React.FC = () => {
 
     if (!userRole) {
         return (
-            <IonMenu contentId="main" type="overlay">
+            <IonMenu contentId="main" type="overlay" className="menu-corporate">
                 <IonContent>
                     <div className="menu-loading">
-                        <p>Загрузка меню...</p>
+                        <div className="loading-skeleton" style={{ width: '150px', height: '20px', marginBottom: '10px' }}></div>
+                        <div className="loading-skeleton" style={{ width: '100px', height: '16px' }}></div>
                     </div>
                 </IonContent>
             </IonMenu>
@@ -68,11 +70,19 @@ const Menu: React.FC = () => {
     }
 
     return (
-        <IonMenu contentId="main" type="overlay">
+        <IonMenu contentId="main" type="overlay" className="menu-corporate">
             <IonContent>
                 {/* Заголовок меню с информацией о пользователе */}
                 <div className="menu-header">
-                    <IonList id="user-info">
+                    <div className="menu-company-logo">
+                        <IonIcon icon={businessOutline} />
+                        <div className="company-info">
+                            <h3>САХАТРАНСНЕФТЕГАЗ</h3>
+                            <p>Мобильный сотрудник</p>
+                        </div>
+                    </div>
+                    
+                    <IonList id="user-info" className="user-info-list">
                         <IonItem lines="none" className="user-item">
                             <IonAvatar slot="start" className="user-avatar">
                                 <IonIcon icon={personOutline} />
@@ -86,77 +96,95 @@ const Menu: React.FC = () => {
                 </div>
 
                 {/* Основное меню */}
-                {menuItems.map((group, groupIndex) => (
-                    <IonList key={groupIndex} className="menu-group">
-                        <IonListHeader>{group.title}</IonListHeader>
+                <div className="menu-content">
+                    {menuItems.map((group, groupIndex) => (
+                        <IonList key={groupIndex} className="menu-group">
+                            <IonListHeader className="menu-group-header">
+                                {group.title}
+                            </IonListHeader>
+                            
+                            {group.pages.map((pageName) => {
+                                const pageConfig = getPageConfig(pageName);
+                                if (!pageConfig) return null;
+
+                                const isSelected = activePage === pageName;
+                                const pageUrl = `/page/${pageName}`;
+
+                                return (
+                                    <IonMenuToggle key={pageName} autoHide={false}>
+                                        <IonItem
+                                            className={`menu-item ${isSelected ? 'selected' : ''}`}
+                                            routerLink={pageUrl}
+                                            routerDirection="none"
+                                            lines="none"
+                                            detail={false}
+                                            button
+                                        >
+                                            <IonIcon
+                                                aria-hidden="true"
+                                                slot="start"
+                                                icon={pageConfig.icon}
+                                                className="menu-item-icon"
+                                            />
+                                            <IonLabel className="menu-item-label">
+                                                {pageConfig.title}
+                                            </IonLabel>
+                                            {pageConfig.badge && (
+                                                <IonBadge 
+                                                    className="menu-badge"
+                                                    slot="end"
+                                                >
+                                                    {pageConfig.badge}
+                                                </IonBadge>
+                                            )}
+                                        </IonItem>
+                                    </IonMenuToggle>
+                                );
+                            })}
+                        </IonList>
+                    ))}
+
+                    {/* Системные действия */}
+                    <IonList className="menu-system">
+                        <IonListHeader className="menu-group-header">
+                            Система
+                        </IonListHeader>
                         
-                        {group.pages.map((pageName) => {
-                            const pageConfig = getPageConfig(pageName);
-                            if (!pageConfig) return null;
-
-                            const isSelected = activePage === pageName;
-                            const pageUrl = `/page/${pageName}`;
-
-                            return (
-                                <IonMenuToggle key={pageName} autoHide={false}>
-                                    <IonItem
-                                        className={isSelected ? 'selected' : ''}
-                                        routerLink={pageUrl}
-                                        routerDirection="none"
-                                        lines="none"
-                                        detail={false}
-                                        button
-                                    >
-                                        <IonIcon
-                                            aria-hidden="true"
-                                            slot="start"
-                                            icon={pageConfig.icon}
-                                        />
-                                        <IonLabel>{pageConfig.title}</IonLabel>
-                                        {pageConfig.badge && (
-                                            <IonBadge 
-                                                color="danger" 
-                                                slot="end"
-                                                className="menu-badge"
-                                            >
-                                                {pageConfig.badge}
-                                            </IonBadge>
-                                        )}
-                                    </IonItem>
-                                </IonMenuToggle>
-                            );
-                        })}
+                        <IonMenuToggle autoHide={false}>
+                            <IonItem
+                                button
+                                onClick={handleLogout}
+                                lines="none"
+                                className="menu-item logout-item"
+                            >
+                                <IonIcon
+                                    aria-hidden="true"
+                                    slot="start"
+                                    icon={logOutOutline}
+                                    className="menu-item-icon"
+                                />
+                                <IonLabel className="menu-item-label">
+                                    Выйти
+                                </IonLabel>
+                            </IonItem>
+                        </IonMenuToggle>
                     </IonList>
-                ))}
-
-                {/* Системные действия */}
-                <IonList className="menu-system">
-                    <IonListHeader>Система</IonListHeader>
-                    
-                    <IonMenuToggle autoHide={false}>
-                        <IonItem
-                            button
-                            onClick={handleLogout}
-                            lines="none"
-                            className="logout-item"
-                        >
-                            <IonIcon
-                                aria-hidden="true"
-                                slot="start"
-                                icon={logOutOutline}
-                            />
-                            <IonLabel>Выйти</IonLabel>
-                        </IonItem>
-                    </IonMenuToggle>
-                </IonList>
+                </div>
 
                 {/* Футер с информацией о приложении */}
                 <div className="menu-footer">
-                    <IonText color="medium">
-                        <p className="app-name">Мобильный сотрудник</p>
-                        <p className="app-version">Версия 1.0.0</p>
-                        <p className="company-name">АО "Сахатранснефтегаз"</p>
-                    </IonText>
+                    <div className="app-info">
+                        <IonText className="app-text">
+                            <p className="app-name">Мобильный сотрудник</p>
+                            <p className="app-version">Версия 1.0.0</p>
+                        </IonText>
+                    </div>
+                    <div className="company-footer">
+                        <IonText className="company-text">
+                            <p className="company-name">АО "Сахатранснефтегаз"</p>
+                            <p className="company-year">© 2025</p>
+                        </IonText>
+                    </div>
                 </div>
             </IonContent>
         </IonMenu>

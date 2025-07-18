@@ -15,6 +15,7 @@ import { useStoreField } from '../components/Store';
 import { getPageTitle, getPageConfig } from './PageConfig';
 import PageRouter from './PageRouters';
 import { UserRole } from './pageTypes';
+import './Page.css'; // Импорт корпоративных стилей
 
 const Page: React.FC = () => {
     const { name } = useParams<{ name: string }>();
@@ -30,23 +31,25 @@ const Page: React.FC = () => {
     // Если нет данных о пользователе, показываем загрузку
     if (!loginData || !userRole) {
         return (
-            <IonPage>
+            <IonPage className="page-corporate">
                 <IonHeader>
                     <IonToolbar>
                         <IonButtons slot="start">
                             <IonMenuButton />
                         </IonButtons>
-                        <IonTitle>Загрузка...</IonTitle>
+                        <IonTitle>
+                            <div className="page-title">
+                                <div className="loading-skeleton" style={{ width: '120px', height: '24px' }}></div>
+                            </div>
+                        </IonTitle>
                     </IonToolbar>
                 </IonHeader>
-                <IonContent fullscreen>
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        height: '100%'
-                    }}>
-                        <p>Загрузка данных пользователя...</p>
+                <IonContent fullscreen className="page-content">
+                    <div className="page-card">
+                        <div className="loading-skeleton" style={{ width: '200px', height: '20px', marginBottom: '16px' }}></div>
+                        <div className="loading-skeleton" style={{ width: '100%', height: '16px', marginBottom: '12px' }}></div>
+                        <div className="loading-skeleton" style={{ width: '80%', height: '16px', marginBottom: '12px' }}></div>
+                        <div className="loading-skeleton" style={{ width: '60%', height: '16px' }}></div>
                     </div>
                 </IonContent>
             </IonPage>
@@ -54,9 +57,9 @@ const Page: React.FC = () => {
     }
 
     return (
-        <IonPage>
+        <IonPage className="page-corporate">
             <IonHeader>
-                <IonToolbar>
+                <IonToolbar className="page-header">
                     <IonButtons slot="start">
                         <IonMenuButton />
                     </IonButtons>
@@ -67,7 +70,7 @@ const Page: React.FC = () => {
                             )}
                             <span>{pageTitle}</span>
                             {pageConfig?.badge && (
-                                <IonBadge color="danger" className="page-title-badge">
+                                <IonBadge className="page-title-badge">
                                     {pageConfig.badge}
                                 </IonBadge>
                             )}
@@ -76,10 +79,10 @@ const Page: React.FC = () => {
                 </IonToolbar>
             </IonHeader>
 
-            <IonContent fullscreen>
+            <IonContent fullscreen className="page-content">
                 {/* Collapsible header для больших экранов */}
                 <IonHeader collapse="condense">
-                    <IonToolbar>
+                    <IonToolbar className="page-header">
                         <IonTitle size="large">
                             <div className="page-title-large">
                                 {pageConfig?.icon && (
@@ -94,7 +97,7 @@ const Page: React.FC = () => {
                                     )}
                                 </div>
                                 {pageConfig?.badge && (
-                                    <IonBadge color="danger" className="page-title-badge-large">
+                                    <IonBadge className="page-title-badge-large">
                                         {pageConfig.badge}
                                     </IonBadge>
                                 )}
@@ -104,115 +107,12 @@ const Page: React.FC = () => {
                 </IonHeader>
 
                 {/* Основной контент страницы */}
-                <PageRouter name={name} userRole={userRole} />
+                <div className="page-content-wrapper">
+                    <PageRouter name={name} userRole={userRole} />
+                </div>
             </IonContent>
         </IonPage>
     );
 };
-
-// ============================================
-// СТИЛИ ДЛЯ ЗАГОЛОВКОВ СТРАНИЦ
-// ============================================
-
-const pageStyles = `
-.page-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.page-title-icon {
-    font-size: 20px;
-    color: var(--ion-color-primary);
-}
-
-.page-title-badge {
-    font-size: 10px;
-    min-width: 16px;
-    height: 16px;
-    margin-left: 4px;
-}
-
-.page-title-large {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-}
-
-.page-title-icon-large {
-    font-size: 32px;
-    color: var(--ion-color-primary);
-    min-width: 32px;
-}
-
-.page-title-content {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-width: 0;
-}
-
-.page-title-text {
-    font-size: 28px;
-    font-weight: 600;
-    line-height: 1.2;
-}
-
-.page-title-description {
-    font-size: 14px;
-    color: var(--ion-color-medium);
-    font-weight: 400;
-    margin-top: 4px;
-    line-height: 1.3;
-}
-
-.page-title-badge-large {
-    font-size: 12px;
-    min-width: 20px;
-    height: 20px;
-    align-self: flex-start;
-}
-
-/* Адаптивность */
-@media (max-width: 576px) {
-    .page-title-large {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-    
-    .page-title-content {
-        width: 100%;
-    }
-    
-    .page-title-text {
-        font-size: 24px;
-    }
-    
-    .page-title-description {
-        font-size: 13px;
-    }
-    
-    .page-title-badge-large {
-        align-self: flex-end;
-        margin-top: -24px;
-    }
-}
-
-/* Темная тема */
-@media (prefers-color-scheme: dark) {
-    .page-title-description {
-        color: var(--ion-color-medium-shade);
-    }
-}
-`;
-
-// Внедряем стили
-if (typeof document !== 'undefined') {
-    const style = document.createElement('style');
-    style.textContent = pageStyles;
-    document.head.appendChild(style);
-}
 
 export default Page;

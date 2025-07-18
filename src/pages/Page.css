@@ -1,0 +1,693 @@
+/* ============================================
+   КОРПОРАТИВНЫЙ СТИЛЬ ДЛЯ PAGE.TSX
+   ============================================ */
+
+/* Основные CSS переменные */
+:root {
+  --corporate-primary: var(--color-primary-dark);     /* #1E3A8A */
+  --corporate-secondary: var(--color-secondary-light); /* #E5E7EB */
+  --corporate-accent: var(--color-accent);            /* #F97316 */
+  --corporate-white: var(--color-white);              /* #FFFFFF */
+  --corporate-text: var(--color-text-primary);        /* #1F2937 */
+  --corporate-blue: var(--color-primary);             /* #3B82F6 */
+  
+  /* Дополнительные корпоративные цвета */
+  --corporate-border: #d1d5db;
+  --corporate-shadow: rgba(0, 0, 0, 0.1);
+  --corporate-hover: #f3f4f6;
+  --corporate-active: #e5e7eb;
+}
+
+/* ============================================
+   ОСНОВНЫЕ СТИЛИ СТРАНИЦЫ
+   ============================================ */
+
+.page-corporate {
+  --ion-background-color: var(--corporate-secondary);
+  --ion-text-color: var(--corporate-text);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ============================================
+   ЗАГОЛОВОК СТРАНИЦЫ
+   ============================================ */
+
+.page-corporate .page-header {
+  --background: var(--corporate-primary);
+  --color: var(--corporate-white);
+  border-bottom: 4px solid var(--corporate-accent);
+  box-shadow: 0 2px 8px var(--corporate-shadow);
+  position: relative;
+}
+
+/* Декоративная линия */
+.page-corporate .page-header::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 20px;
+  width: 120px;
+  height: 4px;
+  background: var(--corporate-blue);
+  z-index: 1;
+}
+
+.page-corporate .page-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-weight: 600;
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--corporate-white);
+}
+
+.page-corporate .page-title-icon {
+  font-size: 24px;
+  color: var(--corporate-accent);
+  background: var(--corporate-white);
+  padding: 8px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.page-corporate .page-title-badge {
+  background: var(--corporate-accent);
+  color: var(--corporate-white);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-left: 8px;
+  text-transform: none;
+  letter-spacing: 0;
+  --background: var(--corporate-accent);
+  --color: var(--corporate-white);
+}
+
+/* ============================================
+   БОЛЬШОЙ ЗАГОЛОВОК (CONDENSE)
+   ============================================ */
+
+.page-corporate .page-title-large {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 24px 20px;
+  background: var(--corporate-primary);
+  color: var(--corporate-white);
+  border-bottom: 4px solid var(--corporate-accent);
+  position: relative;
+}
+
+.page-corporate .page-title-large::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 20px;
+  width: 120px;
+  height: 4px;
+  background: var(--corporate-blue);
+}
+
+.page-corporate .page-title-icon-large {
+  font-size: 36px;
+  color: var(--corporate-accent);
+  background: var(--corporate-white);
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  min-width: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-corporate .page-title-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.page-corporate .page-title-text {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--corporate-white);
+  margin: 0;
+}
+
+.page-corporate .page-title-description {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 400;
+  margin-top: 6px;
+  line-height: 1.4;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.page-corporate .page-title-badge-large {
+  background: var(--corporate-accent);
+  color: var(--corporate-white);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 8px 12px;
+  border-radius: 6px;
+  align-self: flex-start;
+  text-transform: none;
+  letter-spacing: 0;
+  --background: var(--corporate-accent);
+  --color: var(--corporate-white);
+}
+
+/* ============================================
+   КОНТЕНТ СТРАНИЦЫ
+   ============================================ */
+
+.page-corporate .page-content {
+  --background: var(--corporate-secondary);
+  --color: var(--corporate-text);
+}
+
+.page-corporate .page-content-wrapper {
+  background: var(--corporate-secondary);
+  padding: 24px;
+  border-left: 8px solid var(--corporate-primary);
+  min-height: calc(100vh - 120px);
+}
+
+/* ============================================
+   ПЕРЕОПРЕДЕЛЕНИЕ IONIC КОМПОНЕНТОВ
+   ============================================ */
+
+.page-corporate ion-toolbar {
+  --background: var(--corporate-primary) !important;
+  --color: var(--corporate-white) !important;
+  --border-color: var(--corporate-accent) !important;
+}
+
+/* Более специфичный селектор для toolbar */
+.page-corporate ion-header ion-toolbar {
+  --background: var(--corporate-primary) !important;
+  --color: var(--corporate-white) !important;
+  background: var(--corporate-primary) !important;
+  color: var(--corporate-white) !important;
+}
+
+/* Для конкретного класса page-header */
+.page-corporate .page-header,
+.page-corporate ion-toolbar.page-header {
+  --background: var(--corporate-primary) !important;
+  --color: var(--corporate-white) !important;
+  background: var(--corporate-primary) !important;
+  color: var(--corporate-white) !important;
+  --toolbar-background: var(--corporate-primary) !important;
+}
+
+.page-corporate ion-menu-button {
+  --color: var(--corporate-white) !important;
+  color: var(--corporate-white) !important;
+}
+
+.page-corporate ion-title {
+  --color: var(--corporate-white) !important;
+  color: var(--corporate-white) !important;
+}
+
+.page-corporate ion-buttons {
+  --color: var(--corporate-white) !important;
+}
+
+.page-corporate ion-button {
+  --color: var(--corporate-white) !important;
+}
+
+/* ============================================
+   КАРТОЧКИ КОНТЕНТА
+   ============================================ */
+
+.page-corporate .page-card,
+.page-corporate ion-card {
+  --background: var(--corporate-white);
+  background: var(--corporate-white);
+  border: 2px solid var(--corporate-border);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px var(--corporate-shadow);
+  border-left: 6px solid var(--corporate-primary);
+  transition: all 0.3s ease;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.page-corporate .page-card:hover,
+.page-corporate ion-card:hover {
+  border-left-color: var(--corporate-accent);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+  transform: translateX(4px);
+}
+
+.page-corporate .page-card::before,
+.page-corporate ion-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid var(--corporate-primary);
+  border-bottom: 20px solid transparent;
+  opacity: 0.1;
+}
+
+/* ============================================
+   ЗАГОЛОВКИ В КАРТОЧКАХ
+   ============================================ */
+
+.page-corporate ion-card-header {
+  --background: var(--corporate-white);
+  --color: var(--corporate-primary);
+  border-bottom: 2px solid var(--corporate-accent);
+  padding-bottom: 12px;
+}
+
+.page-corporate ion-card-title {
+  --color: var(--corporate-primary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 18px;
+}
+
+.page-corporate ion-card-subtitle {
+  --color: var(--corporate-text);
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.page-corporate ion-card-content {
+  --background: var(--corporate-white);
+  --color: var(--corporate-text);
+}
+
+.page-corporate ion-card-content h1,
+.page-corporate ion-card-content h2,
+.page-corporate ion-card-content h3 {
+  color: var(--corporate-primary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.page-corporate ion-card-content h1 {
+  font-size: 24px;
+  border-bottom: 2px solid var(--corporate-accent);
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+.page-corporate ion-card-content h2 {
+  font-size: 20px;
+}
+
+.page-corporate ion-card-content h3 {
+  font-size: 16px;
+}
+
+/* ============================================
+   КНОПКИ IONIC
+   ============================================ */
+
+.page-corporate ion-button {
+  --background: var(--corporate-primary);
+  --color: var(--corporate-white);
+  --border-radius: 6px;
+  --padding-start: 24px;
+  --padding-end: 24px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.page-corporate ion-button:hover {
+  --background: var(--corporate-accent);
+  transform: translateY(-2px);
+}
+
+.page-corporate ion-button[fill="outline"] {
+  --background: var(--corporate-white);
+  --color: var(--corporate-primary);
+  --border-color: var(--corporate-primary);
+  --border-width: 2px;
+}
+
+.page-corporate ion-button[fill="outline"]:hover {
+  --background: var(--corporate-primary);
+  --color: var(--corporate-white);
+}
+
+.page-corporate ion-button[fill="clear"] {
+  --background: transparent;
+  --color: var(--corporate-primary);
+}
+
+.page-corporate ion-button[fill="clear"]:hover {
+  --background: var(--corporate-hover);
+}
+
+/* ============================================
+   СПИСКИ IONIC
+   ============================================ */
+
+.page-corporate ion-list {
+  --background: var(--corporate-white);
+  border: 2px solid var(--corporate-border);
+  border-radius: 8px;
+  border-left: 6px solid var(--corporate-primary);
+}
+
+.page-corporate ion-item {
+  --background: var(--corporate-white);
+  --color: var(--corporate-text);
+  --border-color: var(--corporate-border);
+  --inner-border-width: 0 0 1px 0;
+  --padding-start: 24px;
+  font-weight: 500;
+}
+
+.page-corporate ion-item:hover {
+  --background: var(--corporate-hover);
+}
+
+.page-corporate ion-item ion-label h2,
+.page-corporate ion-item ion-label h3 {
+  color: var(--corporate-primary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 14px;
+}
+
+.page-corporate ion-item ion-label p {
+  color: var(--corporate-text);
+  font-size: 14px;
+}
+
+/* ============================================
+   ФОРМЫ IONIC
+   ============================================ */
+
+.page-corporate ion-input {
+  --background: var(--corporate-white);
+  --color: var(--corporate-text);
+  --placeholder-color: var(--corporate-text);
+  --border-radius: 6px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  border: 2px solid var(--corporate-border);
+  border-radius: 6px;
+  font-size: 15px;
+  transition: border-color 0.3s ease;
+}
+
+.page-corporate ion-input:focus {
+  border-color: var(--corporate-accent);
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+}
+
+.page-corporate ion-textarea {
+  --background: var(--corporate-white);
+  --color: var(--corporate-text);
+  --placeholder-color: var(--corporate-text);
+  --border-radius: 6px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  border: 2px solid var(--corporate-border);
+  border-radius: 6px;
+  font-size: 15px;
+  transition: border-color 0.3s ease;
+}
+
+.page-corporate ion-textarea:focus {
+  border-color: var(--corporate-accent);
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+}
+
+.page-corporate ion-label {
+  --color: var(--corporate-primary);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+/* ============================================
+   АЛЕРТЫ И УВЕДОМЛЕНИЯ
+   ============================================ */
+
+.page-corporate .alert {
+  padding: 16px;
+  border-radius: 6px;
+  margin: 16px 0;
+  border-left: 4px solid;
+  font-weight: 500;
+}
+
+.page-corporate .alert-info {
+  background: #e0f2fe;
+  color: #0369a1;
+  border-left-color: var(--corporate-blue);
+}
+
+.page-corporate .alert-warning {
+  background: #fff7ed;
+  color: #c2410c;
+  border-left-color: var(--corporate-accent);
+}
+
+.page-corporate .alert-success {
+  background: #ecfdf5;
+  color: #166534;
+  border-left-color: #10b981;
+}
+
+.page-corporate .alert-error {
+  background: #fef2f2;
+  color: #dc2626;
+  border-left-color: #ef4444;
+}
+
+/* ============================================
+   СОСТОЯНИЯ ЗАГРУЗКИ
+   ============================================ */
+
+.page-corporate .loading-skeleton {
+  background: var(--corporate-border);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-corporate .loading-skeleton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.page-corporate ion-skeleton-text {
+  --background: var(--corporate-border);
+  --background-rgb: 209, 213, 219;
+}
+
+.page-corporate ion-spinner {
+  --color: var(--corporate-primary);
+}
+
+/* ============================================
+   МОБИЛЬНАЯ АДАПТАЦИЯ
+   ============================================ */
+
+@media (max-width: 768px) {
+  .page-corporate .page-header::after,
+  .page-corporate .page-title-large::after {
+    left: 16px;
+    width: 80px;
+  }
+
+  .page-corporate .page-title {
+    font-size: 18px;
+    gap: 10px;
+  }
+
+  .page-corporate .page-title-icon {
+    font-size: 20px;
+    padding: 6px;
+  }
+
+  .page-corporate .page-content-wrapper {
+    padding: 16px;
+    border-left: 4px solid var(--corporate-primary);
+  }
+
+  .page-corporate .page-card,
+  .page-corporate ion-card {
+    margin-bottom: 16px;
+    border-left: 4px solid var(--corporate-primary);
+  }
+
+  .page-corporate .page-title-large {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .page-corporate .page-title-text {
+    font-size: 24px;
+  }
+
+  .page-corporate .page-title-description {
+    font-size: 14px;
+  }
+
+  .page-corporate .page-title-icon-large {
+    font-size: 28px;
+    padding: 10px;
+    min-width: 48px;
+  }
+
+  .page-corporate .page-title-badge-large {
+    align-self: flex-end;
+    margin-top: -40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-corporate .page-title {
+    font-size: 16px;
+    gap: 8px;
+  }
+
+  .page-corporate .page-title-icon {
+    font-size: 18px;
+    padding: 6px;
+  }
+
+  .page-corporate .page-content-wrapper {
+    padding: 12px;
+  }
+
+  .page-corporate ion-card-content h1 {
+    font-size: 20px;
+  }
+
+  .page-corporate ion-card-content h2 {
+    font-size: 18px;
+  }
+
+  .page-corporate ion-card-content h3 {
+    font-size: 16px;
+  }
+
+  .page-corporate ion-button {
+    --padding-start: 20px;
+    --padding-end: 20px;
+    --padding-top: 10px;
+    --padding-bottom: 10px;
+    font-size: 14px;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .page-corporate .page-card,
+  .page-corporate ion-card,
+  .page-corporate ion-button {
+    transition: none !important;
+  }
+  
+  .page-corporate .page-card:hover,
+  .page-corporate ion-card:hover {
+    transform: none !important;
+  }
+  
+  .page-corporate ion-button:hover {
+    transform: none !important;
+  }
+  
+  .page-corporate .loading-skeleton::before {
+    animation: none !important;
+  }
+}
+
+/* Увеличенные размеры для touch-устройств */
+@media (pointer: coarse) {
+  .page-corporate ion-button {
+    --padding-start: 28px;
+    --padding-end: 28px;
+    --padding-top: 14px;
+    --padding-bottom: 14px;
+    font-size: 16px;
+  }
+  
+  .page-corporate ion-input,
+  .page-corporate ion-textarea {
+    --padding-start: 14px;
+    --padding-end: 14px;
+    --padding-top: 14px;
+    --padding-bottom: 14px;
+    font-size: 16px;
+  }
+}
+
+/* ============================================
+   ВЫСОКОКОНТРАСТНЫЙ РЕЖИМ
+   ============================================ */
+
+@media (prefers-contrast: high) {
+  .page-corporate .page-header {
+    border-bottom: 6px solid var(--corporate-accent);
+  }
+  
+  .page-corporate .page-card,
+  .page-corporate ion-card {
+    border: 3px solid var(--corporate-primary);
+  }
+  
+  .page-corporate .page-card:hover,
+  .page-corporate ion-card:hover {
+    border-color: var(--corporate-accent);
+    border-width: 3px;
+  }
+}

@@ -1,113 +1,614 @@
-ion-menu ion-content {
-  --background: var(--ion-item-background, var(--ion-background-color, #fff));
+/* ============================================
+   КОРПОРАТИВНЫЙ СТИЛЬ ДЛЯ MENU.TSX
+   ============================================ */
+
+/* Основные переменные */
+:root {
+  --menu-corporate-primary: var(--color-primary-dark);     /* #1E3A8A */
+  --menu-corporate-secondary: var(--color-secondary-light); /* #E5E7EB */
+  --menu-corporate-accent: var(--color-accent);            /* #F97316 */
+  --menu-corporate-white: var(--color-white);              /* #FFFFFF */
+  --menu-corporate-text: var(--color-text-primary);        /* #1F2937 */
+  --menu-corporate-blue: var(--color-primary);             /* #3B82F6 */
+  
+  /* Дополнительные цвета для меню - используем тот же фон что и на страницах */
+  --menu-corporate-bg: var(--color-secondary-light);       /* #E5E7EB - такой же как на страницах */
+  --menu-corporate-border: #d1d5db;
+  --menu-corporate-shadow: rgba(0, 0, 0, 0.1);
+  --menu-corporate-hover: #f3f4f6;
+  --menu-corporate-active: #e5e7eb;
+  --menu-corporate-selected: rgba(30, 58, 138, 0.1);
 }
 
-ion-menu.md ion-content {
-  --padding-start: 8px;
-  --padding-end: 8px;
-  --padding-top: 20px;
-  --padding-bottom: 20px;
+/* ============================================
+   ОСНОВНЫЕ СТИЛИ МЕНЮ
+   ============================================ */
+
+.menu-corporate {
+  --background: var(--menu-corporate-bg);
+  --color: var(--menu-corporate-text);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-ion-menu.md ion-list {
-  padding: 20px 0;
+.menu-corporate ion-content {
+  --background: var(--menu-corporate-bg) !important;
+  --color: var(--menu-corporate-text) !important;
+  background: var(--menu-corporate-bg) !important;
 }
 
-ion-menu.md ion-note {
-  margin-bottom: 30px;
+/* ============================================
+   ЗАГОЛОВОК МЕНЮ
+   ============================================ */
+
+.menu-corporate .menu-header {
+  background: linear-gradient(135deg, var(--menu-corporate-primary) 0%, var(--menu-corporate-blue) 100%);
+  color: var(--menu-corporate-white);
+  padding: 24px 20px;
+  border-bottom: 4px solid var(--menu-corporate-accent);
+  position: relative;
+  box-shadow: 0 4px 12px var(--menu-corporate-shadow);
 }
 
-ion-menu.md ion-list-header, ion-menu.md ion-note {
-  padding-left: 10px;
+.menu-corporate .menu-header::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 20px;
+  width: 100px;
+  height: 4px;
+  background: var(--menu-corporate-accent);
 }
 
-ion-menu.md ion-list#inbox-list {
-  border-bottom: 1px solid var(--ion-background-color-step-150, #d7d8da);
-}
+/* ============================================
+   ЛОГОТИП КОМПАНИИ
+   ============================================ */
 
-ion-menu.md ion-list#inbox-list ion-list-header {
-  font-size: 22px;
-  font-weight: 600;
-  min-height: 20px;
-}
-
-ion-menu.md ion-list#labels-list ion-list-header {
-  font-size: 16px;
-  margin-bottom: 18px;
-  color: #757575;
-  min-height: 26px;
-}
-
-ion-menu.md ion-item {
-  --padding-start: 10px;
-  --padding-end: 10px;
-  border-radius: 4px;
-}
-
-ion-menu.md ion-item.selected {
-  --background: rgba(var(--ion-color-primary-rgb), 0.14);
-}
-
-ion-menu.md ion-item.selected ion-icon {
-  color: var(--ion-color-primary);
-}
-
-ion-menu.md ion-item ion-icon {
-  color: #616e7e;
-}
-
-ion-menu.md ion-item ion-label {
-  font-weight: 500;
-}
-
-ion-menu.ios ion-content {
-  --padding-bottom: 20px;
-}
-
-ion-menu.ios ion-list {
-  padding: 20px 0 0 0;
-}
-
-ion-menu.ios ion-note {
-  line-height: 24px;
+.menu-corporate .menu-company-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-ion-menu.ios ion-item {
-  --padding-start: 16px;
-  --padding-end: 16px;
-  --min-height: 50px;
+.menu-corporate .menu-company-logo ion-icon {
+  font-size: 32px;
+  color: var(--menu-corporate-accent);
+  background: var(--menu-corporate-white);
+  padding: 8px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-ion-menu.ios ion-item ion-icon {
-  font-size: 24px;
-  color: #73849a;
-}
-
-ion-menu.ios ion-item .selected ion-icon {
-  color: var(--ion-color-primary);
-}
-
-ion-menu.ios ion-list#labels-list ion-list-header {
-  margin-bottom: 8px;
-}
-
-ion-menu.ios ion-list-header,
-ion-menu.ios ion-note {
-  padding-left: 16px;
-  padding-right: 16px;
-}
-
-ion-menu.ios ion-note {
-  margin-bottom: 8px;
-}
-
-ion-note {
-  display: inline-block;
+.menu-corporate .company-info h3 {
+  margin: 0;
   font-size: 16px;
-  color: var(--ion-color-medium-shade);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--menu-corporate-white);
 }
 
-ion-item.selected {
-  --color: var(--ion-color-primary);
-} 
+.menu-corporate .company-info p {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 400;
+}
+
+/* ============================================
+   ИНФОРМАЦИЯ О ПОЛЬЗОВАТЕЛЕ
+   ============================================ */
+
+.menu-corporate .user-info-list {
+  --background: transparent !important;
+  background: transparent !important;
+  margin: 0;
+  padding: 0;
+}
+
+.menu-corporate .user-item {
+  --background: rgba(255, 255, 255, 0.1) !important;
+  --color: var(--menu-corporate-white) !important;
+  --border-color: transparent !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 0;
+  --inner-padding-start: 0;
+  --inner-padding-end: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+.menu-corporate .user-avatar {
+  width: 40px;
+  height: 40px;
+  background: var(--menu-corporate-accent);
+  border: 2px solid var(--menu-corporate-white);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.menu-corporate .user-avatar ion-icon {
+  font-size: 24px;
+  color: var(--menu-corporate-white);
+}
+
+.menu-corporate .user-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--menu-corporate-white) !important;
+  margin: 0 0 4px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.menu-corporate .user-role {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8) !important;
+  margin: 0;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ============================================
+   КОНТЕНТ МЕНЮ
+   ============================================ */
+
+.menu-corporate .menu-content {
+  padding: 20px 0;
+  flex: 1;
+}
+
+/* ============================================
+   ГРУППЫ МЕНЮ
+   ============================================ */
+
+.menu-corporate .menu-group {
+  --background: transparent !important;
+  background: transparent !important;
+  margin-bottom: 24px;
+  padding: 0 20px;
+}
+
+.menu-corporate .menu-group-header {
+  --background: transparent !important;
+  --color: var(--menu-corporate-primary) !important;
+  background: transparent !important;
+  color: var(--menu-corporate-primary) !important;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 0 0 12px 0;
+  margin-bottom: 8px;
+  border-bottom: 2px solid var(--menu-corporate-accent);
+  position: relative;
+}
+
+.menu-corporate .menu-group-header::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: var(--menu-corporate-primary);
+}
+
+/* ============================================
+   ПУНКТЫ МЕНЮ
+   ============================================ */
+
+.menu-corporate .menu-item {
+  --background: var(--menu-corporate-white) !important;
+  --color: var(--menu-corporate-text) !important;
+  --border-color: var(--menu-corporate-border) !important;
+  background: var(--menu-corporate-white) !important;
+  border: 1px solid var(--menu-corporate-border) !important;
+  border-radius: 8px !important;
+  margin-bottom: 8px !important;
+  padding: 0 !important;
+  --inner-padding-start: 16px !important;
+  --inner-padding-end: 16px !important;
+  --padding-start: 0 !important;
+  --padding-end: 0 !important;
+  --min-height: 48px !important;
+  box-shadow: 0 2px 4px var(--menu-corporate-shadow) !important;
+  transition: all 0.3s ease !important;
+  border-left: 4px solid var(--menu-corporate-primary) !important;
+}
+
+.menu-corporate .menu-item:hover {
+  --background: var(--menu-corporate-hover) !important;
+  background: var(--menu-corporate-hover) !important;
+  border-left-color: var(--menu-corporate-accent) !important;
+  transform: translateX(4px) !important;
+  box-shadow: 0 4px 8px rgba(249, 115, 22, 0.2) !important;
+}
+
+.menu-corporate .menu-item.selected {
+  --background: var(--menu-corporate-selected) !important;
+  background: var(--menu-corporate-selected) !important;
+  border-left-color: var(--menu-corporate-accent) !important;
+  border-left-width: 6px !important;
+  transform: translateX(4px) !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2) !important;
+}
+
+.menu-corporate .menu-item-icon {
+  font-size: 20px !important;
+  color: var(--menu-corporate-primary) !important;
+  margin-right: 12px !important;
+}
+
+.menu-corporate .menu-item.selected .menu-item-icon {
+  color: var(--menu-corporate-accent) !important;
+}
+
+.menu-corporate .menu-item-label {
+  --color: var(--menu-corporate-text) !important;
+  color: var(--menu-corporate-text) !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+
+.menu-corporate .menu-item.selected .menu-item-label {
+  --color: var(--menu-corporate-primary) !important;
+  color: var(--menu-corporate-primary) !important;
+  font-weight: 700 !important;
+}
+
+/* ============================================
+   БЕЙДЖИ МЕНЮ
+   ============================================ */
+
+.menu-corporate .menu-badge {
+  --background: var(--menu-corporate-accent) !important;
+  --color: var(--menu-corporate-white) !important;
+  background: var(--menu-corporate-accent) !important;
+  color: var(--menu-corporate-white) !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  padding: 4px 8px !important;
+  border-radius: 12px !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* ============================================
+   СИСТЕМНЫЕ ДЕЙСТВИЯ
+   ============================================ */
+
+.menu-corporate .menu-system {
+  --background: transparent !important;
+  background: transparent !important;
+  margin-top: 24px;
+  padding: 0 20px;
+  border-top: 1px solid var(--menu-corporate-border);
+  padding-top: 20px;
+}
+
+.menu-corporate .logout-item {
+  --background: rgba(220, 38, 38, 0.1) !important;
+  --color: #dc2626 !important;
+  background: rgba(220, 38, 38, 0.1) !important;
+  border-color: rgba(220, 38, 38, 0.2) !important;
+  border-left-color: #dc2626 !important;
+}
+
+.menu-corporate .logout-item:hover {
+  --background: rgba(220, 38, 38, 0.2) !important;
+  background: rgba(220, 38, 38, 0.2) !important;
+  border-left-color: #dc2626 !important;
+  box-shadow: 0 4px 8px rgba(220, 38, 38, 0.2) !important;
+}
+
+.menu-corporate .logout-item .menu-item-icon {
+  color: #dc2626 !important;
+}
+
+.menu-corporate .logout-item .menu-item-label {
+  --color: #dc2626 !important;
+  color: #dc2626 !important;
+}
+
+/* ============================================
+   ФУТЕР МЕНЮ
+   ============================================ */
+
+.menu-corporate .menu-footer {
+  background: var(--menu-corporate-primary);
+  color: var(--menu-corporate-white);
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto;
+}
+
+.menu-corporate .app-info {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.menu-corporate .app-text {
+  --color: var(--menu-corporate-white) !important;
+  color: var(--menu-corporate-white) !important;
+}
+
+.menu-corporate .app-name {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  margin: 0 0 4px 0 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  color: var(--menu-corporate-white) !important;
+}
+
+.menu-corporate .app-version {
+  font-size: 12px !important;
+  margin: 0 !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-weight: 400 !important;
+}
+
+.menu-corporate .company-footer {
+  margin: 0;
+}
+
+.menu-corporate .company-text {
+  --color: rgba(255, 255, 255, 0.9) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.menu-corporate .company-name {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  margin: 0 0 2px 0 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.menu-corporate .company-year {
+  font-size: 10px !important;
+  margin: 0 !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-weight: 400 !important;
+}
+
+/* ============================================
+   СОСТОЯНИЕ ЗАГРУЗКИ
+   ============================================ */
+
+.menu-corporate .menu-loading {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.menu-corporate .loading-skeleton {
+  background: var(--menu-corporate-border);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.menu-corporate .loading-skeleton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* ============================================
+   МОБИЛЬНАЯ АДАПТАЦИЯ
+   ============================================ */
+
+@media (max-width: 768px) {
+  .menu-corporate .menu-header {
+    padding: 20px 16px;
+  }
+  
+  .menu-corporate .menu-header::after {
+    left: 16px;
+    width: 80px;
+  }
+
+  .menu-corporate .menu-content {
+    padding: 16px 0;
+  }
+
+  .menu-corporate .menu-group {
+    padding: 0 16px;
+    margin-bottom: 20px;
+  }
+
+  .menu-corporate .menu-system {
+    padding: 0 16px;
+    padding-top: 16px;
+  }
+
+  .menu-corporate .menu-footer {
+    padding: 12px 16px;
+  }
+
+  .menu-corporate .menu-item {
+    --min-height: 44px !important;
+    --inner-padding-start: 12px !important;
+    --inner-padding-end: 12px !important;
+  }
+
+  .menu-corporate .menu-item-label {
+    font-size: 13px !important;
+  }
+
+  .menu-corporate .menu-item-icon {
+    font-size: 18px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .menu-corporate .menu-header {
+    padding: 16px 12px;
+  }
+
+  .menu-corporate .menu-content {
+    padding: 12px 0;
+  }
+
+  .menu-corporate .menu-group {
+    padding: 0 12px;
+    margin-bottom: 16px;
+  }
+
+  .menu-corporate .menu-system {
+    padding: 0 12px;
+    padding-top: 12px;
+  }
+
+  .menu-corporate .menu-footer {
+    padding: 10px 12px;
+  }
+
+  .menu-corporate .company-info h3 {
+    font-size: 14px;
+  }
+
+  .menu-corporate .company-info p {
+    font-size: 11px;
+  }
+
+  .menu-corporate .user-name {
+    font-size: 14px;
+  }
+
+  .menu-corporate .user-role {
+    font-size: 11px;
+  }
+
+  .menu-corporate .menu-group-header {
+    font-size: 12px;
+  }
+
+  .menu-corporate .menu-item-label {
+    font-size: 12px !important;
+  }
+
+  .menu-corporate .menu-item-icon {
+    font-size: 16px !important;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-corporate .menu-item {
+    transition: none !important;
+  }
+  
+  .menu-corporate .menu-item:hover,
+  .menu-corporate .menu-item.selected {
+    transform: none !important;
+  }
+  
+  .menu-corporate .loading-skeleton::before {
+    animation: none !important;
+  }
+}
+
+/* Увеличенные размеры для touch-устройств */
+@media (pointer: coarse) {
+  .menu-corporate .menu-item {
+    --min-height: 52px !important;
+  }
+  
+  .menu-corporate .menu-item-icon {
+    font-size: 22px !important;
+  }
+  
+  .menu-corporate .menu-item-label {
+    font-size: 15px !important;
+  }
+}
+
+/* ============================================
+   ВЫСОКОКОНТРАСТНЫЙ РЕЖИМ
+   ============================================ */
+
+@media (prefers-contrast: high) {
+  .menu-corporate .menu-item {
+    border-width: 2px !important;
+  }
+  
+  .menu-corporate .menu-item:hover,
+  .menu-corporate .menu-item.selected {
+    border-width: 3px !important;
+  }
+  
+  .menu-corporate .menu-header {
+    border-bottom: 6px solid var(--menu-corporate-accent);
+  }
+}
+
+/* ============================================
+   ТЕМНАЯ ТЕМА
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+  .menu-corporate {
+    --menu-corporate-bg: #1a1a1a;
+    --menu-corporate-text: #e5e5e5;
+    --menu-corporate-border: #404040;
+    --menu-corporate-hover: #2a2a2a;
+    --menu-corporate-selected: rgba(59, 130, 246, 0.2);
+  }
+  
+  .menu-corporate .menu-item {
+    --background: #2a2a2a !important;
+    --color: #e5e5e5 !important;
+    --border-color: #404040 !important;
+    background: #2a2a2a !important;
+    border-color: #404040 !important;
+  }
+  
+  .menu-corporate .menu-item:hover {
+    --background: #3a3a3a !important;
+    background: #3a3a3a !important;
+  }
+  
+  .menu-corporate .menu-item-icon {
+    color: var(--menu-corporate-blue) !important;
+  }
+  
+  .menu-corporate .menu-item-label {
+    --color: #e5e5e5 !important;
+    color: #e5e5e5 !important;
+  }
+}
