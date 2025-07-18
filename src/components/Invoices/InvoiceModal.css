@@ -1,0 +1,651 @@
+/* ============================================
+   КОРПОРАТИВНЫЙ СТИЛЬ ДЛЯ INVOICE MODAL
+   ============================================ */
+
+/* Основные переменные */
+:root {
+    --modal-corporate-primary: #1E3A8A;       /* var(--color-primary-dark) */
+    --modal-corporate-white: #FFFFFF;         /* var(--color-white) */
+    --modal-corporate-accent: #F97316;        /* var(--color-accent) */
+    --modal-corporate-text: #1F2937;         /* var(--color-text-primary) */
+    --modal-corporate-blue: #3B82F6;         /* var(--color-primary) */
+    --modal-corporate-background: #f8fafc;
+    --modal-corporate-border: #e5e7eb;
+    --modal-corporate-shadow: rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   ОСНОВНЫЕ СТИЛИ МОДАЛЬНОГО ОКНА
+   ============================================ */
+
+.invoice-modal-corporate {
+    --background: var(--modal-corporate-background);
+}
+
+.invoice-modal-corporate ion-backdrop {
+    --background: rgba(30, 58, 138, 0.4);
+}
+
+/* ============================================
+   ЗАГОЛОВОК МОДАЛЬНОГО ОКНА
+   ============================================ */
+
+.modal-header-corporate {
+    --background: var(--modal-corporate-primary) !important;
+    --color: var(--modal-corporate-white) !important;
+    background: var(--modal-corporate-primary) !important;
+    color: var(--modal-corporate-white) !important;
+    border-bottom: 4px solid var(--modal-corporate-accent);
+    position: relative;
+}
+
+.modal-header-corporate::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 16px;
+    width: 60px;
+    height: 4px;
+    background: var(--modal-corporate-blue);
+}
+
+.modal-title-corporate {
+    --color: var(--modal-corporate-white) !important;
+    color: var(--modal-corporate-white) !important;
+}
+
+.modal-title-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.modal-title-icon {
+    font-size: 24px;
+    color: var(--modal-corporate-accent);
+    background: var(--modal-corporate-white);
+    padding: 6px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.modal-close-button {
+    --color: var(--modal-corporate-white) !important;
+    color: var(--modal-corporate-white) !important;
+    --background: rgba(255, 255, 255, 0.1);
+    --background-hover: rgba(255, 255, 255, 0.2);
+    --border-radius: 8px;
+}
+
+/* ============================================
+   КОНТЕНТ МОДАЛЬНОГО ОКНА
+   ============================================ */
+
+.modal-content-corporate {
+    --background: var(--modal-corporate-background);
+    --color: var(--modal-corporate-text);
+    background: var(--modal-corporate-background);
+    padding: 0 16px 100px;
+}
+
+/* ============================================
+   КАРТОЧКА СТАТУСА
+   ============================================ */
+
+.modal-status-card {
+    background: var(--modal-corporate-primary);
+    color: var(--modal-corporate-white);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 16px 0;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(30, 58, 138, 0.2);
+}
+
+.modal-status-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.modal-status-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+}
+
+.modal-status-icon {
+    font-size: 48px;
+    color: var(--modal-corporate-white);
+    background: var(--modal-corporate-accent);
+    padding: 12px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.modal-status-info {
+    flex: 1;
+}
+
+.modal-status-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    color: var(--modal-corporate-white);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.modal-status-subtitle {
+    font-size: 14px;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 400;
+}
+
+.modal-status-badge {
+    background: var(--modal-corporate-accent) !important;
+    color: var(--modal-corporate-white) !important;
+    --background: var(--modal-corporate-accent) !important;
+    --color: var(--modal-corporate-white) !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    z-index: 3;
+    position: relative;
+}
+
+/* Декоративные элементы статуса */
+.modal-status-decoration {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-left: 30px solid transparent;
+    border-right: 30px solid;
+    border-bottom: 30px solid transparent;
+    opacity: 0.3;
+    z-index: 1;
+}
+
+.modal-status-decoration--overdue {
+    border-right-color: var(--ion-color-danger);
+}
+
+.modal-status-decoration--urgent {
+    border-right-color: var(--ion-color-warning);
+}
+
+.modal-status-decoration--normal {
+    border-right-color: var(--ion-color-success);
+}
+
+/* ============================================
+   ИНФОРМАЦИОННЫЕ КАРТОЧКИ
+   ============================================ */
+
+.modal-info-card {
+    --background: var(--modal-corporate-white);
+    background: var(--modal-corporate-white);
+    border: 2px solid var(--modal-corporate-border);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px var(--modal-corporate-shadow);
+    border-left: 6px solid var(--modal-corporate-primary);
+    margin-bottom: 16px;
+    overflow: hidden;
+    position: relative;
+}
+
+.modal-info-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid var(--modal-corporate-primary);
+    border-bottom: 20px solid transparent;
+    opacity: 0.05;
+}
+
+.modal-info-card ion-card-header {
+    --background: var(--modal-corporate-white);
+    --color: var(--modal-corporate-primary);
+    background: var(--modal-corporate-white);
+    padding: 16px 20px 12px;
+    border-bottom: 2px solid var(--modal-corporate-accent);
+}
+
+.modal-card-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--modal-corporate-primary) !important;
+    --color: var(--modal-corporate-primary) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+}
+
+.modal-card-title ion-icon {
+    font-size: 20px;
+    color: var(--modal-corporate-accent);
+}
+
+.modal-card-content {
+    --background: var(--modal-corporate-white);
+    --color: var(--modal-corporate-text);
+    background: var(--modal-corporate-white);
+    padding: 20px;
+}
+
+/* ============================================
+   СЕТКА ИНФОРМАЦИИ
+   ============================================ */
+
+.modal-info-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+.modal-info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+    background: rgba(30, 58, 138, 0.03);
+    border: 1px solid var(--modal-corporate-border);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.modal-info-item:hover {
+    background: rgba(30, 58, 138, 0.05);
+    border-color: var(--modal-corporate-accent);
+    transform: translateX(2px);
+}
+
+.modal-info-item-phone {
+    cursor: pointer;
+    border-left: 4px solid var(--ion-color-success);
+}
+
+.modal-info-item-phone:hover {
+    border-left-color: var(--modal-corporate-accent);
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.modal-info-item-priority {
+    border-left: 4px solid var(--ion-color-warning);
+}
+
+.modal-info-item-full {
+    grid-column: 1 / -1;
+}
+
+.modal-info-icon {
+    font-size: 20px;
+    color: var(--modal-corporate-primary);
+    background: var(--modal-corporate-white);
+    padding: 8px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.modal-info-icon-phone {
+    color: var(--ion-color-success);
+}
+
+.modal-info-text {
+    flex: 1;
+}
+
+.modal-info-text h3 {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--modal-corporate-primary);
+    margin: 0 0 6px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.modal-info-text p {
+    font-size: 15px;
+    color: var(--modal-corporate-text);
+    margin: 0;
+    line-height: 1.4;
+    font-weight: 500;
+}
+
+.modal-priority-text p {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.modal-phone-action-icon {
+    font-size: 16px;
+    color: var(--ion-color-success);
+    background: rgba(16, 185, 129, 0.1);
+    padding: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+/* ============================================
+   КНОПКИ ДЕЙСТВИЙ
+   ============================================ */
+
+.modal-actions-corporate {
+    position: sticky;
+    bottom: 0;
+    background: var(--modal-corporate-background);
+    padding: 16px;
+    border-top: 1px solid var(--modal-corporate-border);
+    margin: 0 -16px -100px -16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modal-action-button {
+    --border-radius: 12px;
+    --padding-start: 24px;
+    --padding-end: 24px;
+    --padding-top: 16px;
+    --padding-bottom: 16px;
+    height: 56px;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.modal-action-button-primary {
+    --background: var(--ion-color-success);
+    --background-activated: #047857;
+    --background-hover: #047857;
+    --color: var(--modal-corporate-white);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.modal-action-button-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+.modal-action-button-secondary {
+    --background: var(--modal-corporate-white);
+    --color: var(--modal-corporate-text);
+    --border-color: var(--modal-corporate-border);
+    --border-width: 2px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.modal-action-button-secondary:hover {
+    --background: rgba(30, 58, 138, 0.05);
+    --border-color: var(--modal-corporate-primary);
+    transform: translateY(-1px);
+}
+
+/* ============================================
+   АДАПТИВНОСТЬ
+   ============================================ */
+
+@media (min-width: 768px) {
+    .modal-info-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .modal-actions-corporate {
+        flex-direction: row;
+        gap: 16px;
+    }
+    
+    .modal-action-button {
+        flex: 1;
+    }
+}
+
+@media (max-width: 576px) {
+    .modal-content-corporate {
+        padding: 0 12px 100px;
+    }
+    
+    .modal-status-card {
+        padding: 16px;
+        margin: 12px 0;
+    }
+    
+    .modal-status-left {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .modal-status-icon {
+        font-size: 40px;
+        padding: 10px;
+    }
+    
+    .modal-status-title {
+        font-size: 20px;
+    }
+    
+    .modal-status-badge {
+        align-self: flex-end;
+        margin-top: -40px;
+    }
+    
+    .modal-info-card {
+        margin-bottom: 12px;
+    }
+    
+    .modal-card-content {
+        padding: 16px;
+    }
+    
+    .modal-info-item {
+        padding: 12px;
+        gap: 12px;
+    }
+    
+    .modal-info-icon {
+        font-size: 18px;
+        padding: 6px;
+    }
+    
+    .modal-info-text h3 {
+        font-size: 11px;
+    }
+    
+    .modal-info-text p {
+        font-size: 14px;
+    }
+    
+    .modal-actions-corporate {
+        padding: 12px;
+    }
+    
+    .modal-action-button {
+        --padding-top: 14px;
+        --padding-bottom: 14px;
+        height: 52px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 320px) {
+    .modal-status-card {
+        padding: 12px;
+    }
+    
+    .modal-status-icon {
+        font-size: 32px;
+        padding: 8px;
+    }
+    
+    .modal-status-title {
+        font-size: 18px;
+    }
+    
+    .modal-card-content {
+        padding: 12px;
+    }
+    
+    .modal-info-item {
+        padding: 10px;
+        gap: 10px;
+    }
+    
+    .modal-info-icon {
+        font-size: 16px;
+        padding: 5px;
+    }
+    
+    .modal-info-text h3 {
+        font-size: 10px;
+    }
+    
+    .modal-info-text p {
+        font-size: 13px;
+    }
+}
+
+/* ============================================
+   ТЕМНАЯ ТЕМА
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+    .invoice-modal-corporate {
+        --modal-corporate-background: #1a1a1a;
+        --modal-corporate-border: #404040;
+        --modal-corporate-text: #e5e5e5;
+    }
+    
+    .modal-status-card {
+        background: #0f172a;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+    
+    .modal-info-card {
+        --background: #2a2a2a;
+        background: #2a2a2a;
+        border-color: #404040;
+    }
+    
+    .modal-info-card::before {
+        border-right-color: #404040;
+    }
+    
+    .modal-card-content {
+        --background: #2a2a2a;
+        background: #2a2a2a;
+    }
+    
+    .modal-info-item {
+        background: rgba(255, 255, 255, 0.03);
+        border-color: #404040;
+    }
+    
+    .modal-info-item:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .modal-info-text h3 {
+        color: var(--modal-corporate-blue);
+    }
+    
+    .modal-info-text p {
+        color: #e5e5e5;
+    }
+    
+    .modal-actions-corporate {
+        background: #1a1a1a;
+        border-color: #404040;
+    }
+    
+    .modal-action-button-secondary {
+        --background: #2a2a2a;
+        --color: #e5e5e5;
+        --border-color: #404040;
+    }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    .modal-info-item,
+    .modal-action-button {
+        transition: none;
+    }
+    
+    .modal-info-item:hover,
+    .modal-action-button-primary:hover,
+    .modal-action-button-secondary:hover {
+        transform: none;
+    }
+}
+
+/* Увеличение размера для touch-устройств */
+@media (pointer: coarse) {
+    .modal-action-button {
+        --padding-top: 18px;
+        --padding-bottom: 18px;
+        height: 60px;
+        font-size: 16px;
+    }
+    
+    .modal-info-item-phone {
+        min-height: 60px;
+    }
+    
+    .modal-close-button {
+        --padding-start: 12px;
+        --padding-end: 12px;
+        --padding-top: 12px;
+        --padding-bottom: 12px;
+    }
+}
+
+/* ============================================
+   ВЫСОКОКОНТРАСТНЫЙ РЕЖИМ
+   ============================================ */
+
+@media (prefers-contrast: high) {
+    .modal-info-card {
+        border-width: 3px;
+    }
+    
+    .modal-info-item {
+        border-width: 2px;
+    }
+    
+    .modal-info-item:hover {
+        border-width: 3px;
+    }
+    
+    .modal-action-button-secondary {
+        --border-width: 3px;
+    }
+}
