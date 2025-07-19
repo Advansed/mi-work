@@ -1,18 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { IonButton, IonIcon } from '@ionic/react';
+import { arrowBackOutline, printOutline } from 'ionicons/icons';
 import './OrderActForm.css'
 
-const ActOrderForm: React.FC = () => {
+interface ActOrderFormProps {
+    initialData?: {
+        actNumber?: string;
+        date?: string;
+        street?: string;
+        house?: string;
+        apartment?: string;
+        subscriber?: string;
+        equipment?: string;
+        reason?: string;
+    };
+    onBack?: () => void;
+    isModal?: boolean;
+}
+
+const ActOrderForm: React.FC<ActOrderFormProps> = ({ 
+    initialData = {}, 
+    onBack,
+    isModal = false 
+}) => {
     const [formData, setFormData] = useState({
-        actNumber:              '',
-        date:                   '',
+        actNumber:              initialData.actNumber || '',
+        date:                   initialData.date || '',
         representative:         '',
         position:               '',
-        reason:                 '',
-        equipment:              '',
-        apartment:              '',
-        house:                  '',
-        street:                 '',
-        subscriber:             '',
+        reason:                 initialData.reason || '',
+        equipment:              initialData.equipment || '',
+        apartment:              initialData.apartment || '',
+        house:                  initialData.house || '',
+        street:                 initialData.street || '',
+        subscriber:             initialData.subscriber || '',
         orderGiver:             '',
         orderReceiver:          '',
         executor:               '',
@@ -23,6 +44,23 @@ const ActOrderForm: React.FC = () => {
         reconnectionBy:         '',
         reconnectionOrder:      ''
     });
+
+    // Автозаполнение при изменении initialData
+    useEffect(() => {
+        if (initialData) {
+            setFormData(prev => ({
+                ...prev,
+                actNumber: initialData.actNumber || prev.actNumber,
+                date: initialData.date || prev.date,
+                street: initialData.street || prev.street,
+                house: initialData.house || prev.house,
+                apartment: initialData.apartment || prev.apartment,
+                subscriber: initialData.subscriber || prev.subscriber,
+                equipment: initialData.equipment || prev.equipment,
+                reason: initialData.reason || prev.reason
+            }));
+        }
+    }, [initialData]);
 
     const handleInputChange = (field: string, value: string) => {
         setFormData(prev => ({
@@ -35,19 +73,45 @@ const ActOrderForm: React.FC = () => {
         window.print();
     };
 
+    const containerClass = isModal ? 'act-order-modal' : 'act-order-page';
+
     return (
-        <div className="act-order-page">
-            <div className="page-header no-print">
-                <h1>АКТ-НАРЯД на отключение газового оборудования</h1>
-                <button 
-                    className="print-btn"
-                    onClick={handlePrint}
-                >
-                    🖨️ Печать
-                </button>
-            </div>
+        <div className={containerClass}>
+            {/* Заголовок - только если не в модальном режиме */}
+            {!isModal && (
+                <div className="page-header no-print">
+                    <h1>АКТ-НАРЯД на отключение газового оборудования</h1>
+                    <button 
+                        className="print-btn"
+                        onClick={handlePrint}
+                    >
+                        🖨️ Печать
+                    </button>
+                </div>
+            )}
+
+            {/* Кнопки навигации в модальном режиме */}
+            {isModal && onBack && (
+                <div className="modal-nav-buttons no-print">
+                    <IonButton
+                        fill="outline"
+                        onClick={onBack}
+                        className="back-button"
+                    >
+                        <IonIcon icon={arrowBackOutline} slot="start" />
+                        Назад к заявке
+                    </IonButton>
+                    <IonButton
+                        onClick={handlePrint}
+                        className="print-button-small"
+                    >
+                        <IonIcon icon={printOutline} slot="start" />
+                        Печать
+                    </IonButton>
+                </div>
+            )}
             
-            <div className="form-container">
+            <div className={isModal ? 'modal-form-container' : 'form-container'}>
                 <div className="print-form">
                     {/* Заголовок организации */}
                     <div className="form-header">
@@ -295,18 +359,19 @@ const ActOrderForm: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Кнопка печати */}
-                    <div className="print-button-section no-print">
-                        <button 
-                            className="print-button"
-                            onClick={handlePrint}
-                        >
-                            🖨️ Печать документа
-                        </button>
-                    </div>
+                    {/* Кнопка печати - только если не в модальном режиме */}
+                    {!isModal && (
+                        <div className="print-button-section no-print">
+                            <button 
+                                className="print-button"
+                                onClick={handlePrint}
+                            >
+                                🖨️ Печать документа
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
-
         </div>
     );
 };
