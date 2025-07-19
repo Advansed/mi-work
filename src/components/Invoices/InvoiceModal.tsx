@@ -102,6 +102,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
     };
 
     // Подготовка данных для актa-наряда
+// Подготовка данных для актa-наряда
     const prepareActData = () => {
         // Извлекаем компоненты адреса из строки адреса
         const addressParts = invoice.address.split(',').map(part => part.trim());
@@ -129,20 +130,61 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
 
         return {
             actNumber: invoice.number,
-            date: new Date().toLocaleDateString('ru-RU', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            }).split('.')[0], // только день
-            street: street,
-            house: house,
-            apartment: apartment,
-            subscriber: '', // ФИО абонента - нужно добавить в данные заявки
-            equipment: invoice.service || 'газовое оборудование',
-            reason: 'плановое техническое обслуживание'
+            date: new Date().toISOString(),
+            representative: {
+                name: '',
+                position: 'Слесарь',
+                reason: 'плановое техническое обслуживание'
+            },
+            order: {
+                equipment: invoice.service || 'газовое оборудование',
+                apartment: apartment,
+                house: house,
+                street: street,
+                subscriber: '', // ФИО абонента - нужно добавить в данные заявки
+                orderGiver: {
+                    name: '',
+                    position: 'Мастер'
+                },
+                orderReceiver: {
+                    name: '',
+                    position: 'Слесарь'
+                }
+            },
+            execution: {
+                executor: '',
+                executionDate: new Date().toISOString(),
+                executionTime: '',
+                disconnectedEquipment: '',
+                representativeSignature: {
+                    name: '',
+                    position: 'Представитель эксплуатационной организации'
+                },
+                subscriberSignature: {
+                    name: '',
+                    position: 'Ответственный квартиросъёмщик (абонент)'
+                }
+            },
+            reconnection: {
+                reconnectionDate: '',
+                reconnectionBy: '',
+                reconnectionOrder: '',
+                apartment: apartment,
+                house: house,
+                street: street,
+                subscriber: '',
+                representativeSignature: {
+                    name: '',
+                    position: 'Представитель эксплуатационной организации'
+                },
+                subscriberSignature: {
+                    name: '',
+                    position: 'Ответственный квартиросъёмщик (абонент)'
+                }
+            }
         };
     };
-
+    
     return (
         <IonModal isOpen={isOpen} onDidDismiss={handleDismiss} className="invoice-modal-compact">
             <IonHeader>

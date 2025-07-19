@@ -1,77 +1,358 @@
-import React, { useState, useEffect } from 'react';
-import { IonButton, IonIcon } from '@ionic/react';
-import { arrowBackOutline, printOutline } from 'ionicons/icons';
-import './OrderActForm.css'
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+    IonButton,
+    IonIcon,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardContent,
+    IonItem,
+    IonLabel,
+    IonInput,
+    IonTextarea,
+    IonDatetime,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonAccordion,
+    IonAccordionGroup,
+    IonText,
+    IonToast
+} from '@ionic/react';
+import {
+    arrowBackOutline,
+    documentTextOutline,
+    saveOutline,
+    businessOutline,
+    personOutline,
+    buildOutline,
+    checkmarkCircleOutline,
+    refreshCircleOutline
+} from 'ionicons/icons';
+import { PDFGeneratorComponent } from '../PDF';
+import { ActOrderData } from '../PDF/types';
+import { ActOrderFormData, ActOrderFormProps } from './index';
+import './OrderActForm.css';
 
-interface ActOrderFormProps {
-    initialData?: {
-        actNumber?: string;
-        date?: string;
-        street?: string;
-        house?: string;
-        apartment?: string;
-        subscriber?: string;
-        equipment?: string;
-        reason?: string;
-    };
-    onBack?: () => void;
-    isModal?: boolean;
-}
-
-const ActOrderForm: React.FC<ActOrderFormProps> = ({ 
-    initialData = {}, 
+const ActOrderForm: React.FC<ActOrderFormProps> = ({
+    initialData = {},
     onBack,
-    isModal = false 
+    isModal = false,
+    onDataChange,
+    showPDFActions = true
 }) => {
-    const [formData, setFormData] = useState({
-        actNumber:              initialData.actNumber || '',
-        date:                   initialData.date || '',
-        representative:         '',
-        position:               '',
-        reason:                 initialData.reason || '',
-        equipment:              initialData.equipment || '',
-        apartment:              initialData.apartment || '',
-        house:                  initialData.house || '',
-        street:                 initialData.street || '',
-        subscriber:             initialData.subscriber || '',
-        orderGiver:             '',
-        orderReceiver:          '',
-        executor:               '',
-        executionDate:          '',
-        executionTime:          '',
-        disconnectedEquipment:  '',
-        reconnectionDate:       '',
-        reconnectionBy:         '',
-        reconnectionOrder:      ''
+    // ============================================
+    // СОСТОЯНИЕ ФОРМЫ
+    // ============================================
+    
+    const [formData, setFormData] = useState<ActOrderFormData>({
+        actNumber: '',
+        date: new Date().toISOString(),
+        representative: {
+            name: '',
+            position: 'Слесарь',
+            reason: 'плановое техническое обслуживание'
+        },
+        order: {
+            equipment: 'газовое оборудование',
+            apartment: '',
+            house: '',
+            street: '',
+            subscriber: '',
+            orderGiver: {
+                name: '',
+                position: 'Мастер'
+            },
+            orderReceiver: {
+                name: '',
+                position: 'Слесарь'
+            }
+        },
+        execution: {
+            executor: '',
+            executionDate: new Date().toISOString(),
+            executionTime: '',
+            disconnectedEquipment: '',
+            representativeSignature: {
+                name: '',
+                position: 'Представитель эксплуатационной организации'
+            },
+            subscriberSignature: {
+                name: '',
+                position: 'Ответственный квартиросъёмщик (абонент)'
+            }
+        },
+        reconnection: {
+            reconnectionDate: '',
+            reconnectionBy: '',
+            reconnectionOrder: '',
+            apartment: '',
+            house: '',
+            street: '',
+            subscriber: '',
+            representativeSignature: {
+                name: '',
+                position: 'Представитель эксплуатационной организации'
+            },
+            subscriberSignature: {
+                name: '',
+                position: 'Ответственный квартиросъёмщик (абонент)'
+            }
+        }
     });
 
-    // Автозаполнение при изменении initialData
+    const [showSaveToast, setShowSaveToast] = useState(false);
+    const [expandedSections, setExpandedSections] = useState<string[]>(['basic', 'representative', 'order']);
+
+    // ============================================
+    // ИНИЦИАЛИЗАЦИЯ И АВТОЗАПОЛНЕНИЕ
+    // ============================================
+
     useEffect(() => {
         if (initialData) {
             setFormData(prev => ({
                 ...prev,
-                actNumber: initialData.actNumber || prev.actNumber,
-                date: initialData.date || prev.date,
-                street: initialData.street || prev.street,
-                house: initialData.house || prev.house,
-                apartment: initialData.apartment || prev.apartment,
-                subscriber: initialData.subscriber || prev.subscriber,
-                equipment: initialData.equipment || prev.equipment,
-                reason: initialData.reason || prev.reason
+                ...initialData,
+                representative: {
+                    ...prev.representative,
+                    ...initialData.representative
+                },
+                order: {
+                    ...prev.order,
+                    ...initialData.order,
+                    orderGiver: {
+                        ...prev.order.orderGiver,
+                        ...initialData.order?.orderGiver
+                    },
+                    orderReceiver: {
+                        ...prev.order.orderReceiver,
+                        ...initialData.order?.orderReceiver
+                    }
+                },
+                execution: {
+                    ...prev.execution,
+                    ...initialData.execution,
+                    representativeSignature: {
+                        ...prev.execution.representativeSignature,
+                        ...initialData.execution?.representativeSignature
+                    },
+                    subscriberSignature: {
+                        ...prev.execution.subscriberSignature,
+                        ...initialData.execution?.subscriberSignature
+                    }
+                },
+                reconnection: {
+                    ...prev.reconnection,
+                    ...initialData.reconnection,
+                    representativeSignature: {
+                        ...prev.reconnection.representativeSignature,
+                        ...initialData.reconnection?.representativeSignature
+                    },
+                    subscriberSignature: {
+                        ...prev.reconnection.subscriberSignature,
+                        ...initialData.reconnection?.subscriberSignature
+                    }
+                }
             }));
         }
     }, [initialData]);
 
-    const handleInputChange = (field: string, value: string) => {
-        setFormData(prev => ({
-            ...prev,
-            [field]: value
-        }));
+    // ============================================
+    // ОБРАБОТЧИКИ ИЗМЕНЕНИЙ
+    // ============================================
+
+    const updateFormData = useCallback((updates: Partial<ActOrderFormData>) => {
+        setFormData(prev => {
+            const newData = { ...prev, ...updates };
+            
+            // Автосохранение
+            if (isModal) {
+                localStorage.setItem('actOrderFormDraft', JSON.stringify(newData));
+            }
+            
+            // Уведомление родительского компонента
+            if (onDataChange) {
+                onDataChange(newData);
+            }
+            
+            return newData;
+        });
+    }, [isModal, onDataChange]);
+
+    const handleBasicChange = (field: keyof Pick<ActOrderFormData, 'actNumber' | 'date'>, value: string) => {
+        updateFormData({ [field]: value });
     };
 
-    const handlePrint = () => {
-        window.print();
+    const handleRepresentativeChange = (field: keyof ActOrderFormData['representative'], value: string) => {
+        updateFormData({
+            representative: {
+                ...formData.representative,
+                [field]: value
+            }
+        });
     };
+
+    const handleOrderChange = (field: keyof ActOrderFormData['order'], value: string) => {
+        const updatedOrder = {
+            ...formData.order,
+            [field]: value
+        };
+
+        // Автокопирование адресных данных в секцию подключения
+        if (['apartment', 'house', 'street', 'subscriber'].includes(field)) {
+            updateFormData({
+                order: updatedOrder,
+                reconnection: {
+                    ...formData.reconnection,
+                    [field]: value
+                }
+            });
+        } else {
+            updateFormData({ order: updatedOrder });
+        }
+    };
+
+    const handleOrderSignatureChange = (
+        signatureType: 'orderGiver' | 'orderReceiver',
+        field: 'name' | 'position',
+        value: string
+    ) => {
+        updateFormData({
+            order: {
+                ...formData.order,
+                [signatureType]: {
+                    ...formData.order[signatureType],
+                    [field]: value
+                }
+            }
+        });
+    };
+
+    const handleExecutionChange = (field: keyof Omit<ActOrderFormData['execution'], 'representativeSignature' | 'subscriberSignature'>, value: string) => {
+        updateFormData({
+            execution: {
+                ...formData.execution,
+                [field]: value
+            }
+        });
+    };
+
+    const handleExecutionSignatureChange = (
+        signatureType: 'representativeSignature' | 'subscriberSignature',
+        field: 'name' | 'position',
+        value: string
+    ) => {
+        updateFormData({
+            execution: {
+                ...formData.execution,
+                [signatureType]: {
+                    ...formData.execution[signatureType],
+                    [field]: value
+                }
+            }
+        });
+    };
+
+    const handleReconnectionChange = (field: keyof Omit<ActOrderFormData['reconnection'], 'representativeSignature' | 'subscriberSignature'>, value: string) => {
+        updateFormData({
+            reconnection: {
+                ...formData.reconnection,
+                [field]: value
+            }
+        });
+    };
+
+    const handleReconnectionSignatureChange = (
+        signatureType: 'representativeSignature' | 'subscriberSignature',
+        field: 'name' | 'position',
+        value: string
+    ) => {
+        updateFormData({
+            reconnection: {
+                ...formData.reconnection,
+                [signatureType]: {
+                    ...formData.reconnection[signatureType],
+                    [field]: value
+                }
+            }
+        });
+    };
+
+    // ============================================
+    // УТИЛИТЫ
+    // ============================================
+
+    const formatDateForDisplay = (isoDate: string): string => {
+        if (!isoDate) return '';
+        return new Date(isoDate).toLocaleDateString('ru-RU');
+    };
+
+    const formatTimeForDisplay = (time: string): string => {
+        if (!time) return '';
+        return time.substring(0, 5); // HH:MM
+    };
+
+    const convertToPDFData = (): ActOrderData => {
+        return {
+            actNumber: formData.actNumber,
+            date: formData.date,
+            representative: formData.representative,
+            order: formData.order,
+            execution: formData.execution,
+            reconnection: formData.reconnection
+        };
+    };
+
+    // ============================================
+    // ДЕЙСТВИЯ
+    // ============================================
+
+    const handleSaveDraft = () => {
+        localStorage.setItem('actOrderFormDraft', JSON.stringify(formData));
+        setShowSaveToast(true);
+    };
+
+    const handleAutoFill = () => {
+        const currentUser = JSON.parse(localStorage.getItem('loginData') || '{}');
+        
+        updateFormData({
+            representative: {
+                ...formData.representative,
+                name: currentUser.fullName || formData.representative.name
+            },
+            order: {
+                ...formData.order,
+                orderGiver: {
+                    name: currentUser.fullName || formData.order.orderGiver.name,
+                    position: 'Мастер'
+                },
+                orderReceiver: {
+                    name: formData.representative.name || formData.order.orderReceiver.name,
+                    position: 'Слесарь'
+                }
+            },
+            execution: {
+                ...formData.execution,
+                executor: formData.representative.name || formData.execution.executor,
+                representativeSignature: {
+                    ...formData.execution.representativeSignature,
+                    name: formData.representative.name
+                }
+            },
+            reconnection: {
+                ...formData.reconnection,
+                reconnectionBy: formData.representative.name || formData.reconnection.reconnectionBy,
+                representativeSignature: {
+                    ...formData.reconnection.representativeSignature,
+                    name: formData.representative.name
+                }
+            }
+        });
+    };
+
+    // ============================================
+    // РЕНДЕР
+    // ============================================
 
     const containerClass = isModal ? 'act-order-modal' : 'act-order-page';
 
@@ -81,12 +362,12 @@ const ActOrderForm: React.FC<ActOrderFormProps> = ({
             {!isModal && (
                 <div className="page-header no-print">
                     <h1>АКТ-НАРЯД на отключение газового оборудования</h1>
-                    <button 
-                        className="print-btn"
-                        onClick={handlePrint}
-                    >
-                        🖨️ Печать
-                    </button>
+                    <div className="header-actions">
+                        <IonButton fill="outline" onClick={handleSaveDraft}>
+                            <IonIcon icon={saveOutline} slot="start" />
+                            Сохранить черновик
+                        </IonButton>
+                    </div>
                 </div>
             )}
 
@@ -102,276 +383,403 @@ const ActOrderForm: React.FC<ActOrderFormProps> = ({
                         Назад к заявке
                     </IonButton>
                     <IonButton
-                        onClick={handlePrint}
-                        className="print-button-small"
+                        fill="outline"
+                        onClick={handleAutoFill}
+                        className="autofill-button"
                     >
-                        <IonIcon icon={printOutline} slot="start" />
-                        Печать
+                        <IonIcon icon={refreshCircleOutline} slot="start" />
+                        Автозаполнение
                     </IonButton>
                 </div>
             )}
-            
+
             <div className={isModal ? 'modal-form-container' : 'form-container'}>
-                <div className="print-form">
-                    {/* Заголовок организации */}
-                    <div className="form-header">
+                {/* ЗАГОЛОВОК ОРГАНИЗАЦИИ */}
+                <IonCard className="company-header-card">
+                    <IonCardHeader>
                         <div className="company-logo">
-                            <div className="logo-icon">🏢</div>
+                            <IonIcon icon={businessOutline} className="logo-icon" />
                             <div className="company-info">
-                                <h2>САХАТРАНСНЕФТЕГАЗ</h2>
+                                <IonCardTitle>САХАТРАНСНЕФТЕГАЗ</IonCardTitle>
                                 <p>УСД</p>
                             </div>
                         </div>
-                    </div>
+                    </IonCardHeader>
+                </IonCard>
 
-                    {/* Заголовок документа */}
-                    <div className="document-header">
-                        <h1>
-                            АКТ-НАРЯД №
-                            <input
-                                type="text"
-                                value={formData.actNumber}
-                                onChange={(e) => handleInputChange('actNumber', e.target.value)}
-                                placeholder="________"
-                                className="inline-input"
+                {/* ОСНОВНАЯ ФОРМА */}
+                <IonAccordionGroup expand="inset" value={expandedSections} onIonChange={(e) => setExpandedSections(e.detail.value)}>
+                    
+                    {/* ОСНОВНАЯ ИНФОРМАЦИЯ */}
+                    <IonAccordion value="basic">
+                        <IonItem slot="header">
+                            <IonIcon icon={documentTextOutline} slot="start" />
+                            <IonLabel>
+                                <h2>Основная информация</h2>
+                                <p>Номер и дата акта-наряда</p>
+                            </IonLabel>
+                        </IonItem>
+                        <IonCardContent slot="content">
+                            <IonGrid>
+                                <IonRow>
+                                    <IonCol size="12" sizeMd="6">
+                                        <IonItem lines="none">
+                                            <IonLabel position="stacked">Номер акта-наряда</IonLabel>
+                                            <IonInput
+                                                value={formData.actNumber}
+                                                onIonInput={(e) => handleBasicChange('actNumber', e.detail.value!)}
+                                                placeholder="Введите номер"
+                                                required
+                                            />
+                                        </IonItem>
+                                    </IonCol>
+                                    <IonCol size="12" sizeMd="6">
+                                        <IonItem lines="none">
+                                            <IonLabel position="stacked">Дата</IonLabel>
+                                            <IonDatetime
+                                                value={formData.date}
+                                                onIonChange={(e) => handleBasicChange('date', e.detail.value as string)}
+                                                presentation="date"
+                                                locale="ru-RU"
+                                                // placeholder="Выберите дату"
+                                            />
+                                        </IonItem>
+                                    </IonCol>
+                                </IonRow>
+                            </IonGrid>
+                        </IonCardContent>
+                    </IonAccordion>
+
+                    {/* ПРЕДСТАВИТЕЛЬ */}
+                    <IonAccordion value="representative">
+                        <IonItem slot="header">
+                            <IonIcon icon={personOutline} slot="start" />
+                            <IonLabel>
+                                <h2>Представитель организации</h2>
+                                <p>Информация об исполнителе</p>
+                            </IonLabel>
+                        </IonItem>
+                        <IonCardContent slot="content">
+                            <IonGrid>
+                                <IonRow>
+                                    <IonCol size="12" sizeMd="6">
+                                        <IonItem lines="none">
+                                            <IonLabel position="stacked">ФИО представителя</IonLabel>
+                                            <IonInput
+                                                value={formData.representative.name}
+                                                onIonInput={(e) => handleRepresentativeChange('name', e.detail.value!)}
+                                                placeholder="Введите ФИО"
+                                                required
+                                            />
+                                        </IonItem>
+                                    </IonCol>
+                                    <IonCol size="12" sizeMd="6">
+                                        <IonItem lines="none">
+                                            <IonLabel position="stacked">Должность</IonLabel>
+                                            <IonInput
+                                                value={formData.representative.position}
+                                                onIonInput={(e) => handleRepresentativeChange('position', e.detail.value!)}
+                                                placeholder="Введите должность"
+                                            />
+                                        </IonItem>
+                                    </IonCol>
+                                    <IonCol size="12">
+                                        <IonItem lines="none">
+                                            <IonLabel position="stacked">Причина отключения</IonLabel>
+                                            <IonTextarea
+                                                value={formData.representative.reason}
+                                                onIonInput={(e) => handleRepresentativeChange('reason', e.detail.value!)}
+                                                placeholder="Укажите причину"
+                                                rows={3}
+                                                autoGrow
+                                            />
+                                        </IonItem>
+                                    </IonCol>
+                                </IonRow>
+                            </IonGrid>
+                        </IonCardContent>
+                    </IonAccordion>
+
+                    {/* ЗАДАНИЕ НА ОТКЛЮЧЕНИЕ */}
+                    <IonAccordion value="order">
+                        <IonItem slot="header">
+                            <IonIcon icon={buildOutline} slot="start" />
+                            <IonLabel>
+                                <h2>Задание на отключение</h2>
+                                <p>Адрес и оборудование</p>
+                            </IonLabel>
+                        </IonItem>
+                        <IonCardContent slot="content">
+                            <IonGrid>
+                                {/* Адрес */}
+                                <IonRow>
+                                    <IonCol size="12">
+                                        <IonText color="primary">
+                                            <h3>Адрес объекта</h3>
+                                        </IonText>
+                                    </IonCol>
+                                    <IonCol size="12" sizeMd="4">
+                                        <IonItem lines="none">
+                                            <IonLabel position="stacked">Улица</IonLabel>
+                                            <IonInput
+                                                value={formData.order.street}
+                                                onIonInput={(e) => handleOrderChange('street', e.detail.value!)}
+                                                placeholder="Название улицы"
+                                                required
+                                            />
+                                        </IonItem>
+                                    </IonCol>
+                                    <IonCol size="6" sizeMd="4">
+                                        <IonItem lines="none">
+                                            <IonLabel position="stacked">Дом</IonLabel>
+                                            <IonInput
+                                                value={formData.order.house}
+                                                onIonInput={(e) => handleOrderChange('house', e.detail.value!)}
+                                                placeholder="№ дома"
+                                                required
+                                            />
+                                        </IonItem>
+                                    </IonCol>
+                                    <IonCol size="6" sizeMd="4">
+                                        <IonItem lines="none">
+                                            <IonLabel position="stacked">Квартира</IonLabel>
+                                            <IonInput
+                                                value={formData.order.apartment}
+                                                onIonInput={(e) => handleOrderChange('apartment', e.detail.value!)}
+                                                placeholder="№ квартиры"
+                                            />
+                                        </IonItem>
+                                    </IonCol>
+                                </IonRow>
+
+                                {/* Абонент и оборудование */}
+                                <IonRow>
+                                    <IonCol size="12" sizeMd="6">
+                                        <IonItem lines="none">
+                                            <IonLabel position="stacked">ФИО абонента</IonLabel>
+                                            <IonInput
+                                                value={formData.order.subscriber}
+                                                onIonInput={(e) => handleOrderChange('subscriber', e.detail.value!)}
+                                                placeholder="Введите ФИО абонента"
+                                                required
+                                            />
+                                        </IonItem>
+                                    </IonCol>
+                                    <IonCol size="12" sizeMd="6">
+                                        <IonItem lines="none">
+                                            <IonLabel position="stacked">Оборудование для отключения</IonLabel>
+                                            <IonInput
+                                                value={formData.order.equipment}
+                                                onIonInput={(e) => handleOrderChange('equipment', e.detail.value!)}
+                                                placeholder="Наименование приборов"
+                                            />
+                                        </IonItem>
+                                    </IonCol>
+                                </IonRow>
+
+                                {/* Подписи */}
+                                <IonRow>
+                                    <IonCol size="12">
+                                        <IonText color="primary">
+                                            <h3>Подписи</h3>
+                                        </IonText>
+                                    </IonCol>
+                                    <IonCol size="12" sizeMd="6">
+                                        <IonItem lines="none">
+                                            <IonLabel position="stacked">Наряд выдал (ФИО)</IonLabel>
+                                            <IonInput
+                                                value={formData.order.orderGiver.name}
+                                                onIonInput={(e) => handleOrderSignatureChange('orderGiver', 'name', e.detail.value!)}
+                                                placeholder="ФИО выдавшего наряд"
+                                            />
+                                        </IonItem>
+                                    </IonCol>
+                                    <IonCol size="12" sizeMd="6">
+                                        <IonItem lines="none">
+                                            <IonLabel position="stacked">Наряд получил (ФИО)</IonLabel>
+                                            <IonInput
+                                                value={formData.order.orderReceiver.name}
+                                                onIonInput={(e) => handleOrderSignatureChange('orderReceiver', 'name', e.detail.value!)}
+                                                placeholder="ФИО получившего наряд"
+                                            />
+                                        </IonItem>
+                                    </IonCol>
+                                </IonRow>
+                            </IonGrid>
+                        </IonCardContent>
+                    </IonAccordion>
+
+                    {/* ВЫПОЛНЕНИЕ РАБОТ */}
+                    <IonAccordion value="execution">
+                        <IonItem slot="header">
+                            <IonIcon icon={checkmarkCircleOutline} slot="start" />
+                            <IonLabel>
+                                <h2>Выполнение работ</h2>
+                                <p>Информация о выполнении отключения</p>
+                            </IonLabel>
+                        </IonItem>
+                        <IonCardContent slot="content">
+                            <IonGrid>
+                                <IonRow>
+                                    <IonCol size="12" sizeMd="6">
+                                        <IonItem lines="none">
+                                            <IonLabel position="stacked">Исполнитель</IonLabel>
+                                            <IonInput
+                                                value={formData.execution.executor}
+                                                onIonInput={(e) => handleExecutionChange('executor', e.detail.value!)}
+                                                placeholder="ФИО исполнителя"
+                                            />
+                                        </IonItem>
+                                    </IonCol>
+                                    <IonCol size="6" sizeMd="3">
+                                        <IonItem lines="none">
+                                            <IonLabel position="stacked">Дата выполнения</IonLabel>
+                                            <IonDatetime
+                                                value={formData.execution.executionDate}
+                                                onIonChange={(e) => handleExecutionChange('executionDate', e.detail.value as string)}
+                                                presentation="date"
+                                                locale="ru-RU"
+                                            />
+                                        </IonItem>
+                                    </IonCol>
+                                    <IonCol size="6" sizeMd="3">
+                                        <IonItem lines="none">
+                                            <IonLabel position="stacked">Время</IonLabel>
+                                            <IonDatetime
+                                                value={formData.execution.executionTime}
+                                                onIonChange={(e) => handleExecutionChange('executionTime', e.detail.value as string)}
+                                                presentation="time"
+                                                locale="ru-RU"
+                                            />
+                                        </IonItem>
+                                    </IonCol>
+                                    <IonCol size="12">
+                                        <IonItem lines="none">
+                                            <IonLabel position="stacked">Отключенное оборудование</IonLabel>
+                                            <IonTextarea
+                                                value={formData.execution.disconnectedEquipment}
+                                                onIonInput={(e) => handleExecutionChange('disconnectedEquipment', e.detail.value!)}
+                                                placeholder="Указать наименование, количество приборов, способ отключения"
+                                                rows={3}
+                                                autoGrow
+                                            />
+                                        </IonItem>
+                                    </IonCol>
+                                </IonRow>
+                            </IonGrid>
+                        </IonCardContent>
+                    </IonAccordion>
+
+                    {/* ПОДКЛЮЧЕНИЕ ОБРАТНО */}
+                    <IonAccordion value="reconnection">
+                        <IonItem slot="header">
+                            <IonIcon icon={refreshCircleOutline} slot="start" />
+                            <IonLabel>
+                                <h2>Подключение обратно</h2>
+                                <p>Информация о подключении оборудования</p>
+                            </IonLabel>
+                        </IonItem>
+                        <IonCardContent slot="content">
+                            <IonGrid>
+                                <IonRow>
+                                    <IonCol size="12" sizeMd="6">
+                                        <IonItem lines="none">
+                                            <IonLabel position="stacked">Дата подключения</IonLabel>
+                                            <IonDatetime
+                                                value={formData.reconnection.reconnectionDate}
+                                                onIonChange={(e) => handleReconnectionChange('reconnectionDate', e.detail.value as string)}
+                                                presentation="date"
+                                                locale="ru-RU"
+                                            />
+                                        </IonItem>
+                                    </IonCol>
+                                    <IonCol size="12" sizeMd="6">
+                                        <IonItem lines="none">
+                                            <IonLabel position="stacked">Подключил (ФИО)</IonLabel>
+                                            <IonInput
+                                                value={formData.reconnection.reconnectionBy}
+                                                onIonInput={(e) => handleReconnectionChange('reconnectionBy', e.detail.value!)}
+                                                placeholder="ФИО представителя"
+                                            />
+                                        </IonItem>
+                                    </IonCol>
+                                    <IonCol size="12">
+                                        <IonItem lines="none">
+                                            <IonLabel position="stacked">По указанию</IonLabel>
+                                            <IonInput
+                                                value={formData.reconnection.reconnectionOrder}
+                                                onIonInput={(e) => handleReconnectionChange('reconnectionOrder', e.detail.value!)}
+                                                placeholder="Должность, ФИО"
+                                            />
+                                        </IonItem>
+                                    </IonCol>
+                                </IonRow>
+                            </IonGrid>
+                        </IonCardContent>
+                    </IonAccordion>
+                </IonAccordionGroup>
+
+                {/* PDF ГЕНЕРАТОР */}
+                {showPDFActions && (
+                    <IonCard className="pdf-generator-section">
+                        <IonCardHeader>
+                            <IonCardTitle>
+                                <IonIcon icon={documentTextOutline} />
+                                Генерация документа
+                            </IonCardTitle>
+                        </IonCardHeader>
+                        <IonCardContent>
+                            <PDFGeneratorComponent
+                                data={convertToPDFData()}
+                                filename={`act-order-${formData.actNumber || 'draft'}.pdf`}
+                                showPreview={true}
+                                disabled={!formData.actNumber || !formData.representative.name}
                             />
-                        </h1>
-                        <h2>НА ОТКЛЮЧЕНИЕ ГАЗОИСПОЛЬЗУЮЩЕГО<br/>ОБОРУДОВАНИЯ ЖИЛЫХ ЗДАНИЙ</h2>
-                        
-                        <div className="date-line">
-                            «<input
-                                type="text"
-                                value={formData.date}
-                                onChange={(e) => handleInputChange('date', e.target.value)}
-                                placeholder="___"
-                                className="inline-input small"
-                            />» _________________ 20___г.
-                        </div>
+                        </IonCardContent>
+                    </IonCard>
+                )}
+
+                {/* ДЕЙСТВИЯ */}
+                {!isModal && (
+                    <div className="form-actions no-print">
+                        <IonGrid>
+                            <IonRow>
+                                <IonCol size="12" sizeMd="6">
+                                    <IonButton
+                                        expand="block"
+                                        fill="outline"
+                                        onClick={handleSaveDraft}
+                                    >
+                                        <IonIcon icon={saveOutline} slot="start" />
+                                        Сохранить черновик
+                                    </IonButton>
+                                </IonCol>
+                                <IonCol size="12" sizeMd="6">
+                                    <IonButton
+                                        expand="block"
+                                        onClick={handleAutoFill}
+                                        color="secondary"
+                                    >
+                                        <IonIcon icon={refreshCircleOutline} slot="start" />
+                                        Автозаполнение
+                                    </IonButton>
+                                </IonCol>
+                            </IonRow>
+                        </IonGrid>
                     </div>
-
-                    {/* Основное содержание */}
-                    <div className="form-content">
-                        <div className="content-section">
-                            <p>Представителю эксплуатационной организации 
-                                <input
-                                    type="text"
-                                    value={formData.representative}
-                                    onChange={(e) => handleInputChange('representative', e.target.value)}
-                                    placeholder="_______________________________________"
-                                    className="underlined-input"
-                                />
-                            </p>
-                            <p className="small-text">ф.и.о., должность</p>
-                        </div>
-
-                        <div className="content-section">
-                            <p>ввиду</p>
-                            <textarea
-                                value={formData.reason}
-                                onChange={(e) => handleInputChange('reason', e.target.value)}
-                                placeholder="указать причину"
-                                className="underlined-textarea"
-                                rows={2}
-                            />
-                        </div>
-
-                        <div className="content-section">
-                            <p>поручается отключить 
-                                <input
-                                    type="text"
-                                    value={formData.equipment}
-                                    onChange={(e) => handleInputChange('equipment', e.target.value)}
-                                    placeholder="наименование приборов"
-                                    className="underlined-input"
-                                />
-                            </p>
-                        </div>
-
-                        <div className="content-section">
-                            <p>в квартире №
-                                <input
-                                    type="text"
-                                    value={formData.apartment}
-                                    onChange={(e) => handleInputChange('apartment', e.target.value)}
-                                    placeholder="____"
-                                    className="inline-input small"
-                                /> дома
-                                <input
-                                    type="text"
-                                    value={formData.house}
-                                    onChange={(e) => handleInputChange('house', e.target.value)}
-                                    placeholder="____"
-                                    className="inline-input small"
-                                /> по ул.
-                                <input
-                                    type="text"
-                                    value={formData.street}
-                                    onChange={(e) => handleInputChange('street', e.target.value)}
-                                    placeholder="__________________________________________"
-                                    className="underlined-input"
-                                />
-                            </p>
-                        </div>
-
-                        <div className="content-section">
-                            <p>у абонента 
-                                <input
-                                    type="text"
-                                    value={formData.subscriber}
-                                    onChange={(e) => handleInputChange('subscriber', e.target.value)}
-                                    placeholder="ф.и.о."
-                                    className="underlined-input"
-                                />
-                            </p>
-                        </div>
-
-                        <div className="two-column">
-                            <div className="column">
-                                <p>Наряд выдал</p>
-                                <input
-                                    type="text"
-                                    value={formData.orderGiver}
-                                    onChange={(e) => handleInputChange('orderGiver', e.target.value)}
-                                    placeholder="должность, ф.и.о., подпись"
-                                    className="underlined-input"
-                                />
-                            </div>
-                            <div className="column">
-                                <p>Наряд получил</p>
-                                <input
-                                    type="text"
-                                    value={formData.orderReceiver}
-                                    onChange={(e) => handleInputChange('orderReceiver', e.target.value)}
-                                    placeholder="должность, ф.и.о., подпись"
-                                    className="underlined-input"
-                                />
-                            </div>
-                        </div>
-
-                        {/* Раздел выполнения */}
-                        <div className="execution-section">
-                            <div className="content-section">
-                                <p>Мною 
-                                    <input
-                                        type="text"
-                                        value={formData.executor}
-                                        onChange={(e) => handleInputChange('executor', e.target.value)}
-                                        placeholder="должность, ф.и.о."
-                                        className="underlined-input"
-                                    />
-                                </p>
-                            </div>
-                            
-                            <div className="content-section">
-                                <p>«<input
-                                    type="text"
-                                    value={formData.executionDate}
-                                    onChange={(e) => handleInputChange('executionDate', e.target.value)}
-                                    placeholder="___"
-                                    className="inline-input small"
-                                />» _____________ 20___г. в 
-                                <input
-                                    type="text"
-                                    value={formData.executionTime}
-                                    onChange={(e) => handleInputChange('executionTime', e.target.value)}
-                                    placeholder="__:__"
-                                    className="inline-input small"
-                                /> ч. ______ мин.</p>
-                            </div>
-
-                            <div className="content-section">
-                                <p>произведено отключение газоиспользующего оборудования</p>
-                                <textarea
-                                    value={formData.disconnectedEquipment}
-                                    onChange={(e) => handleInputChange('disconnectedEquipment', e.target.value)}
-                                    placeholder="указать наименование, количество приборов, способ отключения"
-                                    className="underlined-textarea"
-                                    rows={2}
-                                />
-                                <p className="small-text">указать наименование, количество приборов, способ отключения</p>
-                            </div>
-
-                            <div className="content-section">
-                                <p>в квартире №______ дома _______ по ул. ____________________________________________</p>
-                            </div>
-                        </div>
-
-                        {/* Подписи */}
-                        <div className="signatures-section">
-                            <p><strong>Подписи:</strong></p>
-                            <p>Представитель эксплуатационной организации ________________________</p>
-                            <p>Ответственный квартиросъёмщик (абонент) __________________________</p>
-                        </div>
-
-                        {/* Раздел подключения */}
-                        <div className="reconnection-section">
-                            <div className="content-section">
-                                <p>Газоиспользующее оборудование подключено «
-                                    <input
-                                        type="text"
-                                        value={formData.reconnectionDate}
-                                        onChange={(e) => handleInputChange('reconnectionDate', e.target.value)}
-                                        placeholder="___"
-                                        className="inline-input small"
-                                    />»______________20___г.</p>
-                            </div>
-                            
-                            <div className="content-section">
-                                <p>представителем эксплуатационной организации 
-                                    <input
-                                        type="text"
-                                        value={formData.reconnectionBy}
-                                        onChange={(e) => handleInputChange('reconnectionBy', e.target.value)}
-                                        placeholder="должность, ф.и.о."
-                                        className="underlined-input"
-                                    />
-                                </p>
-                            </div>
-
-                            <div className="content-section">
-                                <p>по указанию 
-                                    <input
-                                        type="text"
-                                        value={formData.reconnectionOrder}
-                                        onChange={(e) => handleInputChange('reconnectionOrder', e.target.value)}
-                                        placeholder="должность, ф.и.о."
-                                        className="underlined-input"
-                                    />
-                                </p>
-                            </div>
-
-                            <div className="content-section">
-                                <p>в квартире №________ дома________ по ул.__________________________________________</p>
-                                <p>у абонента ______________________________________________________________________</p>
-                                <p className="small-text">ф.и.о.</p>
-                            </div>
-
-                            <div className="signatures-section">
-                                <p><strong>Подписи:</strong></p>
-                                <p>Представитель эксплуатационной организации ________________________</p>
-                                <p>Ответственный квартиросъёмщик (абонент) ___________________________</p>
-                            </div>
-                        </div>
-
-                        {/* Примечание */}
-                        <div className="note-section">
-                            <p><strong>Примечание:</strong> Акт-наряд составляется в двух экземплярах, один из которых выдаётся на руки абоненту, другой хранится в эксплуатационной организации.</p>
-                        </div>
-                    </div>
-
-                    {/* Кнопка печати - только если не в модальном режиме */}
-                    {!isModal && (
-                        <div className="print-button-section no-print">
-                            <button 
-                                className="print-button"
-                                onClick={handlePrint}
-                            >
-                                🖨️ Печать документа
-                            </button>
-                        </div>
-                    )}
-                </div>
+                )}
             </div>
+
+            {/* УВЕДОМЛЕНИЕ О СОХРАНЕНИИ */}
+            <IonToast
+                isOpen={showSaveToast}
+                onDidDismiss={() => setShowSaveToast(false)}
+                message="Черновик сохранен"
+                duration={2000}
+                icon={checkmarkCircleOutline}
+                color="success"
+                position="top"
+            />
         </div>
     );
 };
