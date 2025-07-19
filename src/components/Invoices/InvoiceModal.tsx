@@ -156,7 +156,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
                                 <div className="detail-content">
                                     <span className="detail-label">Срок выполнения</span>
                                     <span className={`detail-value term-${status.type}`}>
-                                        {formatDateFull(invoice.term)}
+                                        {formatDateFull(invoice.term_end)}
                                     </span>
                                 </div>
                             </div>
@@ -168,7 +168,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
                                 <div className="detail-content">
                                     <span className="detail-label">Линия / Дата создания</span>
                                     <span className="detail-value">
-                                        {invoice.lineno} • {formatDateFull(invoice.date)}
+                                        {invoice.lineno} • {formatDateFull(invoice.term_begin)}
                                     </span>
                                 </div>
                             </div>
