@@ -22,9 +22,11 @@ import {
     calendarOutline,
     warningOutline,
     checkmarkCircleOutline,
-    businessOutline
+    businessOutline,
+    printOutline
 } from 'ionicons/icons';
 import { Invoice, InvoiceStatus } from './types';
+import './InvoiceModal.css'
 
 interface InvoiceModalProps {
     isOpen: boolean;
@@ -50,7 +52,8 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
     }
 
     const handlePhoneClick = () => {
-        onPhoneClick(invoice.phone);
+//        onPhoneClick(invoice.phone);
+        
     };
 
     const getStatusIcon = () => {
@@ -179,8 +182,8 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
                                 className="action-button-call"
                                 size="default"
                             >
-                                <IonIcon icon={callOutline} slot="start" />
-                                Позвонить
+                                <IonIcon icon={ printOutline } slot="start" />
+                                Акт
                             </IonButton>
 
                             <IonButton
