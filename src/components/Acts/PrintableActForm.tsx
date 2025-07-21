@@ -2,8 +2,6 @@ import React, { useRef } from 'react';
 import {
     IonButton,
     IonIcon,
-    IonCard,
-    IonCardContent,
     IonGrid,
     IonRow,
     IonCol
@@ -13,50 +11,47 @@ import {
     downloadOutline,
     arrowBackOutline
 } from 'ionicons/icons';
-import './PrintableActOrder.css';
+import './PrintableActForm.css';
 
-interface PrintableActOrderProps {
+interface Service {
+    id: string;
+    name: string;
+    unit: string;
+    quantity: number;
+    price: number;
+    total: number;
+}
+
+interface PrintableActFormProps {
     data: {
         actNumber: string;
         date: string;
-        representative: {
+        customer: {
             name: string;
-            position: string;
-            reason: string;
-        };
-        order: {
-            equipment: string;
+            address: string;
             apartment: string;
             house: string;
             street: string;
-            subscriber: string;
-            orderGiver: {
-                name: string;
-                position: string;
-            };
-            orderReceiver: {
-                name: string;
-                position: string;
-            };
         };
-        execution: {
-            executor: string;
-            executionDate: string;
-            executionTime: string;
-            disconnectedEquipment: string;
+        executor: {
+            name: string;
+            position: string;
+            organization: string;
         };
-        reconnection: {
-            reconnectionDate: string;
-            reconnectionBy: string;
-            reconnectionOrder: string;
-            subscriber: string;
+        services: Service[];
+        total: number;
+        workPeriod: {
+            startDate: string;
+            endDate: string;
         };
+        quality: string;
+        notes?: string;
     };
     onBack?: () => void;
     isModal?: boolean;
 }
 
-const PrintableActOrder: React.FC<PrintableActOrderProps> = ({ 
+const PrintableActForm: React.FC<PrintableActFormProps> = ({ 
     data, 
     onBack, 
     isModal = false 
@@ -74,21 +69,19 @@ const PrintableActOrder: React.FC<PrintableActOrderProps> = ({
         ];
         
         return {
-            day: date.getDate().toString(),
+            day: date.getDate().toString().padStart(2, '0'),
             month: months[date.getMonth()] || '',
-            year: date.getFullYear().toString().slice(-2)
+            year: date.getFullYear().toString()
         };
     };
 
-    // Форматирование времени
-    const formatTime = (timeString: string) => {
-        if (!timeString) return { hours: '', minutes: '' };
-        
-        const time = new Date(timeString);
-        return {
-            hours: time.getHours().toString().padStart(2, '0'),
-            minutes: time.getMinutes().toString().padStart(2, '0')
-        };
+    // Форматирование числа в валюту
+    const formatCurrency = (amount: number) => {
+        return new Intl.NumberFormat('ru-RU', {
+            style: 'currency',
+            currency: 'RUB',
+            minimumFractionDigits: 2
+        }).format(amount);
     };
 
     // Печать документа
@@ -102,12 +95,11 @@ const PrintableActOrder: React.FC<PrintableActOrderProps> = ({
     };
 
     const dateFormatted = formatDate(data.date);
-    const executionDateFormatted = formatDate(data.execution.executionDate);
-    const reconnectionDateFormatted = formatDate(data.reconnection.reconnectionDate);
-    const timeFormatted = formatTime(data.execution.executionTime);
+    const startDateFormatted = formatDate(data.workPeriod.startDate);
+    const endDateFormatted = formatDate(data.workPeriod.endDate);
 
     return (
-        <div className={`printable-act ${isModal ? 'printable-act-modal' : ''}`}>
+        <div className={`printable-act-form ${isModal ? 'printable-act-form-modal' : ''}`}>
             {/* Кнопки управления - скрываются при печати */}
             {isModal && (
                 <div className="print-controls no-print">
@@ -150,7 +142,7 @@ const PrintableActOrder: React.FC<PrintableActOrderProps> = ({
             )}
 
             {/* Печатная форма */}
-            <div ref={printRef} className="act-form">
+            <div ref={printRef} className="act-works-form">
                 {/* Шапка с логотипом */}
                 <div className="act-header">
                     <div className="company-logo">
@@ -166,161 +158,172 @@ const PrintableActOrder: React.FC<PrintableActOrderProps> = ({
 
                 {/* Заголовок документа */}
                 <div className="document-title">
-                    <h1>
-                        АКТ-НАРЯД №<span className="field-value">{data.actNumber || '_______'}</span>
-                    </h1>
-                    <h2>НА ОТКЛЮЧЕНИЕ ГАЗОИСПОЛЬЗУЮЩЕГО<br />ОБОРУДОВАНИЯ ЖИЛЫХ ЗДАНИЙ</h2>
+                    <h1>АКТ ВЫПОЛНЕННЫХ РАБОТ №<span className="field-value">{data.actNumber || '_______'}</span></h1>
                     
                     <div className="date-line">
-                        «<span className="field-value small">{dateFormatted.day || '_____'}</span>»
-                        <span className="field-value medium">{dateFormatted.month || '__________________'}</span>
-                        20<span className="field-value small">{dateFormatted.year || '___'}</span>г.
+                        «<span className="field-value small">{dateFormatted.day || '___'}</span>»
+                        <span className="field-value medium">{dateFormatted.month || '_______________'}</span>
+                        <span className="field-value small">{dateFormatted.year || '____'}</span>г.
                     </div>
                 </div>
 
-                {/* Основное содержание */}
-                <div className="act-content">
-                    {/* Представитель организации */}
-                    <div className="content-line">
-                        Представителю эксплуатационной организации 
-                        <span className="field-value long">{data.representative.name || '_______________________________________'}</span>
-                    </div>
-                    <div className="field-description">ф.и.о., должность</div>
-
-                    <div className="content-line">
-                        ввиду <span className="field-value extra-long">{data.representative.reason || '__________________________________________________________________________'}</span>
-                    </div>
-                    <div className="field-description">указать причину</div>
-
-                    <div className="content-line spacing-top">
-                        поручается отключить 
-                        <span className="field-value long">{data.order.equipment || '____________________________________________________________'}</span>
-                    </div>
-                    <div className="field-description">наименование приборов</div>
-
-                    {/* Адрес */}
-                    <div className="content-line">
-                        в квартире №<span className="field-value small">{data.order.apartment || '________'}</span>
-                        дома<span className="field-value small">{data.order.house || '________'}</span>
-                        по ул.<span className="field-value medium">{data.order.street || '__________________________________________'}</span>
+                {/* Стороны договора */}
+                <div className="parties-section">
+                    <div className="party-block">
+                        <div className="party-title">ИСПОЛНИТЕЛЬ:</div>
+                        <div className="party-info">
+                            <div><strong>{data.executor.organization || 'ООО "СахаТрансНефтеГаз"'}</strong></div>
+                            <div>в лице {data.executor.position || 'слесаря'} {data.executor.name || '________________________'}</div>
+                        </div>
                     </div>
 
-                    <div className="content-line">
-                        у абонента 
-                        <span className="field-value extra-long">{data.order.subscriber || '______________________________________________________________________'}</span>
-                    </div>
-                    <div className="field-description">ф.и.о.</div>
-
-                    {/* Подписи выдачи наряда */}
-                    <div className="signatures-section">
-                        <div className="signature-line">
-                            Наряд выдал 
-                            <span className="field-value signature">{data.order.orderGiver.name || '__________________________________'}</span>
-                            <span className="field-value signature">{' __________________________________'}</span>
-                        </div>
-                        <div className="field-description">должность, ф.и.о., подпись</div>
-
-                        <div className="signature-line">
-                            Наряд получил 
-                            <span className="field-value signature">{data.order.orderReceiver.name || '__________________________________'}</span>
-                            <span className="field-value signature">{' __________________________________'}</span>
-                        </div>
-                        <div className="field-description">должность, ф.и.о., подпись</div>
-                    </div>
-
-                    {/* Выполнение работ */}
-                    <div className="execution-section">
-                        <div className="content-line">
-                            Мною 
-                            <span className="field-value extra-long">{data.execution.executor || '__________________________________________________________________________'}</span>
-                        </div>
-                        <div className="field-description">должность, ф.и.о.</div>
-
-                        <div className="content-line">
-                            «<span className="field-value small">{executionDateFormatted.day || '_____'}</span>»
-                            <span className="field-value medium">{executionDateFormatted.month || '_______________'}</span>
-                            20<span className="field-value small">{executionDateFormatted.year || '___'}</span>г. в 
-                            <span className="field-value small">{timeFormatted.hours || '_____'}</span>ч.
-                            <span className="field-value small">{timeFormatted.minutes || '______'}</span>мин.
-                        </div>
-
-                        <div className="content-line">
-                            произведено отключение газоиспользующего оборудования 
-                            <span className="field-value long">{data.execution.disconnectedEquipment || '___________________________'}</span>
-                        </div>
-
-                        <div className="field-description">указать наименование, количество приборов, способ отключения</div>
-
-                        <div className="content-line">
-                            в квартире №<span className="field-value small">{data.order.apartment || '______'}</span>
-                            дома <span className="field-value small">{data.order.house || '_______'}</span>
-                            по ул. <span className="field-value medium">{data.order.street || '____________________________________________'}</span>
-                        </div>
-
-                        {/* Подписи выполнения */}
-                        <div className="signatures-execution">
-                            <div className="signatures-title">Подписи:</div>
-                            <div className="signature-line">
-                                Представитель эксплуатационной организации 
-                                <span className="field-value signature">________________________</span>
-                            </div>
-                            <div className="signature-line">
-                                Ответственный квартиросъёмщик (абонент) 
-                                <span className="field-value signature">__________________________</span>
+                    <div className="party-block">
+                        <div className="party-title">ЗАКАЗЧИК:</div>
+                        <div className="party-info">
+                            <div><strong>{data.customer.name || '________________________________________________'}</strong></div>
+                            <div>проживающий по адресу: {data.customer.address || '_________________________________'}</div>
+                            <div>
+                                ул. <span className="field-value medium">{data.customer.street || '____________________'}</span>,
+                                д. <span className="field-value small">{data.customer.house || '____'}</span>,
+                                кв. <span className="field-value small">{data.customer.apartment || '____'}</span>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    {/* Подключение обратно */}
-                    <div className="reconnection-section">
+                {/* Период выполнения работ */}
+                <div className="work-period">
+                    <div className="content-line">
+                        Настоящий акт составлен в том, что в период с 
+                        «<span className="field-value small">{startDateFormatted.day || '___'}</span>»
+                        <span className="field-value medium">{startDateFormatted.month || '_______________'}</span>
+                        <span className="field-value small">{startDateFormatted.year || '____'}</span>г.
+                        по 
+                        «<span className="field-value small">{endDateFormatted.day || '___'}</span>»
+                        <span className="field-value medium">{endDateFormatted.month || '_______________'}</span>
+                        <span className="field-value small">{endDateFormatted.year || '____'}</span>г.
+                        ИСПОЛНИТЕЛЕМ выполнены следующие работы:
+                    </div>
+                </div>
+
+                {/* Таблица выполненных работ */}
+                <div className="services-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th className="col-num">№ п/п</th>
+                                <th className="col-service">Наименование работ (услуг)</th>
+                                <th className="col-unit">Ед. изм.</th>
+                                <th className="col-qty">Кол-во</th>
+                                <th className="col-price">Цена, руб.</th>
+                                <th className="col-total">Сумма, руб.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {data.services.map((service, index) => (
+                                <tr key={service.id}>
+                                    <td className="text-center">{index + 1}</td>
+                                    <td>{service.name}</td>
+                                    <td className="text-center">{service.unit}</td>
+                                    <td className="text-center">{service.quantity}</td>
+                                    <td className="text-right">{service.price.toFixed(2)}</td>
+                                    <td className="text-right">{service.total.toFixed(2)}</td>
+                                </tr>
+                            ))}
+                            
+                            {/* Пустые строки для ручного заполнения */}
+                            {Array.from({ length: Math.max(0, 5 - data.services.length) }, (_, index) => (
+                                <tr key={`empty-${index}`} className="empty-row">
+                                    <td>{data.services.length + index + 1}</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                        <tfoot>
+                            <tr className="total-row">
+                                <td colSpan={5} className="text-right"><strong>ИТОГО:</strong></td>
+                                <td className="text-right"><strong>{data.total.toFixed(2)}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                {/* Сумма прописью */}
+                <div className="amount-words">
+                    <div className="content-line">
+                        Всего выполнено работ на сумму: <span className="field-value extra-long">{formatCurrency(data.total)}</span>
+                    </div>
+                    <div className="content-line">
+                        <span className="field-value full-width">_____________________________________________________________________________</span>
+                    </div>
+                    <div className="field-description">(сумма прописью)</div>
+                </div>
+
+                {/* Качество работ */}
+                <div className="quality-section">
+                    <div className="content-line">
+                        Работы выполнены полностью, в установленные сроки, с надлежащим качеством.
+                    </div>
+                    <div className="content-line">
+                        Качество выполненных работ: <span className="field-value long">{data.quality || 'отличное'}</span>
+                    </div>
+                    <div className="content-line">
+                        Претензий к выполненным работам не имею.
+                    </div>
+                </div>
+
+                {/* Примечания */}
+                {data.notes && (
+                    <div className="notes-section">
                         <div className="content-line">
-                            Газоиспользующее оборудование подключено 
-                            «<span className="field-value small">{reconnectionDateFormatted.day || '_____'}</span>»
-                            <span className="field-value medium">{reconnectionDateFormatted.month || '______________'}</span>
-                            20<span className="field-value small">{reconnectionDateFormatted.year || '___'}</span>г.
+                            <strong>Примечания:</strong> {data.notes}
                         </div>
+                    </div>
+                )}
 
-                        <div className="content-line">
-                            представителем эксплуатационной организации 
-                            <span className="field-value long">{data.reconnection.reconnectionBy || '______________________________________'}</span>
-                        </div>
-                        <div className="field-description">должность, ф.и.о.</div>
-
-                        <div className="content-line">
-                            по указанию 
-                            <span className="field-value extra-long">{data.reconnection.reconnectionOrder || '_____________________________________________________________________'}</span>
-                        </div>
-                        <div className="field-description">должность, ф.и.о.</div>
-
-                        <div className="content-line">
-                            в квартире №<span className="field-value small">{data.order.apartment || '________'}</span>
-                            дома<span className="field-value small">{data.order.house || '________'}</span>
-                            по ул.<span className="field-value medium">{data.order.street || '__________________________________________'}</span>
-                        </div>
-
-                        <div className="content-line">
-                            у абонента 
-                            <span className="field-value extra-long">{data.reconnection.subscriber || '______________________________________________________________________'}</span>
-                        </div>
-                        <div className="field-description">ф.и.о.</div>
-
-                        {/* Подписи подключения */}
-                        <div className="signatures-reconnection">
-                            <div className="signatures-title">Подписи:</div>
+                {/* Подписи */}
+                <div className="signatures-section">
+                    <div className="signatures-grid">
+                        <div className="signature-block">
+                            <div className="signature-title">ИСПОЛНИТЕЛЬ:</div>
                             <div className="signature-line">
-                                Представитель эксплуатационной организации 
-                                <span className="field-value signature">________________________</span>
+                                <span className="field-value signature">_____________________</span>
+                                <span className="field-value signature">{data.executor.name || '_____________________'}</span>
                             </div>
+                            <div className="field-description">подпись &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; расшифровка подписи</div>
+                            
+                            <div className="date-signature">
+                                «<span className="field-value small">___</span>»
+                                <span className="field-value medium">___________</span>
+                                20<span className="field-value small">___</span>г.
+                            </div>
+                        </div>
+
+                        <div className="signature-block">
+                            <div className="signature-title">ЗАКАЗЧИК:</div>
                             <div className="signature-line">
-                                Ответственный квартиросъёмщик (абонент) 
-                                <span className="field-value signature">___________________________</span>
+                                <span className="field-value signature">_____________________</span>
+                                <span className="field-value signature">{data.customer.name || '_____________________'}</span>
+                            </div>
+                            <div className="field-description">подпись &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; расшифровка подписи</div>
+                            
+                            <div className="date-signature">
+                                «<span className="field-value small">___</span>»
+                                <span className="field-value medium">___________</span>
+                                20<span className="field-value small">___</span>г.
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    {/* Примечание */}
-                    <div className="note-section">
-                        <strong>Примечание:</strong> Акт-наряд составляется в двух экземплярах, один из которых выдаётся на руки абоненту, другой хранится в эксплуатационной организации.
+                {/* Печать */}
+                <div className="stamp-section">
+                    <div className="stamp-placeholder">
+                        М.П.
                     </div>
                 </div>
             </div>
@@ -328,4 +331,4 @@ const PrintableActOrder: React.FC<PrintableActOrderProps> = ({
     );
 };
 
-export default PrintableActOrder;
+export default PrintableActForm;

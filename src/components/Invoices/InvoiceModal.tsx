@@ -6,103 +6,119 @@ import {
     IonTitle,
     IonContent,
     IonButton,
-    IonButtons,
     IonIcon,
-    IonBadge,
     IonCard,
-    IonCardContent
+    IonCardHeader,
+    IonCardTitle,
+    IonCardContent,
+    IonItem,
+    IonLabel,
+    IonBadge,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonChip
 } from '@ionic/react';
 import {
-    close,
-    callOutline,
-    timeOutline,
+    closeOutline,
+    personOutline,
     locationOutline,
+    callOutline,
     documentTextOutline,
+    timeOutline,
+    cashOutline,
     informationCircleOutline,
-    calendarOutline,
-    warningOutline,
-    checkmarkCircleOutline,
-    businessOutline,
-    printOutline,
-    arrowBackOutline
+    checkboxOutline
 } from 'ionicons/icons';
-import { Invoice, InvoiceStatus } from './types';
-import { ActOrderForm } from '../Acts';
-import './InvoiceModal.css'
+import PrintableActOrder from '../Acts/PrintableActOrder';
+import PrintableActForm from '../Acts/PrintableActForm';
+import './InvoiceModal.css';
 
 interface InvoiceModalProps {
-    isOpen: boolean;
     invoice: Invoice | null;
-    status: InvoiceStatus | null;
-    onDismiss: () => void;
-    onPhoneClick: (phone: string) => void;
-    formatDate: (dateString: string) => string;
-    formatPhone: (phone: string) => string;
+    isOpen: boolean;
+    onClose: () => void;
 }
 
-type ModalView = 'invoice' | 'act';
+const InvoiceModal: React.FC<InvoiceModalProps> = ({ invoice, isOpen, onClose }) => {
+    const [showActOrder, setShowActOrder] = useState(false);
+    const [showActForm, setShowActForm] = useState(false);
 
-const InvoiceModal: React.FC<InvoiceModalProps> = ({
-    isOpen,
-    invoice,
-    status,
-    onDismiss,
-    onPhoneClick,
-    formatDate,
-    formatPhone
-}) => {
-    const [currentView, setCurrentView] = useState<ModalView>('invoice');
+    if (!invoice) return null;
 
-    if (!invoice || !status) {
-        return null;
-    }
-
-    // Сброс вида при закрытии модального окна
-    const handleDismiss = () => {
-        setCurrentView('invoice');
-        onDismiss();
+    // Показать акт-наряд
+    const handleShowActOrder = () => {
+        setShowActOrder(true);
+        setShowActForm(false);
     };
 
-    const handlePhoneClick = () => {
-        onPhoneClick(invoice.phone);
+    // Показать акт выполненных работ
+    const handleShowActForm = () => {
+        setShowActForm(true);
+        setShowActOrder(false);
     };
 
-    const handleShowAct = () => {
-        setCurrentView('act');
-    };
-
+    // Вернуться к заявке из акт-наряда
     const handleBackToInvoice = () => {
-        setCurrentView('invoice');
+        setShowActOrder(false);
+        setShowActForm(false);
     };
 
-    const getStatusIcon = () => {
-        switch (status.type) {
-            case 'overdue':
-                return warningOutline;
-            case 'urgent':
-                return timeOutline;
-            case 'normal':
-                return checkmarkCircleOutline;
+    // Закрыть модальное окно
+    const handleClose = () => {
+        setShowActOrder(false);
+        setShowActForm(false);
+        onClose();
+    };
+
+    // Получить цвет статуса
+    const getStatusColor = (status: string) => {
+        switch (status.toLowerCase()) {
+            case 'выполнен':
+                return 'success';
+            case 'в работе':
+                return 'warning';
+            case 'отменен':
+                return 'danger';
             default:
-                return documentTextOutline;
+                return 'medium';
         }
     };
 
-    const formatDateFull = (dateString: string): string => {
-        if (!dateString) return 'Не указано';
-        
+    // Получить цвет приоритета
+    const getPriorityColor = (priority: string) => {
+        switch (priority.toLowerCase()) {
+            case 'высокий':
+                return 'danger';
+            case 'средний':
+                return 'warning';
+            case 'низкий':
+                return 'success';
+            default:
+                return 'medium';
+        }
+    };
+
+    // Форматирование даты
+    const formatDate = (dateString: string) => {
         const date = new Date(dateString);
-        return date.toLocaleString('ru-RU', {
+        return date.toLocaleDateString('ru-RU', {
             day: '2-digit',
             month: '2-digit',
-            year: 'numeric',
+            year: 'numeric'
+        });
+    };
+
+    // Форматирование времени
+    const formatTime = (dateString: string) => {
+        const date = new Date(dateString);
+        return date.toLocaleTimeString('ru-RU', {
             hour: '2-digit',
             minute: '2-digit'
         });
     };
 
-    // Подготовка данных для актa-наряда
-// Подготовка данных для актa-наряда
+    // Подготовка данных для печатной формы акта-наряда
     const prepareActData = () => {
         // Извлекаем компоненты адреса из строки адреса
         const addressParts = invoice.address.split(',').map(part => part.trim());
@@ -155,171 +171,234 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
                 executor: '',
                 executionDate: new Date().toISOString(),
                 executionTime: '',
-                disconnectedEquipment: '',
-                representativeSignature: {
-                    name: '',
-                    position: 'Представитель эксплуатационной организации'
-                },
-                subscriberSignature: {
-                    name: '',
-                    position: 'Ответственный квартиросъёмщик (абонент)'
-                }
+                disconnectedEquipment: ''
             },
             reconnection: {
                 reconnectionDate: '',
                 reconnectionBy: '',
                 reconnectionOrder: '',
-                apartment: apartment,
-                house: house,
-                street: street,
-                subscriber: '',
-                representativeSignature: {
-                    name: '',
-                    position: 'Представитель эксплуатационной организации'
-                },
-                subscriberSignature: {
-                    name: '',
-                    position: 'Ответственный квартиросъёмщик (абонент)'
-                }
+                subscriber: ''
             }
         };
     };
-    
+
+    // Подготовка данных для печатной формы акта выполненных работ
+    const prepareActFormData = () => {
+        // Извлекаем компоненты адреса из строки адреса
+        const addressParts = invoice.address.split(',').map(part => part.trim());
+        
+        // Пытаемся извлечь улицу, дом, квартиру из адреса
+        let street = '';
+        let house = '';
+        let apartment = '';
+        
+        addressParts.forEach(part => {
+            if (part.includes('ул.') || part.includes('улица')) {
+                street = part.replace(/ул\.|улица/gi, '').trim();
+            } else if (part.includes('д.') || part.includes('дом')) {
+                house = part.replace(/д\.|дом/gi, '').trim();
+            } else if (part.includes('кв.') || part.includes('квартира')) {
+                apartment = part.replace(/кв\.|квартира/gi, '').trim();
+            }
+        });
+
+        // Если не удалось распарсить, используем весь адрес как улицу
+        if (!street && !house) {
+            street = invoice.address;
+        }
+
+        // Создаем список услуг
+        const services = [
+            {
+                id: '1',
+                name: invoice.service || 'Техническое обслуживание газового оборудования',
+                unit: 'усл.',
+                quantity: 1,
+                price: invoice.amount || 0,
+                total: invoice.amount || 0
+            }
+        ];
+
+        return {
+            actNumber: invoice.number,
+            date: new Date().toISOString(),
+            customer: {
+                name: '', // ФИО заказчика - нужно добавить в данные заявки
+                address: invoice.address,
+                apartment: apartment,
+                house: house,
+                street: street
+            },
+            executor: {
+                name: '', // ФИО исполнителя - заполняется вручную
+                position: 'слесарь',
+                organization: 'ООО "СахаТрансНефтеГаз"'
+            },
+            services: services,
+            total: invoice.amount || 0,
+            workPeriod: {
+                startDate: new Date().toISOString(),
+                endDate: new Date().toISOString()
+            },
+            quality: 'отличное',
+            notes: invoice.notes || ''
+        };
+    };
+
     return (
-        <IonModal isOpen={isOpen} onDidDismiss={handleDismiss} className="invoice-modal-compact">
+        <IonModal isOpen={isOpen} onDidDismiss={handleClose} className="invoice-modal">
             <IonHeader>
-                <IonToolbar className="modal-header-compact">
-                    <IonTitle className="modal-title-compact">
-                        <div className="modal-title-content">
-                            <IonIcon 
-                                icon={currentView === 'act' ? printOutline : businessOutline} 
-                                className="modal-title-icon" 
-                            />
-                            <span>
-                                {currentView === 'act' 
-                                    ? `Акт-наряд № ${invoice.number}`
-                                    : `Заявка № ${invoice.number}`
-                                }
-                            </span>
-                        </div>
+                <IonToolbar>
+                    <IonTitle>
+                        {!showActOrder && !showActForm ? `Заявка №${invoice.number}` : 
+                         showActOrder ? 'Акт-наряд' : 'Акт выполненных работ'}
                     </IonTitle>
-                    <IonButtons slot="end">
-                        {currentView === 'act' && (
-                            <IonButton onClick={handleBackToInvoice} className="modal-close-btn">
-                                <IonIcon icon={arrowBackOutline} />
-                            </IonButton>
-                        )}
-                        <IonButton onClick={handleDismiss} className="modal-close-btn">
-                            <IonIcon icon={close} />
-                        </IonButton>
-                    </IonButtons>
                 </IonToolbar>
             </IonHeader>
-
-            <IonContent className="modal-content-compact">
-                {currentView === 'invoice' ? (
-                    /* Просмотр заявки */
-                    <IonCard className="invoice-info-card">
-                        <IonCardContent className="invoice-info-content">
-                            {/* Заголовок с номером и статусом */}
-                            <div className="invoice-header-section">
-                                <div className="invoice-number">
-                                    <IonIcon icon={getStatusIcon()} className="status-icon" />
-                                    <span>Заявка № {invoice.number}</span>
-                                </div>
-                                <IonBadge color={status.color} className="status-badge-compact">
-                                    {status.label}
-                                </IonBadge>
-                            </div>
-
-                            {/* Основная информация */}
-                            <div className="invoice-details-section">
-                                <div className="detail-item">
-                                    <div className="detail-icon">
-                                        <IonIcon icon={locationOutline} />
-                                    </div>
-                                    <div className="detail-content">
-                                        <span className="detail-label">Адрес</span>
-                                        <span className="detail-value">{invoice.address}</span>
+            
+            <IonContent>
+                {!showActOrder && !showActForm ? (
+                    /* Основное содержимое заявки */
+                    <div className="invoice-content">
+                        {/* Заголовок с номером и статусом */}
+                        <IonCard>
+                            <IonCardHeader>
+                                <div className="invoice-header">
+                                    <IonCardTitle>Заявка №{invoice.number}</IonCardTitle>
+                                    <div className="status-badges">
+                                        <IonBadge color={getStatusColor(invoice.status)}>
+                                            {invoice.status}
+                                        </IonBadge>
+                                        <IonBadge color={getPriorityColor(invoice.priority)}>
+                                            {invoice.priority}
+                                        </IonBadge>
                                     </div>
                                 </div>
+                            </IonCardHeader>
+                        </IonCard>
 
-                                <div className="detail-item clickable" onClick={handlePhoneClick}>
-                                    <div className="detail-icon phone-icon">
-                                        <IonIcon icon={callOutline} />
-                                    </div>
-                                    <div className="detail-content">
-                                        <span className="detail-label">Телефон</span>
-                                        <span className="detail-value phone-value">{formatPhone(invoice.phone)}</span>
-                                    </div>
-                                </div>
+                        {/* Информация о клиенте */}
+                        <IonCard>
+                            <IonCardHeader>
+                                <IonCardTitle>
+                                    <IonIcon icon={personOutline} />
+                                    Информация о клиенте
+                                </IonCardTitle>
+                            </IonCardHeader>
+                            <IonCardContent>
+                                <IonItem lines="none">
+                                    <IonIcon icon={personOutline} slot="start" />
+                                    <IonLabel>
+                                        <h3>Клиент</h3>
+                                        <p>{invoice.customerName}</p>
+                                    </IonLabel>
+                                </IonItem>
+                                
+                                <IonItem lines="none">
+                                    <IonIcon icon={locationOutline} slot="start" />
+                                    <IonLabel>
+                                        <h3>Адрес</h3>
+                                        <p>{invoice.address}</p>
+                                    </IonLabel>
+                                </IonItem>
+                                
+                                <IonItem lines="none">
+                                    <IonIcon icon={callOutline} slot="start" />
+                                    <IonLabel>
+                                        <h3>Телефон</h3>
+                                        <p>{invoice.phone}</p>
+                                    </IonLabel>
+                                </IonItem>
+                            </IonCardContent>
+                        </IonCard>
 
-                                {invoice.service && (
-                                    <div className="detail-item">
-                                        <div className="detail-icon">
-                                            <IonIcon icon={informationCircleOutline} />
-                                        </div>
-                                        <div className="detail-content">
-                                            <span className="detail-label">Услуга</span>
-                                            <span className="detail-value">{invoice.service}</span>
-                                        </div>
-                                    </div>
+                        {/* Детали заявки */}
+                        <IonCard>
+                            <IonCardHeader>
+                                <IonCardTitle>
+                                    <IonIcon icon={documentTextOutline} />
+                                    Детали заявки
+                                </IonCardTitle>
+                            </IonCardHeader>
+                            <IonCardContent>
+                                <IonItem lines="none">
+                                    <IonIcon icon={documentTextOutline} slot="start" />
+                                    <IonLabel>
+                                        <h3>Услуга</h3>
+                                        <p>{invoice.service}</p>
+                                    </IonLabel>
+                                </IonItem>
+                                
+                                <IonItem lines="none">
+                                    <IonIcon icon={timeOutline} slot="start" />
+                                    <IonLabel>
+                                        <h3>Дата создания</h3>
+                                        <p>{formatDate(invoice.date)} в {formatTime(invoice.date)}</p>
+                                    </IonLabel>
+                                </IonItem>
+                                
+                                <IonItem lines="none">
+                                    <IonIcon icon={cashOutline} slot="start" />
+                                    <IonLabel>
+                                        <h3>Сумма</h3>
+                                        <p>{invoice.amount.toLocaleString('ru-RU')} ₽</p>
+                                    </IonLabel>
+                                </IonItem>
+                                
+                                {invoice.notes && (
+                                    <IonItem lines="none">
+                                        <IonIcon icon={informationCircleOutline} slot="start" />
+                                        <IonLabel>
+                                            <h3>Примечания</h3>
+                                            <p>{invoice.notes}</p>
+                                        </IonLabel>
+                                    </IonItem>
                                 )}
+                            </IonCardContent>
+                        </IonCard>
 
-                                <div className="detail-item">
-                                    <div className="detail-icon">
-                                        <IonIcon icon={calendarOutline} />
-                                    </div>
-                                    <div className="detail-content">
-                                        <span className="detail-label">Срок выполнения</span>
-                                        <span className={`detail-value term-${status.type}`}>
-                                            {formatDateFull(invoice.term_end)}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div className="detail-item">
-                                    <div className="detail-icon">
-                                        <IonIcon icon={documentTextOutline} />
-                                    </div>
-                                    <div className="detail-content">
-                                        <span className="detail-label">Линия / Дата создания</span>
-                                        <span className="detail-value">
-                                            {invoice.lineno} • {formatDateFull(invoice.term_begin)}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Кнопки действий */}
-                            <div className="invoice-actions-section">
-                                <IonButton
-                                    expand="block"
-                                    onClick={handleShowAct}
-                                    className="action-button-call"
-                                    size="default"
-                                >
-                                    <IonIcon icon={printOutline} slot="start" />
-                                    Создать акт-наряд
-                                </IonButton>
-
-                                <IonButton
-                                    expand="block"
-                                    fill="outline"
-                                    onClick={handleDismiss}
-                                    className="action-button-close"
-                                    size="default"
-                                >
-                                    <IonIcon icon={close} slot="start" />
-                                    Закрыть
-                                </IonButton>
-                            </div>
-                        </IonCardContent>
-                    </IonCard>
+                        {/* Действия */}
+                        <div className="invoice-actions">
+                            <IonButton 
+                                expand="block" 
+                                fill="outline"
+                                onClick={handleShowActOrder}
+                            >
+                                <IonIcon icon={documentTextOutline} slot="start" />
+                                Создать акт-наряд
+                            </IonButton>
+                            
+                            <IonButton 
+                                expand="block" 
+                                fill="outline"
+                                onClick={handleShowActForm}
+                                color="secondary"
+                            >
+                                <IonIcon icon={checkboxOutline} slot="start" />
+                                Создать акт выполненных работ
+                            </IonButton>
+                            
+                            <IonButton 
+                                expand="block" 
+                                fill="clear"
+                                onClick={onClose}
+                            >
+                                <IonIcon icon={closeOutline} slot="start" />
+                                Закрыть
+                            </IonButton>
+                        </div>
+                    </div>
+                ) : showActOrder ? (
+                    /* Печатная форма акта-наряда */
+                    <PrintableActOrder 
+                        data={prepareActData()}
+                        onBack={handleBackToInvoice}
+                        isModal={true}
+                    />
                 ) : (
-                    /* Форма акта-наряда */
-                    <ActOrderForm 
-                        initialData={prepareActData()}
+                    /* Печатная форма акта выполненных работ */
+                    <PrintableActForm 
+                        data={prepareActFormData()}
                         onBack={handleBackToInvoice}
                         isModal={true}
                     />
