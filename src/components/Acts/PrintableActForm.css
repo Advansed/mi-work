@@ -1,0 +1,503 @@
+/* ============================================
+   ПЕЧАТНАЯ ФОРМА АКТ-НАРЯДА
+   ============================================ */
+
+.printable-act {
+    background: #f8fafc;
+    min-height: 100vh;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.printable-act-modal {
+    background: var(--ion-background-color);
+    min-height: auto;
+}
+
+/* ============================================
+   КНОПКИ УПРАВЛЕНИЯ (НЕ ПЕЧАТАЮТСЯ)
+   ============================================ */
+
+.print-controls {
+    padding: 16px;
+    background: var(--ion-background-color);
+    border-bottom: 1px solid var(--ion-color-step-150);
+}
+
+/* ============================================
+   ОСНОВНАЯ ФОРМА
+   ============================================ */
+
+.act-form {
+    background: white;
+    max-width: 210mm; /* A4 ширина */
+    min-height: 297mm; /* A4 высота */
+    margin: 0 auto;
+    padding: 20mm;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    line-height: 1.4;
+    color: #000;
+    position: relative;
+}
+
+.printable-act-modal .act-form {
+    box-shadow: none;
+    margin: 0;
+    padding: 16px;
+    min-height: auto;
+}
+
+/* ============================================
+   ШАПКА ДОКУМЕНТА
+   ============================================ */
+
+.act-header {
+    margin-bottom: 25px;
+}
+
+.company-logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    justify-content: center;
+}
+
+.logo-circle {
+    width: 50px;
+    height: 50px;
+    background: #1E3A8A;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.company-info {
+    text-align: left;
+}
+
+.company-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1E3A8A;
+    letter-spacing: 1px;
+}
+
+.department {
+    font-size: 16px;
+    color: #666;
+    font-weight: bold;
+}
+
+/* ============================================
+   ЗАГОЛОВОК ДОКУМЕНТА
+   ============================================ */
+
+.document-title {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.document-title h1 {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0 0 10px 0;
+    color: #000;
+}
+
+.document-title h2 {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0 0 20px 0;
+    line-height: 1.3;
+    color: #000;
+}
+
+.date-line {
+    font-size: 14px;
+    margin: 20px 0;
+    color: #000;
+}
+
+/* ============================================
+   ОСНОВНОЕ СОДЕРЖАНИЕ
+   ============================================ */
+
+.act-content {
+    line-height: 1.6;
+    color: #000;
+}
+
+.content-line {
+    margin: 8px 0;
+    font-size: 14px;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 2px;
+}
+
+.spacing-top {
+    margin-top: 15px;
+}
+
+/* ============================================
+   ПОЛЯ ВВОДА
+   ============================================ */
+
+.field-value {
+    border-bottom: 1px solid #000;
+    padding: 0 2px;
+    min-height: 18px;
+    display: inline-block;
+    font-weight: normal;
+    color: #000;
+    position: relative;
+}
+
+.field-value.small {
+    min-width: 40px;
+}
+
+.field-value.medium {
+    min-width: 150px;
+}
+
+.field-value.long {
+    min-width: 200px;
+}
+
+.field-value.extra-long {
+    min-width: 300px;
+}
+
+.field-value.signature {
+    min-width: 180px;
+}
+
+/* Убираем подчеркивание для пустых полей */
+.field-value:empty::after {
+    content: attr(data-placeholder);
+    border-bottom: 1px solid #000;
+    padding: 0 2px;
+}
+
+/* ============================================
+   ПОДПИСИ ПОЛЕЙ
+   ============================================ */
+
+.field-description {
+    font-size: 10px;
+    color: #666;
+    font-style: italic;
+    text-align: center;
+    margin: 2px 0 8px 0;
+    line-height: 1.2;
+}
+
+/* ============================================
+   СЕКЦИИ ПОДПИСЕЙ
+   ============================================ */
+
+.signatures-section {
+    margin: 20px 0;
+}
+
+.signature-line {
+    margin: 8px 0;
+    font-size: 14px;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.signatures-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+/* ============================================
+   СЕКЦИЯ ВЫПОЛНЕНИЯ
+   ============================================ */
+
+.execution-section {
+    margin: 25px 0;
+    padding: 15px 0;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+.signatures-execution {
+    margin-top: 15px;
+}
+
+/* ============================================
+   СЕКЦИЯ ПОДКЛЮЧЕНИЯ
+   ============================================ */
+
+.reconnection-section {
+    margin: 25px 0;
+}
+
+.signatures-reconnection {
+    margin-top: 15px;
+}
+
+/* ============================================
+   ПРИМЕЧАНИЕ
+   ============================================ */
+
+.note-section {
+    margin-top: 30px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #000;
+    border-top: 1px solid #ccc;
+    padding-top: 15px;
+}
+
+/* ============================================
+   СТИЛИ ДЛЯ ПЕЧАТИ
+   ============================================ */
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    .printable-act,
+    .printable-act-modal {
+        background: white !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .act-form {
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 15mm !important;
+        max-width: none !important;
+        min-height: auto !important;
+        font-size: 12px !important;
+    }
+    
+    .print-controls {
+        display: none !important;
+    }
+    
+    /* Обеспечиваем разрывы страниц */
+    .execution-section {
+        page-break-inside: avoid;
+    }
+    
+    .reconnection-section {
+        page-break-inside: avoid;
+    }
+    
+    .signatures-section {
+        page-break-inside: avoid;
+    }
+    
+    /* Настройки для печати */
+    body {
+        -webkit-print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+    
+    .company-name {
+        font-size: 16px !important;
+    }
+    
+    .department {
+        font-size: 14px !important;
+    }
+    
+    .document-title h1 {
+        font-size: 14px !important;
+    }
+    
+    .document-title h2 {
+        font-size: 12px !important;
+    }
+    
+    .content-line {
+        font-size: 12px !important;
+    }
+    
+    .field-description {
+        font-size: 9px !important;
+    }
+    
+    .note-section {
+        font-size: 10px !important;
+    }
+}
+
+/* ============================================
+   МОБИЛЬНАЯ АДАПТАЦИЯ
+   ============================================ */
+
+@media (max-width: 768px) {
+    .act-form {
+        padding: 15px;
+        font-size: 13px;
+    }
+    
+    .printable-act-modal .act-form {
+        padding: 12px;
+        font-size: 12px;
+    }
+    
+    .company-logo {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .logo-circle {
+        width: 40px;
+        height: 40px;
+        font-size: 10px;
+    }
+    
+    .company-name {
+        font-size: 16px;
+    }
+    
+    .department {
+        font-size: 14px;
+    }
+    
+    .document-title h1 {
+        font-size: 14px;
+    }
+    
+    .document-title h2 {
+        font-size: 12px;
+    }
+    
+    .content-line {
+        font-size: 12px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .field-value {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .signature-line {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .print-controls ion-col {
+        padding: 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .act-form {
+        padding: 10px;
+        font-size: 11px;
+    }
+    
+    .company-name {
+        font-size: 14px;
+    }
+    
+    .department {
+        font-size: 12px;
+    }
+    
+    .document-title h1 {
+        font-size: 12px;
+    }
+    
+    .document-title h2 {
+        font-size: 11px;
+    }
+    
+    .content-line {
+        font-size: 11px;
+    }
+    
+    .field-description {
+        font-size: 9px;
+    }
+}
+
+/* ============================================
+   ТЕМНАЯ ТЕМА
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+    .printable-act-modal {
+        background: #1a1a1a;
+    }
+    
+    .printable-act-modal .act-form {
+        background: #2a2a2a;
+        color: #e5e5e5;
+    }
+    
+    .printable-act-modal .field-value {
+        border-bottom-color: #666;
+        color: #e5e5e5;
+    }
+    
+    .printable-act-modal .field-description {
+        color: #aaa;
+    }
+    
+    .printable-act-modal .execution-section,
+    .printable-act-modal .note-section {
+        border-color: #666;
+    }
+}
+
+/* ============================================
+   УЛУЧШЕНИЯ ДЛЯ ЧИТАЕМОСТИ
+   ============================================ */
+
+/* Более четкие границы полей */
+.field-value {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+}
+
+/* Лучшее выравнивание текста */
+.content-line {
+    word-spacing: 1px;
+}
+
+/* Отступы между секциями */
+.execution-section,
+.reconnection-section {
+    margin: 30px 0;
+}
+
+/* Четкие линии подписей */
+.signature-line .field-value {
+    border-bottom: 1px solid #000;
+    margin-left: 5px;
+}
+
+/* Выделение важных элементов */
+.document-title h1,
+.signatures-title {
+    font-weight: bold;
+}
+
+/* Правильное позиционирование полей */
+.field-value:not(:empty) {
+    background: transparent;
+    border-bottom: 1px solid #000;
+}
