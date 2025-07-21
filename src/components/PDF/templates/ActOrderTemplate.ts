@@ -1,5 +1,5 @@
 // ============================================
-// ШАБЛОН АКТ-НАРЯДА НА ОТКЛЮЧЕНИЕ ГАЗОВОГО ОБОРУДОВАНИЯ
+// ИСПРАВЛЕННЫЙ ШАБЛОН АКТ-НАРЯДА
 // ============================================
 
 import { BaseTemplate } from './BaseTemplate';
@@ -12,366 +12,424 @@ export class ActOrderTemplate extends BaseTemplate {
      * Основной метод рендеринга документа
      */
     public renderDocument(data: ActOrderData): void {
-        this.renderHeader();
-        this.renderTitle(data.actNumber, data.date);
-        this.renderRepresentativeSection(data.representative);
-        this.renderOrderSection(data.order);
-        this.renderExecutionSection(data.execution);
-        this.renderReconnectionSection(data.reconnection);
-        this.renderFooter();
+        try {
+            this.renderHeader();
+            this.renderTitle(data.actNumber, data.date);
+            this.renderRepresentativeSection(data.representative);
+            this.renderOrderSection(data.order);
+            this.renderExecutionSection(data.execution);
+            this.renderReconnectionSection(data.reconnection);
+            this.renderFooter();
+        } catch (error) {
+            console.error('Ошибка рендеринга документа:', error);
+            // Добавляем базовую информацию при ошибке
+            this.doc.text('Ошибка генерации документа', 20, 50);
+            this.doc.text(`АКТ-НАРЯД № ${data.actNumber || 'Не указан'}`, 20, 70);
+        }
     }
 
     /**
      * Рендерит заголовок с логотипом компании
      */
     private renderHeader(): void {
-        // Логотип компании (можно заменить на реальное изображение)
-        this.doc.setFillColor(this.config.colors.secondary);
-        this.doc.circle(this.config.margins.left + 15, this.currentY + 15, 12, 'F');
-        
-        // Иконка здания в логотипе
-        this.doc.setTextColor('#FFFFFF');
-        this.doc.setFontSize(16);
-        this.doc.text('🏢', this.config.margins.left + 11, this.currentY + 19);
+        try {
+            // Логотип компании (прямоугольник вместо круга)
+            this.doc.setFillColor('#F97316'); // Оранжевый цвет
+            this.doc.rect(this.config.margins.left, this.currentY, 24, 24, 'F');
+            
+            // Текст в логотипе
+            this.doc.setTextColor('#FFFFFF');
+            this.doc.setFontSize(14);
+            this.doc.text('СТНГ', this.config.margins.left + 3, this.currentY + 15);
 
-        // Название компании
-        this.setTitleStyle();
-        this.doc.setTextColor(this.config.colors.primary);
-        this.doc.text(CORPORATE_SETTINGS.companyName, this.config.margins.left + 35, this.currentY + 12);
-        
-        // Подразделение
-        this.doc.setFontSize(14);
-        this.doc.text(CORPORATE_SETTINGS.department, this.config.margins.left + 35, this.currentY + 20);
+            // Название компании
+            this.doc.setTextColor('#000000');
+            this.doc.setFont('times', 'bold');
+            this.doc.setFontSize(16);
+            this.doc.text('САХАТРАНСНЕФТЕГАЗ', this.config.margins.left + 30, this.currentY + 12);
+            
+            // Подразделение
+            this.doc.setFontSize(12);
+            this.doc.text('УСД', this.config.margins.left + 30, this.currentY + 20);
 
-        // Линия под заголовком
-        this.currentY += 35;
-        this.addLine(
-            this.config.margins.left, 
-            this.currentY, 
-            this.pageWidth - this.config.margins.right, 
-            this.currentY,
-            this.config.colors.primary
-        );
-        
-        this.addSpacing(10);
-        this.resetTextStyle();
+            // Сброс стилей
+            this.doc.setTextColor('#000000');
+            this.doc.setFont('times', 'normal');
+            this.doc.setFontSize(12);
+
+            this.currentY += 35;
+            
+            // Линия под заголовком
+            this.doc.setDrawColor('#1E3A8A');
+            this.doc.setLineWidth(1);
+            this.doc.line(
+                this.config.margins.left, 
+                this.currentY, 
+                this.pageWidth - this.config.margins.right, 
+                this.currentY
+            );
+            
+            this.addSpacing(10);
+        } catch (error) {
+            console.error('Ошибка рендеринга заголовка:', error);
+            this.currentY += 30;
+        }
     }
 
     /**
      * Рендерит заголовок документа
      */
     private renderTitle(actNumber: string, date: string): void {
-        // Основной заголовок
-        this.setTitleStyle();
-        
-        // АКТ-НАРЯД №
-        const titleY = this.currentY;
-        this.doc.text('АКТ-НАРЯД №', this.config.margins.left + 60, titleY);
-        
-        // Поле для номера
-        this.addInputField(
-            this.config.margins.left + 110, 
-            titleY - 3, 
-            30, 
-            actNumber
-        );
+        try {
+            const centerX = this.pageWidth / 2;
+            
+            // Основной заголовок
+            this.doc.setFont('times', 'bold');
+            this.doc.setFontSize(16);
+            
+            // АКТ-НАРЯД №
+            const titleText = `АКТ-НАРЯД № ${actNumber || '___________'}`;
+            const titleWidth = this.doc.getTextWidth(titleText);
+            this.doc.text(titleText, centerX - titleWidth / 2, this.currentY);
+            
+            this.addSpacing(8);
 
-        this.addSpacing(8);
+            // Подзаголовок
+            this.doc.setFontSize(14);
+            const subtitle1 = 'НА ОТКЛЮЧЕНИЕ ГАЗОИСПОЛЬЗУЮЩЕГО';
+            const subtitle2 = 'ОБОРУДОВАНИЯ ЖИЛЫХ ЗДАНИЙ';
+            
+            const subtitle1Width = this.doc.getTextWidth(subtitle1);
+            const subtitle2Width = this.doc.getTextWidth(subtitle2);
+            
+            this.doc.text(subtitle1, centerX - subtitle1Width / 2, this.currentY);
+            this.addSpacing(6);
+            this.doc.text(subtitle2, centerX - subtitle2Width / 2, this.currentY);
+            
+            this.addSpacing(12);
 
-        // Подзаголовок
-        this.addText(
-            CORPORATE_SETTINGS.documentSubtitle, 
-            0, 
-            undefined, 
-            { 
-                align: 'center', 
-                fontSize: 14, 
-                fontStyle: 'bold'
-            }
-        );
+            // Дата
+            this.doc.setFont('times', 'normal');
+            this.doc.setFontSize(12);
+            
+            const dateText = this.formatDateString(date);
+            const dateFullText = `«${dateText.day}» ${dateText.month} ${dateText.year} г.`;
+            const dateWidth = this.doc.getTextWidth(dateFullText);
+            this.doc.text(dateFullText, centerX - dateWidth / 2, this.currentY);
 
-        this.addSpacing(8);
-
-        // Дата
-        const dateText = `«`;
-        const dateY = this.currentY;
-        
-        this.resetTextStyle();
-        this.doc.text(dateText, this.config.margins.left + 60, dateY);
-        
-        // Извлекаем день из даты
-        let day = '';
-        if (date) {
-            const dateObj = new Date(date);
-            day = dateObj.getDate().toString();
+            this.addSpacing();
+        } catch (error) {
+            console.error('Ошибка рендеринга заголовка документа:', error);
+            this.doc.text('АКТ-НАРЯД', this.config.margins.left, this.currentY);
+            this.addSpacing();
         }
-        
-        this.addInputField(this.config.margins.left + 70, dateY - 3, 15, day);
-        this.doc.text('»', this.config.margins.left + 90, dateY);
-        
-        // Месяц
-        let month = '';
-        if (date) {
-            const dateObj = new Date(date);
-            const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
-                          'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
-            month = months[dateObj.getMonth()];
-        }
-        
-        this.addInputField(this.config.margins.left + 95, dateY - 3, 40, month);
-        
-        // Год
-        let year = '';
-        if (date) {
-            const dateObj = new Date(date);
-            year = dateObj.getFullYear().toString().slice(-2);
-        }
-        
-        this.addInputField(this.config.margins.left + 140, dateY - 3, 15, year);
-        this.doc.text('г.', this.config.margins.left + 160, dateY);
-
-        this.addSpacing();
     }
 
     /**
      * Рендерит секцию представителя
      */
     private renderRepresentativeSection(representative: any): void {
-        const startY = this.currentY;
-        
-        // Представителю эксплуатационной организации
-        this.doc.text('Представителю эксплуатационной организации', this.config.margins.left, startY);
-        this.addInputField(this.config.margins.left + 110, startY - 3, 80, representative.name);
-        
-        this.addSpacing(5);
-        
-        // Подпись под полем
-        this.doc.setFontSize(10);
-        this.doc.setTextColor('#666666');
-        this.doc.text('ф.и.о., должность', this.config.margins.left + 120, this.currentY);
-        this.resetTextStyle();
-        
-        this.addSpacing(8);
-        
-        // ввиду
-        this.doc.text('ввиду', this.config.margins.left, this.currentY);
-        this.addTextArea(this.config.margins.left + 20, this.currentY - 5, 150, 20, representative.reason);
-        
-        this.addSpacing(25);
-        
-        // поручается отключить
-        this.doc.text('поручается отключить', this.config.margins.left, this.currentY);
-        this.addInputField(this.config.margins.left + 60, this.currentY - 3, 120, representative.equipment || '');
-        
-        this.addSpacing(5);
-        this.doc.setFontSize(10);
-        this.doc.setTextColor('#666666');
-        this.doc.text('наименование приборов', this.config.margins.left + 100, this.currentY);
-        this.resetTextStyle();
-        
-        this.addSpacing();
+        try {
+            // Представителю эксплуатационной организации
+            const line1 = `Представителю эксплуатационной организации ${representative.name || '_'.repeat(30)}`;
+            this.addWrappedText(line1);
+            
+            this.addSpacing(3);
+            
+            // Подпись под полем
+            this.doc.setFontSize(10);
+            this.doc.setTextColor('#666666');
+            this.doc.text('ф.и.о., должность', this.config.margins.left + 60, this.currentY);
+            this.doc.setTextColor('#000000');
+            this.doc.setFontSize(12);
+            
+            this.addSpacing(8);
+            
+            // ввиду
+            const reason = representative.reason || 'плановое техническое обслуживание';
+            const reasonText = `ввиду ${reason}`;
+            this.addWrappedText(reasonText);
+            
+            this.addSpacing(8);
+            
+            // поручается отключить
+            const equipment = representative.equipment || 'газовое оборудование';
+            const equipmentText = `поручается отключить ${equipment}`;
+            this.addWrappedText(equipmentText);
+            
+            this.addSpacing(5);
+            this.doc.setFontSize(10);
+            this.doc.setTextColor('#666666');
+            this.doc.text('наименование приборов', this.config.margins.left + 20, this.currentY);
+            this.doc.setTextColor('#000000');
+            this.doc.setFontSize(12);
+            
+            this.addSpacing();
+        } catch (error) {
+            console.error('Ошибка рендеринга секции представителя:', error);
+            this.doc.text('Представитель организации', this.config.margins.left, this.currentY);
+            this.addSpacing();
+        }
     }
 
     /**
      * Рендерит секцию наряда
      */
     private renderOrderSection(order: any): void {
-        // в квартире № ... дома ... по ул.
-        const apartmentY = this.currentY;
-        this.doc.text('в квартире №', this.config.margins.left, apartmentY);
-        this.addInputField(this.config.margins.left + 30, apartmentY - 3, 20, order.apartment);
-        
-        this.doc.text('дома', this.config.margins.left + 55, apartmentY);
-        this.addInputField(this.config.margins.left + 75, apartmentY - 3, 20, order.house);
-        
-        this.doc.text('по ул.', this.config.margins.left + 100, apartmentY);
-        this.addInputField(this.config.margins.left + 115, apartmentY - 3, 70, order.street);
-        
-        this.addSpacing(8);
-        
-        // у абонента
-        this.doc.text('у абонента', this.config.margins.left, this.currentY);
-        this.addInputField(this.config.margins.left + 30, this.currentY - 3, 120, order.subscriber);
-        
-        this.addSpacing(5);
-        this.doc.setFontSize(10);
-        this.doc.setTextColor('#666666');
-        this.doc.text('ф.и.о.', this.config.margins.left + 80, this.currentY);
-        this.resetTextStyle();
-        
-        this.addSpacing(15);
-        
-        // Наряд выдал / получил
-        const orderY = this.currentY;
-        this.doc.text('Наряд выдал', this.config.margins.left, orderY);
-        this.addInputField(this.config.margins.left + 35, orderY - 3, 60, order.orderGiver?.name);
-        
-        this.doc.text('Наряд получил', this.config.margins.left + 105, orderY);
-        this.addInputField(this.config.margins.left + 150, orderY - 3, 60, order.orderReceiver?.name);
-        
-        this.addSpacing(5);
-        this.doc.setFontSize(10);
-        this.doc.setTextColor('#666666');
-        this.doc.text('должность, ф.и.о., подпись', this.config.margins.left + 40, this.currentY);
-        this.doc.text('должность, ф.и.о., подпись', this.config.margins.left + 155, this.currentY);
-        this.resetTextStyle();
-        
-        this.addSpacing();
+        try {
+            // Адрес
+            const addressText = `в квартире № ${order.apartment || '___'} дома ${order.house || '___'} по ул. ${order.street || '_'.repeat(30)}`;
+            this.addWrappedText(addressText);
+            
+            this.addSpacing(8);
+            
+            // у абонента
+            const subscriberText = `у абонента ${order.subscriber || '_'.repeat(40)}`;
+            this.addWrappedText(subscriberText);
+            
+            this.addSpacing(5);
+            this.doc.setFontSize(10);
+            this.doc.setTextColor('#666666');
+            this.doc.text('ф.и.о.', this.config.margins.left + 20, this.currentY);
+            this.doc.setTextColor('#000000');
+            this.doc.setFontSize(12);
+            
+            this.addSpacing(15);
+            
+            // Наряд выдал / получил
+            const giverText = `Наряд выдал ${order.orderGiver?.name || '_'.repeat(20)}`;
+            const receiverText = `Наряд получил ${order.orderReceiver?.name || '_'.repeat(20)}`;
+            
+            this.addWrappedText(giverText);
+            this.addSpacing(5);
+            this.addWrappedText(receiverText);
+            
+            this.addSpacing(5);
+            this.doc.setFontSize(10);
+            this.doc.setTextColor('#666666');
+            this.doc.text('должность, ф.и.о., подпись', this.config.margins.left + 20, this.currentY);
+            this.doc.setTextColor('#000000');
+            this.doc.setFontSize(12);
+            
+            this.addSpacing();
+        } catch (error) {
+            console.error('Ошибка рендеринга секции наряда:', error);
+            this.doc.text('Задание на работы', this.config.margins.left, this.currentY);
+            this.addSpacing();
+        }
     }
 
     /**
      * Рендерит секцию выполнения
      */
     private renderExecutionSection(execution: any): void {
-        // Фон для секции выполнения
-        this.doc.setFillColor('#f9f9f9');
-        this.doc.rect(this.config.margins.left - 5, this.currentY - 5, this.contentWidth + 10, 60, 'F');
-        
-        // Мною
-        this.doc.text('Мною', this.config.margins.left, this.currentY);
-        this.addInputField(this.config.margins.left + 20, this.currentY - 3, 120, execution.executor);
-        
-        this.addSpacing(5);
-        this.doc.setFontSize(10);
-        this.doc.setTextColor('#666666');
-        this.doc.text('должность, ф.и.о.', this.config.margins.left + 60, this.currentY);
-        this.resetTextStyle();
-        
-        this.addSpacing(8);
-        
-        // Дата и время выполнения
-        const execY = this.currentY;
-        this.doc.text('«', this.config.margins.left, execY);
-        
-        let execDay = '';
-        if (execution.executionDate) {
-            const dateObj = new Date(execution.executionDate);
-            execDay = dateObj.getDate().toString();
+        try {
+            // Фон для секции выполнения
+            this.doc.setFillColor('#f9f9f9');
+            const sectionHeight = 60;
+            this.doc.rect(this.config.margins.left - 2, this.currentY - 5, this.contentWidth + 4, sectionHeight, 'F');
+            
+            // Мною
+            const executorText = `Мною ${execution.executor || '_'.repeat(40)}`;
+            this.addWrappedText(executorText);
+            
+            this.addSpacing(5);
+            this.doc.setFontSize(10);
+            this.doc.setTextColor('#666666');
+            this.doc.text('должность, ф.и.о.', this.config.margins.left + 20, this.currentY);
+            this.doc.setTextColor('#000000');
+            this.doc.setFontSize(12);
+            
+            this.addSpacing(8);
+            
+            // Дата и время выполнения
+            const execDate = this.formatDateString(execution.executionDate);
+            const execTime = this.formatTimeString(execution.executionTime);
+            
+            const dateTimeText = `«${execDate.day}» ${execDate.month} ${execDate.year} г. в ${execTime.hours} ч. ${execTime.minutes} мин.`;
+            this.addWrappedText(dateTimeText);
+            
+            this.addSpacing(8);
+            
+            // произведено отключение
+            const disconnectionText = `произведено отключение газоиспользующего оборудования ${execution.disconnectedEquipment || '_'.repeat(30)}`;
+            this.addWrappedText(disconnectionText);
+            
+            this.addSpacing(5);
+            this.doc.setFontSize(10);
+            this.doc.setTextColor('#666666');
+            this.doc.text('указать наименование, количество приборов, способ отключения', this.config.margins.left + 20, this.currentY);
+            this.doc.setTextColor('#000000');
+            this.doc.setFontSize(12);
+            
+            this.addSpacing(15);
+            
+            // Подписи
+            this.doc.setFont('times', 'bold');
+            this.doc.text('Подписи:', this.config.margins.left, this.currentY);
+            this.doc.setFont('times', 'normal');
+            this.addSpacing(5);
+            
+            const repSignature = execution.representativeSignature?.name || '_'.repeat(25);
+            const subSignature = execution.subscriberSignature?.name || '_'.repeat(25);
+            
+            this.doc.text(`Представитель эксплуатационной организации ${repSignature}`, this.config.margins.left, this.currentY);
+            this.addSpacing(8);
+            this.doc.text(`Ответственный квартиросъёмщик (абонент) ${subSignature}`, this.config.margins.left, this.currentY);
+            
+            this.addSpacing();
+        } catch (error) {
+            console.error('Ошибка рендеринга секции выполнения:', error);
+            this.doc.text('Выполнение работ', this.config.margins.left, this.currentY);
+            this.addSpacing();
         }
-        
-        this.addInputField(this.config.margins.left + 8, execY - 3, 15, execDay);
-        this.doc.text('»', this.config.margins.left + 28, execY);
-        this.addInputField(this.config.margins.left + 35, execY - 3, 30, '');
-        this.doc.text('20', this.config.margins.left + 70, execY);
-        this.addInputField(this.config.margins.left + 80, execY - 3, 15, '');
-        this.doc.text('г. в', this.config.margins.left + 100, execY);
-        
-        // Время
-        const time = TextUtils.formatTime(execution.executionTime);
-        this.addInputField(this.config.margins.left + 115, execY - 3, 15, time.hours);
-        this.doc.text('ч.', this.config.margins.left + 135, execY);
-        this.addInputField(this.config.margins.left + 145, execY - 3, 15, time.minutes);
-        this.doc.text('мин.', this.config.margins.left + 165, execY);
-        
-        this.addSpacing(8);
-        
-        // произведено отключение
-        this.doc.text('произведено отключение газоиспользующего оборудования', this.config.margins.left, this.currentY);
-        this.addSpacing(5);
-        this.addTextArea(this.config.margins.left, this.currentY, this.contentWidth, 15, execution.disconnectedEquipment);
-        
-        this.addSpacing(20);
-        this.doc.setFontSize(10);
-        this.doc.setTextColor('#666666');
-        this.doc.text('указать наименование, количество приборов, способ отключения', this.config.margins.left + 30, this.currentY);
-        this.resetTextStyle();
-        
-        this.addSpacing(8);
-        
-        // Подписи
-        this.setBoldStyle();
-        this.doc.text('Подписи:', this.config.margins.left, this.currentY);
-        this.resetTextStyle();
-        this.addSpacing(5);
-        
-        this.addSignatureSection([
-            execution.representativeSignature || { name: '', position: 'Представитель эксплуатационной организации' },
-            execution.subscriberSignature || { name: '', position: 'Ответственный квартиросъёмщик (абонент)' }
-        ]);
     }
 
     /**
      * Рендерит секцию подключения
      */
     private renderReconnectionSection(reconnection: any): void {
-        this.addSpacing(10);
-        
-        // Фон для секции подключения
-        this.doc.setFillColor('#f0f8ff');
-        this.doc.rect(this.config.margins.left - 5, this.currentY - 5, this.contentWidth + 10, 50, 'F');
-        
-        // Газоиспользующее оборудование подключено
-        const reconnY = this.currentY;
-        this.doc.text('Газоиспользующее оборудование подключено «', this.config.margins.left, reconnY);
-        
-        let reconnDay = '';
-        if (reconnection.reconnectionDate) {
-            const dateObj = new Date(reconnection.reconnectionDate);
-            reconnDay = dateObj.getDate().toString();
+        try {
+            this.addSpacing(10);
+            
+            // Фон для секции подключения
+            this.doc.setFillColor('#f0f8ff');
+            const sectionHeight = 50;
+            this.doc.rect(this.config.margins.left - 2, this.currentY - 5, this.contentWidth + 4, sectionHeight, 'F');
+            
+            // Газоиспользующее оборудование подключено
+            const reconnDate = this.formatDateString(reconnection.reconnectionDate);
+            const reconnectionText = `Газоиспользующее оборудование подключено «${reconnDate.day}» ${reconnDate.month} ${reconnDate.year} г.`;
+            this.addWrappedText(reconnectionText);
+            
+            this.addSpacing(8);
+            
+            // представителем эксплуатационной организации
+            const reconnByText = `представителем эксплуатационной организации ${reconnection.reconnectionBy || '_'.repeat(30)}`;
+            this.addWrappedText(reconnByText);
+            
+            this.addSpacing(8);
+            
+            // по указанию
+            const orderText = `по указанию ${reconnection.reconnectionOrder || '_'.repeat(40)}`;
+            this.addWrappedText(orderText);
+            
+            this.addSpacing(8);
+            
+            // адрес и абонент
+            const addressText = `в квартире № ${reconnection.apartment || '___'} дома ${reconnection.house || '___'} по ул. ${reconnection.street || '_'.repeat(30)}`;
+            this.addWrappedText(addressText);
+            
+            this.addSpacing(5);
+            const subscriberText = `у абонента ${reconnection.subscriber || '_'.repeat(40)}`;
+            this.addWrappedText(subscriberText);
+            
+            this.addSpacing(8);
+            
+            // Подписи для подключения
+            this.doc.setFont('times', 'bold');
+            this.doc.text('Подписи:', this.config.margins.left, this.currentY);
+            this.doc.setFont('times', 'normal');
+            this.addSpacing(5);
+            
+            const repSignature = reconnection.representativeSignature?.name || '_'.repeat(25);
+            const subSignature = reconnection.subscriberSignature?.name || '_'.repeat(25);
+            
+            this.doc.text(`Представитель эксплуатационной организации ${repSignature}`, this.config.margins.left, this.currentY);
+            this.addSpacing(8);
+            this.doc.text(`Ответственный квартиросъёмщик (абонент) ${subSignature}`, this.config.margins.left, this.currentY);
+            
+            this.addSpacing();
+        } catch (error) {
+            console.error('Ошибка рендеринга секции подключения:', error);
+            this.doc.text('Подключение оборудования', this.config.margins.left, this.currentY);
+            this.addSpacing();
         }
-        
-        this.addInputField(this.config.margins.left + 95, reconnY - 3, 15, reconnDay);
-        this.doc.text('»', this.config.margins.left + 115, reconnY);
-        this.addInputField(this.config.margins.left + 120, reconnY - 3, 30, '');
-        this.doc.text('20', this.config.margins.left + 155, reconnY);
-        this.addInputField(this.config.margins.left + 165, reconnY - 3, 15, '');
-        this.doc.text('г.', this.config.margins.left + 185, reconnY);
-        
-        this.addSpacing(8);
-        
-        // представителем эксплуатационной организации
-        this.doc.text('представителем эксплуатационной организации', this.config.margins.left, this.currentY);
-        this.addInputField(this.config.margins.left + 90, this.currentY - 3, 90, reconnection.reconnectionBy);
-        
-        this.addSpacing(8);
-        
-        // по указанию
-        this.doc.text('по указанию', this.config.margins.left, this.currentY);
-        this.addInputField(this.config.margins.left + 30, this.currentY - 3, 120, reconnection.reconnectionOrder);
-        
-        this.addSpacing(8);
-        
-        // адрес и абонент
-        this.doc.text(`в квартире №________ дома________ по ул.__________________________________________`, this.config.margins.left, this.currentY);
-        this.addSpacing(5);
-        this.doc.text(`у абонента ______________________________________________________________________`, this.config.margins.left, this.currentY);
-        
-        this.addSpacing(8);
-        
-        // Подписи для подключения
-        this.setBoldStyle();
-        this.doc.text('Подписи:', this.config.margins.left, this.currentY);
-        this.resetTextStyle();
-        this.addSpacing(5);
-        
-        this.addSignatureSection([
-            reconnection.representativeSignature || { name: '', position: 'Представитель эксплуатационной организации' },
-            reconnection.subscriberSignature || { name: '', position: 'Ответственный квартиросъёмщик (абонент)' }
-        ]);
     }
 
     /**
      * Рендерит футер документа
      */
     private renderFooter(): void {
-        this.addSpacing(15);
+        try {
+            this.addSpacing(15);
+            
+            // Примечание
+            this.doc.setFont('times', 'bold');
+            this.doc.text('Примечание:', this.config.margins.left, this.currentY);
+            this.doc.setFont('times', 'normal');
+            
+            this.addSpacing(5);
+            
+            const noteText = 'Акт-наряд составляется в двух экземплярах, один из которых выдаётся на руки абоненту, другой хранится в эксплуатационной организации.';
+            this.addWrappedText(noteText, 10);
+        } catch (error) {
+            console.error('Ошибка рендеринга футера:', error);
+        }
+    }
+
+    // ============================================
+    // ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ
+    // ============================================
+
+    /**
+     * Добавляет многострочный текст с переносами
+     */
+    private addWrappedText(text: string, fontSize: number = 12): void {
+        this.doc.setFontSize(fontSize);
+        const lines = this.doc.splitTextToSize(text, this.contentWidth - 10);
         
-        // Примечание
-        this.setBoldStyle();
-        this.doc.text('Примечание:', this.config.margins.left, this.currentY);
-        this.resetTextStyle();
-        
-        this.addSpacing(3);
-        
-        const noteText = 'Акт-наряд составляется в двух экземплярах, один из которых выдаётся на руки абоненту, другой хранится в эксплуатационной организации.';
-        this.addText(
-            noteText, 
-            this.config.margins.left, 
-            undefined, 
-            { 
-                maxWidth: this.contentWidth, 
-                fontSize: 10 
+        for (let i = 0; i < lines.length; i++) {
+            this.doc.text(lines[i], this.config.margins.left, this.currentY);
+            if (i < lines.length - 1) {
+                this.currentY += this.config.elements.lineHeight;
             }
-        );
+        }
+        
+        this.doc.setFontSize(12); // Возвращаем стандартный размер
+    }
+
+    /**
+     * Форматирует дату из ISO строки
+     */
+    private formatDateString(isoDate: string): { day: string; month: string; year: string } {
+        if (!isoDate) {
+            return { day: '___', month: '___________', year: '____' };
+        }
+        
+        try {
+            const date = new Date(isoDate);
+            const day = date.getDate().toString().padStart(2, '0');
+            const year = date.getFullYear().toString();
+            
+            const months = [
+                'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+                'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+            ];
+            const month = months[date.getMonth()];
+            
+            return { day, month, year };
+        } catch (error) {
+            return { day: '___', month: '___________', year: '____' };
+        }
+    }
+
+    /**
+     * Форматирует время из строки
+     */
+    private formatTimeString(timeString: string): { hours: string; minutes: string } {
+        if (!timeString) {
+            return { hours: '__', minutes: '__' };
+        }
+        
+        try {
+            const [hours, minutes] = timeString.split(':');
+            return {
+                hours: hours || '__',
+                minutes: minutes || '__'
+            };
+        } catch (error) {
+            return { hours: '__', minutes: '__' };
+        }
     }
 }

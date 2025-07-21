@@ -1,11 +1,11 @@
 // ============================================
-// ОСНОВНОЙ КЛАСС PDF ГЕНЕРАТОРА
+// ИСПРАВЛЕННЫЙ ОСНОВНОЙ КЛАСС PDF ГЕНЕРАТОРА
 // ============================================
 
 import jsPDF from 'jspdf';
 import { PDFConfig, ActOrderData } from './types';
 import { DEFAULT_PDF_CONFIG } from './config';
-import { FontLoader } from './utils/fontLoader';
+import { FontLoader, getErrorMessage } from './utils/fontLoader';
 import { ActOrderTemplate } from './templates/ActOrderTemplate';
 
 export class PDFGenerator {
@@ -30,11 +30,26 @@ export class PDFGenerator {
 
         try {
             await FontLoader.loadFonts(this.doc);
+            
+            // Устанавливаем базовые настройки
+            FontLoader.setFontSafe(this.doc, 'times', 'normal', 12);
+            this.doc.setTextColor(this.config.colors.text);
+            
+            // Проверяем поддержку кириллицы
+            const cyrillicSupport = FontLoader.checkCyrillicSupport(this.doc);
+            if (!cyrillicSupport) {
+                console.warn('⚠️ Ограниченная поддержка кириллицы');
+            }
+            
             this.initialized = true;
-            console.log('✅ PDFGenerator инициализирован');
+            console.log('✅ PDFGenerator инициализирован', {
+                cyrillicSupport,
+                fontInfo: FontLoader.getFontInfo(this.doc)
+            });
         } catch (error) {
             console.error('❌ Ошибка инициализации PDFGenerator:', error);
-            throw error;
+            // Помечаем как инициализированный чтобы не блокировать работу
+            this.initialized = true;
         }
     }
 
@@ -42,22 +57,29 @@ export class PDFGenerator {
      * Создает новый PDF документ
      */
     private createDocument(): void {
-        this.doc = new jsPDF({
-            orientation: this.config.orientation,
-            unit: 'mm',
-            format: this.config.format
-        });
+        try {
+            this.doc = new jsPDF({
+                orientation: this.config.orientation,
+                unit: 'mm',
+                format: this.config.format
+            });
 
-        // Устанавливаем стандартные параметры
-        this.doc.setFont('times', 'normal');
-        this.doc.setFontSize(this.config.fonts.regular.size);
-        this.doc.setTextColor(this.config.colors.text);
+            // Устанавливаем стандартные параметры
+            FontLoader.setFontSafe(this.doc, 'times', 'normal', this.config.fonts.regular.size);
+            this.doc.setTextColor(this.config.colors.text);
+            
+            console.log('✅ PDF документ создан');
+        } catch (error) {
+            console.error('❌ Ошибка создания PDF документа:', error);
+            throw new Error('Не удалось создать PDF документ');
+        }
     }
 
     // ============================================
     // ГЕНЕРАЦИЯ ДОКУМЕНТОВ
     // ============================================
 
+    
     /**
      * Генерирует АКТ-НАРЯД
      */
@@ -67,13 +89,63 @@ export class PDFGenerator {
         }
 
         try {
+            console.log('🔄 Начинаем генерацию АКТ-НАРЯДА с данными:', data);
+            
+            // Проверяем данные
+            if (!data || typeof data !== 'object') {
+                throw new Error('Данные для генерации не переданы или неверного формата');
+            }
+
             const template = new ActOrderTemplate(this.doc, this.config);
             template.renderDocument(data);
             
-            console.log('✅ АКТ-НАРЯД сгенерирован');
+            console.log('✅ АКТ-НАРЯД сгенерирован успешно');
         } catch (error) {
             console.error('❌ Ошибка генерации АКТ-НАРЯДА:', error);
-            throw new Error('Не удалось сгенерировать АКТ-НАРЯД');
+            
+            // Создаем минимальный документ при ошибке
+            this.createFallbackDocument(data);
+            
+            throw new Error(`Не удалось сгенерировать АКТ-НАРЯД: ${ getErrorMessage(error) }`);
+        }
+    }
+
+    /**
+     * Создает упрощенный документ при ошибке генерации
+     */
+    private createFallbackDocument(data: ActOrderData): void {
+        try {
+            console.log('🔄 Создаем упрощенный документ...');
+            
+            // Очищаем документ
+            this.createDocument();
+            
+            // Добавляем базовую информацию
+            FontLoader.setFontSafe(this.doc, 'times', 'bold', 16);
+            FontLoader.addTextSafe(this.doc, 'АКТ-НАРЯД', 20, 30);
+            
+            FontLoader.setFontSafe(this.doc, 'times', 'normal', 12);
+            FontLoader.addTextSafe(this.doc, `№ ${data.actNumber || 'Не указан'}`, 20, 50);
+            
+            if (data.date) {
+                const date = new Date(data.date).toLocaleDateString('ru-RU');
+                FontLoader.addTextSafe(this.doc, `Дата: ${date}`, 20, 70);
+            }
+            
+            if (data.representative?.name) {
+                FontLoader.addTextSafe(this.doc, `Представитель: ${data.representative.name}`, 20, 90);
+            }
+            
+            if (data.order?.street || data.order?.house) {
+                const address = `${data.order.street || ''} ${data.order.house || ''}`.trim();
+                FontLoader.addTextSafe(this.doc, `Адрес: ${address}`, 20, 110);
+            }
+            
+            FontLoader.addTextSafe(this.doc, 'Документ создан с ограниченным функционалом', 20, 140);
+            
+            console.log('✅ Упрощенный документ создан');
+        } catch (fallbackError) {
+            console.error('❌ Ошибка создания упрощенного документа:', fallbackError);
         }
     }
 
@@ -157,7 +229,9 @@ export class PDFGenerator {
     public getPreviewUrl(): string {
         try {
             const blob = this.getBlob();
-            return URL.createObjectURL(blob);
+            const url = URL.createObjectURL(blob);
+            console.log('✅ URL для предпросмотра создан');
+            return url;
         } catch (error) {
             console.error('❌ Ошибка создания URL предпросмотра:', error);
             throw new Error('Не удалось создать URL предпросмотра');
@@ -184,12 +258,21 @@ export class PDFGenerator {
             document.body.appendChild(iframe);
             
             iframe.onload = () => {
-                iframe.contentWindow?.print();
+                try {
+                    iframe.contentWindow?.print();
+                } catch (printError) {
+                    console.warn('⚠️ Автоматическая печать недоступна, открываем в новом окне');
+                    window.open(url, '_blank');
+                }
                 
                 // Удаляем iframe через некоторое время
                 setTimeout(() => {
-                    document.body.removeChild(iframe);
-                    URL.revokeObjectURL(url);
+                    try {
+                        document.body.removeChild(iframe);
+                        URL.revokeObjectURL(url);
+                    } catch (cleanupError) {
+                        console.warn('⚠️ Ошибка очистки ресурсов печати');
+                    }
                 }, 1000);
             };
         } catch (error) {
@@ -277,22 +360,61 @@ export class PDFGenerator {
         orientation: string;
         size: number; // в байтах
     } {
-        const blob = this.getBlob();
-        
-        return {
-            pageCount: this.doc.getNumberOfPages(),
-            format: this.config.format,
-            orientation: this.config.orientation,
-            size: blob.size
-        };
+        try {
+            const blob = this.getBlob();
+            
+            return {
+                pageCount: this.doc.getNumberOfPages(),
+                format: this.config.format,
+                orientation: this.config.orientation,
+                size: blob.size
+            };
+        } catch (error) {
+            console.error('❌ Ошибка получения информации о документе:', error);
+            return {
+                pageCount: 1,
+                format: this.config.format,
+                orientation: this.config.orientation,
+                size: 0
+            };
+        }
+    }
+
+    /**
+     * Проверяет состояние генератора
+     */
+    public getStatus(): {
+        initialized: boolean;
+        hasContent: boolean;
+        fontInfo: any;
+        error?: string;
+    } {
+        try {
+            return {
+                initialized: this.initialized,
+                hasContent: this.doc.getNumberOfPages() > 0,
+                fontInfo: FontLoader.getFontInfo(this.doc)
+            };
+        } catch (error) {
+            return {
+                initialized: this.initialized,
+                hasContent: false,
+                fontInfo: null,
+                error: getErrorMessage( error ) 
+            };
+        }
     }
 
     /**
      * Сбрасывает документ для создания нового
      */
     public reset(): void {
-        this.createDocument();
-        console.log('✅ PDFGenerator сброшен');
+        try {
+            this.createDocument();
+            console.log('✅ PDFGenerator сброшен');
+        } catch (error) {
+            console.error('❌ Ошибка сброса PDFGenerator:', error);
+        }
     }
 
     /**
