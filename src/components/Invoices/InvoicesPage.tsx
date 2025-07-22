@@ -1,5 +1,4 @@
 import React from 'react';
-import { IonContent, IonPage } from '@ionic/react';
 import { useInvoices } from './useInvoices';
 import { InvoicesBreadcrumb } from './InvoicesBreadcrumb';
 import { InvoicesList } from './InvoicesList';
@@ -89,18 +88,16 @@ const InvoicesPage: React.FC = () => {
     };
 
     return (
-        <IonPage>
-            <IonContent>
-                <InvoicesBreadcrumb
-                    currentPosition={navigation.position}
-                    selectedInvoiceId={navigation.selectedInvoiceId}
-                    canGoBack={navigation.canGoBack}
-                    onNavigate={navigateToPosition}
-                    onGoBack={goBack}
-                />
-                {renderCurrentPage()}
-            </IonContent>
-        </IonPage>
+        <div className="invoices-page">
+            <InvoicesBreadcrumb
+                currentPosition={navigation.position}
+                selectedInvoiceId={navigation.selectedInvoiceId}
+                canGoBack={navigation.canGoBack}
+                onNavigate={navigateToPosition}
+                onGoBack={goBack}
+            />
+            {renderCurrentPage()}
+        </div>
     );
 };
 
