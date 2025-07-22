@@ -1,0 +1,610 @@
+/* ============================================
+   ОСНОВНЫЕ СТИЛИ КОМПОНЕНТА
+   ============================================ */
+
+.act-shutdown {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.act-shutdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.act-shutdown-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.act-shutdown-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* ============================================
+   КНОПКИ
+   ============================================ */
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #2563eb;
+}
+
+.btn-secondary {
+  background: #6b7280;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #4b5563;
+}
+
+.btn-outline {
+  background: transparent;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+}
+
+.btn-outline:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.btn-small {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+/* ============================================
+   АККОРДЕОН
+   ============================================ */
+
+.accordion {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.accordion-item {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.accordion-item:last-child {
+  border-bottom: none;
+}
+
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: #f9fafb;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  user-select: none;
+}
+
+.accordion-header:hover {
+  background: #f3f4f6;
+}
+
+.accordion-header.active {
+  background: #eff6ff;
+  border-bottom: 1px solid #dbeafe;
+}
+
+.accordion-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.accordion-toggle {
+  font-size: 20px;
+  font-weight: bold;
+  color: #6b7280;
+  transition: transform 0.2s ease;
+}
+
+.accordion-header.active .accordion-toggle {
+  transform: rotate(180deg);
+}
+
+.accordion-content {
+  padding: 20px;
+  background: white;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* ============================================
+   ПОЛЯ ФОРМЫ
+   ============================================ */
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group.flex-2 {
+  flex: 2;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-group input[readonly],
+.form-group textarea[readonly] {
+  background: #f9fafb;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.form-group input.error,
+.form-group textarea.error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.error-text {
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* ============================================
+   ПЕЧАТНАЯ ФОРМА
+   ============================================ */
+
+.print-form {
+  max-width: 210mm;
+  margin: 0 auto;
+  background: white;
+}
+
+.print-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.print-content {
+  padding: 20mm;
+  background: white;
+  font-family: 'Times New Roman', serif;
+  font-size: 12pt;
+  line-height: 1.4;
+  color: #000;
+}
+
+/* Заголовок документа */
+.document-header {
+  margin-bottom: 20px;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.logo-circle {
+  width: 60px;
+  height: 60px;
+  background: #1e40af;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-text {
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.company-info {
+  flex: 1;
+}
+
+.company-name {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.department {
+  font-size: 14px;
+  color: #666;
+}
+
+.document-title {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.document-title h1 {
+  font-size: 16pt;
+  font-weight: bold;
+  margin: 0 0 10px 0;
+}
+
+.document-title h2 {
+  font-size: 14pt;
+  font-weight: bold;
+  margin: 0 0 20px 0;
+  line-height: 1.3;
+}
+
+.date-line {
+  font-size: 12pt;
+  margin-bottom: 20px;
+}
+
+/* Содержание документа */
+.document-content {
+  text-align: left;
+  line-height: 1.6;
+}
+
+.content-line {
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.field-value {
+  border-bottom: 1px solid #000;
+  min-width: 20px;
+  display: inline-block;
+  padding: 0 2px;
+  margin: 0 2px;
+}
+
+.field-value.underline {
+  border-bottom: 1px solid #000;
+}
+
+.field-description {
+  font-size: 10pt;
+  color: #666;
+  font-style: italic;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+/* Секции подписей */
+.signatures-section {
+  margin: 20px 0;
+}
+
+.signatures-title {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.signature-line {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.execution-section {
+  margin: 25px 0;
+  padding: 15px 0;
+  border-top: 1px solid #ccc;
+}
+
+.reconnection-section {
+  margin: 25px 0;
+  padding: 15px 0;
+  border-top: 1px solid #ccc;
+}
+
+.note-section {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #ccc;
+  font-size: 10pt;
+  font-style: italic;
+}
+
+/* ============================================
+   МЕДИА-ЗАПРОСЫ ДЛЯ ПЕЧАТИ
+   ============================================ */
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .print-form {
+    max-width: none;
+    margin: 0;
+    box-shadow: none;
+  }
+
+  .print-content {
+    padding: 10mm;
+    box-shadow: none;
+    border: none;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  .document-content {
+    font-size: 11pt;
+  }
+
+  .field-description {
+    font-size: 9pt;
+  }
+
+  .note-section {
+    font-size: 9pt;
+  }
+
+  /* Предотвращение разрыва страницы внутри секций */
+  .signatures-section,
+  .execution-section,
+  .reconnection-section {
+    page-break-inside: avoid;
+  }
+
+  /* Обеспечение корректного отображения линий */
+  .field-value {
+    border-bottom: 1px solid #000 !important;
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+}
+
+/* ============================================
+   АДАПТИВНОСТЬ
+   ============================================ */
+
+@media (max-width: 768px) {
+  .act-shutdown {
+    padding: 15px;
+    margin: 10px;
+  }
+
+  .act-shutdown-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+
+  .act-shutdown-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .accordion-content {
+    padding: 15px;
+  }
+
+  .btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .print-content {
+    padding: 10mm 5mm;
+    font-size: 11pt;
+  }
+
+  .logo-section {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .act-shutdown {
+    margin: 5px;
+    padding: 10px;
+  }
+
+  .act-shutdown-actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .accordion-header {
+    padding: 12px 15px;
+  }
+
+  .accordion-header h3 {
+    font-size: 14px;
+  }
+
+  .accordion-content {
+    padding: 12px;
+  }
+}
+
+/* ============================================
+   УТИЛИТАРНЫЕ КЛАССЫ
+   ============================================ */
+
+.spacing-top {
+  margin-top: 15px;
+}
+
+.spacing-bottom {
+  margin-bottom: 15px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.font-bold {
+  font-weight: bold;
+}
+
+.font-italic {
+  font-style: italic;
+}
+
+/* ============================================
+   АНИМАЦИИ
+   ============================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.accordion-content {
+  animation: fadeIn 0.3s ease;
+}
+
+/* ============================================
+   СОСТОЯНИЯ ВАЛИДАЦИИ
+   ============================================ */
+
+.form-group.success input,
+.form-group.success textarea {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.form-group.warning input,
+.form-group.warning textarea {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+/* ============================================
+   ДОСТУПНОСТЬ
+   ============================================ */
+
+.accordion-header:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.btn:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Высокий контраст для слабовидящих */
+@media (prefers-contrast: high) {
+  .accordion-header {
+    border: 2px solid #000;
+  }
+  
+  .field-value {
+    border-bottom: 2px solid #000;
+  }
+  
+  .btn {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Уменьшение анимаций для пользователей с вестибулярными нарушениями */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .accordion-toggle {
+    transition: none;
+  }
+}
