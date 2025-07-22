@@ -1,19 +1,37 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { getData, useStoreField } from '../Store';
-import { Invoice, InvoiceStatus, InvoiceFilters, InvoicesResponse, UseInvoicesReturn } from './types';
+import { 
+    Invoice, 
+    InvoiceStatus, 
+    InvoiceFilters, 
+    InvoicesResponse, 
+    UseInvoicesReturn, 
+    InvoicePosition, 
+    InvoiceNavigation 
+} from './types';
 
 export const useInvoices = (): UseInvoicesReturn => {
+    // Получаем данные авторизации из Store
+    const loginData = useStoreField('login', 2);
+    
+    // Основное состояние
     const [invoices, setInvoices] = useState<Invoice[]>([]);
     const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [filters, setFiltersState] = useState<InvoiceFilters>({
+    
+    // Фильтры
+    const [filtersState, setFiltersState] = useState<InvoiceFilters>({
         search: '',
         status: 'all'
     });
-
-    // Получаем токен из Store
-    const loginData = useStoreField('login', 2);
+    
+    // Навигация
+    const [navigation, setNavigation] = useState<InvoiceNavigation>({
+        position: 0,
+        selectedInvoiceId: null,
+        canGoBack: false
+    });
 
     // Загрузка заявок
     const loadInvoices = useCallback(async () => {
@@ -30,7 +48,8 @@ export const useInvoices = (): UseInvoicesReturn => {
                 token: loginData.token
             }) as InvoicesResponse;
 
-            console.log(response)
+            console.log('Invoices response:', response);
+            
             if (response.success && response.data) {
                 setInvoices(response.data);
             } else {
@@ -114,9 +133,7 @@ export const useInvoices = (): UseInvoicesReturn => {
         if (!dateString) return '';
         
         const date = new Date(dateString);
-        console.log(date)
         const now = new Date();
-        console.log()
         const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
 
         if (diffDays === 0) {
@@ -140,7 +157,7 @@ export const useInvoices = (): UseInvoicesReturn => {
         }
     }, []);
 
-    // Форматирование телефона
+    // Форматирование телефона (используем функцию Phone из Store если нужно)
     const formatPhone = useCallback((phone: string): string => {
         if (!phone) return '';
         
@@ -156,8 +173,8 @@ export const useInvoices = (): UseInvoicesReturn => {
         let result = [...invoices];
 
         // Поиск по номеру заявки и адресу
-        if (filters.search) {
-            const searchLower = filters.search.toLowerCase();
+        if (filtersState.search) {
+            const searchLower = filtersState.search.toLowerCase();
             result = result.filter(invoice => 
                 invoice.number.toLowerCase().includes(searchLower) ||
                 invoice.address.toLowerCase().includes(searchLower)
@@ -165,21 +182,21 @@ export const useInvoices = (): UseInvoicesReturn => {
         }
 
         // Фильтр по статусу
-        if (filters.status !== 'all') {
+        if (filtersState.status !== 'all') {
             result = result.filter(invoice => {
                 const status = getInvoiceStatus(invoice);
-                return status.type === filters.status;
+                return status.type === filtersState.status;
             });
         }
 
         // Фильтр по дате (если указан)
-        if (filters.dateFrom) {
-            const fromDate = new Date(filters.dateFrom);
+        if (filtersState.dateFrom) {
+            const fromDate = new Date(filtersState.dateFrom);
             result = result.filter(invoice => new Date(invoice.date) >= fromDate);
         }
 
-        if (filters.dateTo) {
-            const toDate = new Date(filters.dateTo);
+        if (filtersState.dateTo) {
+            const toDate = new Date(filtersState.dateTo);
             toDate.setHours(23, 59, 59, 999); // Конец дня
             result = result.filter(invoice => new Date(invoice.date) <= toDate);
         }
@@ -199,7 +216,41 @@ export const useInvoices = (): UseInvoicesReturn => {
         });
 
         return result;
-    }, [invoices, filters, getInvoiceStatus]);
+    }, [invoices, filtersState, getInvoiceStatus]);
+
+    // Выбранная заявка
+    const selectedInvoice = useMemo(() => {
+        if (!navigation.selectedInvoiceId) return null;
+        return invoices.find(invoice => invoice.id === navigation.selectedInvoiceId) || null;
+    }, [invoices, navigation.selectedInvoiceId]);
+
+    // Методы навигации
+    const navigateToPosition = useCallback((position: InvoicePosition, invoiceId?: string) => {
+        setNavigation(prev => ({
+            position,
+            selectedInvoiceId: invoiceId || prev.selectedInvoiceId,
+            canGoBack: position > 0
+        }));
+    }, []);
+
+    const goBack = useCallback(() => {
+        setNavigation(prev => {
+            const newPosition = Math.max(0, prev.position - 1) as InvoicePosition;
+            return {
+                ...prev,
+                position: newPosition,
+                canGoBack: newPosition > 0
+            };
+        });
+    }, []);
+
+    const selectInvoice = useCallback((invoiceId: string) => {
+        setNavigation({
+            position: 1,
+            selectedInvoiceId: invoiceId,
+            canGoBack: true
+        });
+    }, []);
 
     // Загрузка при монтировании
     useEffect(() => {
@@ -214,13 +265,18 @@ export const useInvoices = (): UseInvoicesReturn => {
         loading,
         refreshing,
         error,
-        filters,
+        filters: filtersState,
+        navigation,
+        selectedInvoice,
         loadInvoices,
         refreshInvoices,
         setFilters,
         clearError,
         getInvoiceStatus,
         formatDate,
-        formatPhone
+        formatPhone,
+        navigateToPosition,
+        goBack,
+        selectInvoice
     };
 };

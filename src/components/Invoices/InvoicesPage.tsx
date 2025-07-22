@@ -1,38 +1,11 @@
-import React, { useState } from 'react';
-import {
-    IonContent,
-    IonHeader,
-    IonPage,
-    IonTitle,
-    IonToolbar,
-    IonButtons,
-    IonButton,
-    IonIcon,
-    IonSearchbar,
-    IonList,
-    IonRefresher,
-    IonRefresherContent,
-    IonSpinner,
-    IonText,
-    IonCard,
-    IonCardContent,
-    IonSkeletonText,
-    IonItem,
-    IonLabel,
-    RefresherEventDetail
-} from '@ionic/react';
-import {
-    refreshOutline,
-    documentTextOutline,
-    callOutline,
-    alertCircleOutline
-} from 'ionicons/icons';
+import React from 'react';
+import { IonContent, IonPage } from '@ionic/react';
 import { useInvoices } from './useInvoices';
-import InvoiceCard from './InvoiceCard';
-import InvoiceModal from './InvoiceModal';
-import InvoiceFiltersComponent from './InvoiceFilters';
-import { Invoice } from './types';
-import './Invoices.css';
+import { InvoicesBreadcrumb } from './InvoicesBreadcrumb';
+import { InvoicesList } from './InvoicesList';
+import { InvoiceView } from './InvoiceView';
+import { InvoiceActs } from './InvoiceActs';
+import { InvoicePrintForm } from './InvoicePrintForm';
 
 const InvoicesPage: React.FC = () => {
     const {
@@ -41,202 +14,91 @@ const InvoicesPage: React.FC = () => {
         refreshing,
         error,
         filters,
-        loadInvoices,
+        navigation,
+        selectedInvoice,
         refreshInvoices,
         setFilters,
         clearError,
         getInvoiceStatus,
         formatDate,
-        formatPhone
+        formatPhone,
+        navigateToPosition,
+        goBack,
+        selectInvoice
     } = useInvoices();
 
-    const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const renderCurrentPage = () => {
+        switch (navigation.position) {
+            case 0:
+                return (
+                    <InvoicesList
+                        invoices={filteredInvoices}
+                        loading={loading}
+                        refreshing={refreshing}
+                        error={error}
+                        filters={filters}
+                        onRefresh={refreshInvoices}
+                        onFiltersChange={setFilters}
+                        onClearError={clearError}
+                        onInvoiceSelect={selectInvoice}
+                        getInvoiceStatus={getInvoiceStatus}
+                        formatDate={formatDate}
+                        formatPhone={formatPhone}
+                    />
+                );
 
-    // Обработчик поиска
-    const handleSearch = (event: CustomEvent) => {
-        const query = event.detail.value;
-        setFilters({ search: query });
-    };
+            case 1:
+                if (!selectedInvoice) {
+                    navigateToPosition(0);
+                    return null;
+                }
+                return (
+                    <InvoiceView
+                        invoice={selectedInvoice}
+                        invoiceStatus={getInvoiceStatus(selectedInvoice)}
+                        formatDate={formatDate}
+                        formatPhone={formatPhone}
+                        onNavigateToActs={() => navigateToPosition(2)}
+                        onNavigateToPrint={() => navigateToPosition(3)}
+                    />
+                );
 
-    // Обработчик refresh
-    const handleRefresh = async (event: CustomEvent<RefresherEventDetail>) => {
-        await refreshInvoices();
-        event.detail.complete();
-    };
+            case 2:
+                if (!selectedInvoice) {
+                    navigateToPosition(0);
+                    return null;
+                }
+                return <InvoiceActs invoice={selectedInvoice} />;
 
-    // Открытие модального окна
-    const handleCardClick = (invoice: Invoice) => {
-        setSelectedInvoice(invoice);
-        setIsModalOpen(true);
-    };
+            case 3:
+                if (!selectedInvoice) {
+                    navigateToPosition(0);
+                    return null;
+                }
+                return (
+                    <InvoicePrintForm
+                        invoice={selectedInvoice}
+                        formatDate={formatDate}
+                        formatPhone={formatPhone}
+                    />
+                );
 
-    // Закрытие модального окна
-    const handleModalClose = () => {
-        setIsModalOpen(false);
-        setSelectedInvoice(null);
-    };
-
-    // Звонок клиенту
-    const handlePhoneClick = (phone: string) => {
-        if (phone) {
-            window.open(`tel:${phone}`, '_self');
+            default:
+                return null;
         }
     };
 
-    // Повторная загрузка при ошибке
-    const handleRetry = () => {
-        clearError();
-        loadInvoices();
-    };
-
-    // Рендер скелетона загрузки
-    const renderSkeleton = () => (
-        <div className="invoices-skeleton">
-            {[1, 2, 3, 4, 5].map((item) => (
-                <IonCard key={item}>
-                    <IonCardContent>
-                        <IonSkeletonText animated style={{ width: '60%', height: '20px' }} />
-                        <IonSkeletonText animated style={{ width: '40%', height: '16px', marginTop: '10px' }} />
-                        <IonSkeletonText animated style={{ width: '80%', height: '16px', marginTop: '5px' }} />
-                        <IonSkeletonText animated style={{ width: '50%', height: '16px', marginTop: '5px' }} />
-                    </IonCardContent>
-                </IonCard>
-            ))}
-        </div>
-    );
-
-    // Рендер ошибки
-    const renderError = () => (
-        <div className="invoices-error">
-            <IonCard>
-                <IonCardContent className="error-content">
-                    <IonIcon icon={alertCircleOutline} className="error-icon" />
-                    <h2>Ошибка загрузки</h2>
-                    <p>{error}</p>
-                    <IonButton
-                        expand="block"
-                        fill="outline"
-                        onClick={handleRetry}
-                    >
-                        <IonIcon icon={refreshOutline} slot="start" />
-                        Повторить
-                    </IonButton>
-                </IonCardContent>
-            </IonCard>
-        </div>
-    );
-
-    // Рендер пустого списка
-    const renderEmpty = () => (
-        <div className="invoices-empty">
-            <IonCard>
-                <IonCardContent className="empty-content">
-                    <IonIcon icon={documentTextOutline} className="empty-icon" />
-                    <h2>Заявок не найдено</h2>
-                    <p>
-                        {filters.search || filters.status !== 'all' || filters.dateFrom || filters.dateTo
-                            ? 'Попробуйте изменить параметры поиска или фильтры'
-                            : 'Новые заявки появятся здесь'
-                        }
-                    </p>
-                    <IonButton
-                        expand="block"
-                        fill="outline"
-                        onClick={() => setFilters({ search: '', status: 'all', dateFrom: undefined, dateTo: undefined })}
-                    >
-                        Сбросить фильтры
-                    </IonButton>
-                </IonCardContent>
-            </IonCard>
-        </div>
-    );
-
     return (
-        <IonPage className="invoices-page">
-            <IonHeader>
-                <IonToolbar>
-                    <IonTitle>Заявки</IonTitle>
-                    <IonButtons slot="end">
-                        <IonButton onClick={loadInvoices} disabled={loading}>
-                            <IonIcon icon={refreshOutline} />
-                        </IonButton>
-                    </IonButtons>
-                </IonToolbar>
-            </IonHeader>
-
-            <IonContent fullscreen>
-                <IonHeader collapse="condense">
-                    <IonToolbar>
-                        <IonTitle size="large">Заявки</IonTitle>
-                    </IonToolbar>
-                </IonHeader>
-
-                {/* Refresher */}
-                <IonRefresher
-                    slot="fixed"
-                    onIonRefresh={handleRefresh}
-                    disabled={loading}
-                >
-                    <IonRefresherContent />
-                </IonRefresher>
-
-                {/* Поиск */}
-                <div className="search-container">
-                    <IonSearchbar
-                        value={filters.search}
-                        onIonInput={handleSearch}
-                        placeholder="Поиск по номеру заявки или адресу"
-                        showClearButton="focus"
-                        disabled={loading}
-                    />
-                </div>
-
-                {/* Фильтры */}
-                {/* <div className="filters-container">
-                    <InvoiceFiltersComponent
-                        filters={filters}
-                        onFiltersChange={setFilters}
-                        totalCount={filteredInvoices.length}
-                        filteredCount={filteredInvoices.length}
-                    />
-                </div> */}
-
-                {/* Контент */}
-                <div className="invoices-content">
-                    {loading && !refreshing ? (
-                        renderSkeleton()
-                    ) : error ? (
-                        renderError()
-                    ) : filteredInvoices.length === 0 ? (
-                        renderEmpty()
-                    ) : (
-                        <IonList className="invoices-list">
-                            {filteredInvoices.map((invoice) => (
-                                <InvoiceCard
-                                    key={invoice.id}
-                                    invoice={invoice}
-                                    status={getInvoiceStatus(invoice)}
-                                    onCardClick={handleCardClick}
-                                    onPhoneClick={handlePhoneClick}
-                                    formatDate={formatDate}
-                                    formatPhone={formatPhone}
-                                />
-                            ))}
-                        </IonList>
-                    )}
-                </div>
-
-                {/* Модальное окно */}
-                <InvoiceModal
-                    isOpen={isModalOpen}
-                    invoice={selectedInvoice}
-                    status={selectedInvoice ? getInvoiceStatus(selectedInvoice) : null}
-                    onDismiss={handleModalClose}
-                    onPhoneClick={handlePhoneClick}
-                    formatDate={formatDate}
-                    formatPhone={formatPhone}
+        <IonPage>
+            <IonContent>
+                <InvoicesBreadcrumb
+                    currentPosition={navigation.position}
+                    selectedInvoiceId={navigation.selectedInvoiceId}
+                    canGoBack={navigation.canGoBack}
+                    onNavigate={navigateToPosition}
+                    onGoBack={goBack}
                 />
+                {renderCurrentPage()}
             </IonContent>
         </IonPage>
     );
