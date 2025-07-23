@@ -1,0 +1,162 @@
+/* ============================================
+   СТИЛИ ДЛЯ КНОПОК АКТОВ
+   ============================================ */
+
+.act-button {
+    --border-radius: 12px;
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --padding-top: 16px;
+    --padding-bottom: 16px;
+    margin-bottom: 12px;
+    height: auto;
+    min-height: 70px;
+}
+
+.act-button-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    margin-left: 12px;
+    flex: 1;
+}
+
+.act-button-title {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 4px;
+}
+
+.act-button-description {
+    font-size: 12px;
+    opacity: 0.7;
+    line-height: 1.3;
+    font-weight: 400;
+}
+
+/* ============================================
+   СТИЛИ ДЛЯ ФОРМ АКТОВ
+   ============================================ */
+
+.act-form-buttons {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.act-form-buttons ion-button {
+    --border-radius: 8px;
+    height: 44px;
+    font-weight: 500;
+}
+
+/* Поля формы */
+.act-form-buttons + ion-item {
+    margin-top: 16px;
+}
+
+ion-item ion-label[position="stacked"] {
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--ion-color-dark);
+    margin-bottom: 8px;
+}
+
+ion-item ion-input,
+ion-item ion-textarea,
+ion-item ion-datetime,
+ion-item ion-select {
+    --padding-start: 12px;
+    --padding-end: 12px;
+    --border-radius: 8px;
+    --background: var(--ion-color-light);
+    font-size: 15px;
+}
+
+ion-item ion-textarea {
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+}
+
+/* ============================================
+   АДАПТИВНОСТЬ
+   ============================================ */
+
+@media (min-width: 768px) {
+    .act-button-content {
+        margin-left: 16px;
+    }
+    
+    .act-button-title {
+        font-size: 17px;
+    }
+    
+    .act-button-description {
+        font-size: 12px;
+    }
+    
+    .act-form-buttons {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    
+    .act-form-buttons ion-button {
+        flex: 1;
+        margin: 0 4px;
+    }
+    
+    .act-form-buttons ion-button:first-child {
+        margin-left: 0;
+    }
+    
+    .act-form-buttons ion-button:last-child {
+        margin-right: 0;
+    }
+}
+
+/* ============================================
+   СОСТОЯНИЯ КНОПОК
+   ============================================ */
+
+.act-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.act-button:active {
+    transform: translateY(0);
+}
+
+/* Цветовые схемы для разных типов актов */
+.act-button[color="primary"] {
+    --color: var(--ion-color-primary);
+    --border-color: var(--ion-color-primary);
+}
+
+.act-button[color="warning"] {
+    --color: var(--ion-color-warning);
+    --border-color: var(--ion-color-warning);
+}
+
+.act-button[color="secondary"] {
+    --color: var(--ion-color-secondary);
+    --border-color: var(--ion-color-secondary);
+}
+
+.act-button[color="tertiary"] {
+    --color: var(--ion-color-tertiary);
+    --border-color: var(--ion-color-tertiary);
+}
+
+.act-button[color="success"] {
+    --color: var(--ion-color-success);
+    --border-color: var(--ion-color-success);
+}
+
+.act-button[color="danger"] {
+    --color: var(--ion-color-danger);
+    --border-color: var(--ion-color-danger);
+}

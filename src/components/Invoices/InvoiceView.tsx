@@ -1,6 +1,6 @@
 import React from 'react';
 import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonChip, IonIcon, IonItem, IonLabel, IonList } from '@ionic/react';
-import { callOutline, locationOutline, timeOutline, documentOutline, printOutline } from 'ionicons/icons';
+import { callOutline, locationOutline, timeOutline, documentOutline, printOutline, codeWorkingOutline } from 'ionicons/icons';
 import { Invoice, InvoiceStatus } from './types';
 import './Invoices.css';
 
@@ -34,18 +34,8 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
                 <p className="invoice-page-subtitle">{formatDate(invoice.date)}</p>
             </div>
 
-            <div className="invoice-page-content">
+            <div className="invoice-page-content scroll">
                 {/* Статус заявки */}
-                <IonCard>
-                    <IonCardHeader>
-                        <IonCardTitle>Статус</IonCardTitle>
-                    </IonCardHeader>
-                    <IonCardContent>
-                        <IonChip color={invoiceStatus.color}>
-                            <IonLabel>{invoiceStatus.label}</IonLabel>
-                        </IonChip>
-                    </IonCardContent>
-                </IonCard>
 
                 {/* Основная информация */}
                 <IonCard>
@@ -54,6 +44,15 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
                     </IonCardHeader>
                     <IonCardContent>
                         <IonList>
+                            <IonItem >
+                                <IonIcon icon={ codeWorkingOutline } slot="start" />
+                                <IonLabel>
+                                    <h3>Статус</h3>
+                                    <IonChip color={invoiceStatus.color} >
+                                        <IonLabel>{invoiceStatus.label}</IonLabel>
+                                    </IonChip>
+                                </IonLabel>
+                            </IonItem>
                             <IonItem>
                                 <IonIcon icon={locationOutline} slot="start" />
                                 <IonLabel>
@@ -97,7 +96,7 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
                         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                             <IonButton 
                                 expand="block" 
-                                fill="outline"
+                                fill="solid"
                                 onClick={onNavigateToActs}
                             >
                                 <IonIcon icon={documentOutline} slot="start" />
@@ -106,7 +105,7 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
 
                             <IonButton 
                                 expand="block" 
-                                fill="outline"
+                                fill="solid"
                                 onClick={onNavigateToPrint}
                             >
                                 <IonIcon icon={printOutline} slot="start" />
