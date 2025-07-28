@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { getData } from '../../Store';
+import { getData, Store } from '../../Store';
 
 // Типы
 export interface ActShutdownData {
@@ -48,30 +48,31 @@ export type AddressCopyDirection = 'to_execution' | 'to_reconnection';
 
 // Начальные данные (без act_number - будет автогенерирован в SQL)
 const initialData: ActShutdownData = {
-  act_date: new Date().toISOString().split('T')[0],
-  representative_name: '',
-  reason: '',
-  equipment: '',
-  apartment: '',
-  house: '',
-  street: '',
-  subscriber_name: '',
-  order_issued_by: '',
-  order_received_by: '',
-  executor_name: '',
-  execution_date: '',
-  execution_time: '',
-  disconnected_equipment: '',
-  execution_apartment: '',
-  execution_house: '',
-  execution_street: '',
-  reconnection_date: '',
-  reconnection_representative: '',
-  reconnection_supervisor: '',
-  reconnection_apartment: '',
-  reconnection_house: '',
-  reconnection_street: '',
-  reconnection_subscriber: ''
+  id:                           '',
+  act_date:                     new Date().toISOString().split('T')[0],
+  representative_name:          '',
+  reason:                       '',
+  equipment:                    '',
+  apartment:                    '',
+  house:                        '',
+  street:                       '',
+  subscriber_name:              '',
+  order_issued_by:              '',
+  order_received_by:            '',
+  executor_name:                '',
+  execution_date:               '',
+  execution_time:               '',
+  disconnected_equipment:       '',
+  execution_apartment:          '',
+  execution_house:              '',
+  execution_street:             '',
+  reconnection_date:            '',
+  reconnection_representative:  '',
+  reconnection_supervisor:      '',
+  reconnection_apartment:       '',
+  reconnection_house:           '',
+  reconnection_street:          '',
+  reconnection_subscriber:      ''
 };
 
 export const useShutdownAct = (actId?: string) => {
@@ -152,37 +153,25 @@ export const useShutdownAct = (actId?: string) => {
     return Object.keys(newErrors).length === 0;
   }, [data]);
 
-  // Загрузка акта по ID
-  const loadAct = useCallback(async (id: string) => {
-    setLoading(true);
-    try {
-      const result = await getData('SHUTDOWN_ORDER_GET', { id });
-      
-      // Если процедура возвращает массив записей, берем первую
-      const actData = Array.isArray(result) ? result[0] : result;
-      setData(actData);
-    } catch (error) {
-      console.error('Ошибка загрузки акта:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
 
   // Загрузка акта по invoice_id
   const loadActByInvoice = useCallback(async (invoiceId: string) => {
     setLoading(true);
     try {
-      const result = await getData('SHUTDOWN_ORDER_GET_BY_INVOICE', { invoice_id: invoiceId });
+      const params = { invoice_id: invoiceId, user_id: Store.getState().login.userId }
+      console.log( params )
+      const result = await getData('SHUTDOWN_ORDER_GET_BY_INVOICE', params );
       
-      // Если акт найден - режим редактирования, если нет - создание нового с invoice_id
-      if (result && (Array.isArray(result) ? result.length > 0 : result.id)) {
-        const actData = Array.isArray(result) ? result[0] : result;
+      if(result.success){
+        // Если акт найден - режим редактирования, если нет - создание нового с invoice_id
+        const actData = result.data
+
+        console.log( actData )
+
         setData(actData);
-      } else {
-        // Акт не найден - создаем новый с привязкой к заявке
-        setData({ ...initialData, invoice_id: invoiceId });
-      }
+
+      } 
+
     } catch (error) {
       console.error('Ошибка загрузки акта по заявке:', error);
       // При ошибке создаем новый акт с invoice_id
@@ -228,7 +217,6 @@ export const useShutdownAct = (actId?: string) => {
     handleFieldChange,
     copyAddressData,
     validateForm,
-    loadAct,
     loadActByInvoice,
     saveAct,
     

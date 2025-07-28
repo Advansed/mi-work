@@ -3,14 +3,12 @@ import { useShutdownAct } from './useActShutdown';
 import './ActShutdownForm.css';
 
 interface ShutdownOrderFormProps {
-  actId?: string;
   invoiceId?: string;
   onSave?: (data: any) => void;
   onCancel?: () => void;
 }
 
 const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
-  actId,
   invoiceId,
   onSave,
   onCancel
@@ -23,17 +21,14 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
     handleFieldChange,
     copyAddressData,
     saveAct,
-    loadAct,
     loadActByInvoice
-  } = useShutdownAct(actId);
+  } = useShutdownAct();
 
   useEffect(() => {
-    if (actId) {
-      loadAct(actId);
-    } else if (invoiceId) {
+    if (invoiceId) {
       loadActByInvoice(invoiceId);
     }
-  }, [actId, invoiceId, loadAct, loadActByInvoice]);
+  }, [ invoiceId, loadActByInvoice ]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,7 +55,7 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
     <div className="shutdown-order-form">
       <div className="form-header">
         <h2>
-          {actId ? 'Редактирование' : 'Создание'} акта-наряда на отключение
+          {data.id ? 'Редактирование' : 'Создание'} акта-наряда на отключение
           {data.invoice_id && ` (Заявка №${data.invoice_id})`}
         </h2>
         <div className="form-actions">
@@ -82,13 +77,13 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
               <label>Номер акта</label>
               <input
                 type="text"
-                value={data.act_number || (actId ? 'Загрузка...' : 'Будет присвоен при сохранении')}
+                value={data.act_number || (data.id ? 'Загрузка...' : 'Будет присвоен при сохранении')}
                 readOnly
                 className="readonly"
-                placeholder={actId ? 'Загрузка номера...' : 'Номер будет присвоен автоматически'}
+                placeholder={data.id ? 'Загрузка номера...' : 'Номер будет присвоен автоматически'}
               />
               <small className="field-hint">
-                {actId ? 'Номер присвоен системой' : 'Номер будет сгенерирован автоматически при сохранении'}
+                {data.id ? 'Номер присвоен системой' : 'Номер будет сгенерирован автоматически при сохранении'}
               </small>
             </div>
             <div className="form-group">
@@ -423,6 +418,7 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
             type="submit"
             disabled={saving}
             className="btn btn-primary"
+            onClick={ saveAct }
           >
             {saving ? 'Сохранение...' : 'Сохранить'}
           </button>
