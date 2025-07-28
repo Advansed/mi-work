@@ -46,7 +46,7 @@ export type AddressCopyDirection = 'to_execution' | 'to_reconnection';
 
 // Начальные данные
 const initialData: ActShutdownData = {
-  act_number: '',
+  act_number: '', // Будет автогенерирован при сохранении
   act_date: new Date().toISOString().split('T')[0],
   representative_name: '',
   reason: '',
@@ -120,9 +120,8 @@ export const useShutdownAct = (actId?: string) => {
   const validateForm = useCallback((): boolean => {
     const newErrors: ShutdownFormErrors = {};
     
-    // Обязательные поля
+    // Обязательные поля (act_number не проверяем, т.к. автогенерируется)
     const requiredFields: (keyof ActShutdownData)[] = [
-      'act_number',
       'act_date',
       'representative_name',
       'reason',
@@ -156,11 +155,17 @@ export const useShutdownAct = (actId?: string) => {
   const loadAct = useCallback(async (id: string) => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/acts/shutdown/${id}`);
+      const response = await fetch('/MI/SHUTDOWN_ORDER_GET', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
       if (!response.ok) {
         throw new Error('Ошибка загрузки акта');
       }
-      const actData = await response.json();
+      const result = await response.json();
+      // Если процедура возвращает массив записей, берем первую
+      const actData = Array.isArray(result) ? result[0] : result;
       setData(actData);
     } catch (error) {
       console.error('Ошибка загрузки акта:', error);
@@ -173,12 +178,16 @@ export const useShutdownAct = (actId?: string) => {
   // Генерация номера акта
   const generateActNumber = useCallback(async () => {
     try {
-      const response = await fetch('/api/acts/shutdown/next-number');
+      const response = await fetch('/MI/SHUTDOWN_ORDER_NEXT_NUMBER');
       if (!response.ok) {
         throw new Error('Ошибка генерации номера');
       }
-      const { number } = await response.json();
-      setData(prev => ({ ...prev, act_number: number }));
+      const result = await response.json();
+      // Процедура возвращает recordset с полем 'number'
+      const number = Array.isArray(result) ? result[0]?.number : result?.number;
+      if (number) {
+        setData(prev => ({ ...prev, act_number: number }));
+      }
     } catch (error) {
       console.error('Ошибка генерации номера:', error);
       throw error;
@@ -193,20 +202,22 @@ export const useShutdownAct = (actId?: string) => {
 
     setSaving(true);
     try {
-      const url = actId ? `/api/acts/shutdown/${actId}` : '/api/acts/shutdown';
-      const method = actId ? 'PUT' : 'POST';
+      const url = actId ? '/MI/SHUTDOWN_ORDER_UPDATE' : '/MI/SHUTDOWN_ORDER_ADD';
+      const body = actId ? { ...data, id: actId } : data;
       
       const response = await fetch(url, {
-        method,
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: JSON.stringify(body)
       });
 
       if (!response.ok) {
         throw new Error('Ошибка сохранения акта');
       }
 
-      const savedData = await response.json();
+      const result = await response.json();
+      // Если процедура возвращает массив записей, берем первую
+      const savedData = Array.isArray(result) ? result[0] : result;
       setData(savedData);
       return savedData;
     } catch (error) {

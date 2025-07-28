@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useShutdownAct } from './useActShutdown';
-import './ShutdownOrderForm.css';
+import './ActShutdownForm.css';
 
 interface ShutdownOrderFormProps {
   actId?: string;
@@ -9,7 +9,9 @@ interface ShutdownOrderFormProps {
 }
 
 const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
-  actId,  onSave, onCancel
+  actId,
+  onSave,
+  onCancel
 }) => {
   const {
     data,
@@ -19,17 +21,14 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
     handleFieldChange,
     copyAddressData,
     saveAct,
-    loadAct,
-    initializeNewAct
+    loadAct
   } = useShutdownAct(actId);
 
   useEffect(() => {
     if (actId) {
       loadAct(actId);
-    } else {
-      initializeNewAct();
     }
-  }, [actId, loadAct, initializeNewAct]);
+  }, [actId, loadAct]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,15 +71,15 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
           <h3>Основная информация</h3>
           <div className="form-row">
             <div className="form-group">
-              <label>Номер акта*</label>
+              <label>Номер акта</label>
               <input
                 type="text"
-                value={data.act_number}
-                onChange={(e) => handleFieldChange('act_number', e.target.value)}
-                className={errors.act_number ? 'error' : ''}
-                placeholder="Номер акта"
+                value={data.act_number || 'Автогенерация при сохранении'}
+                readOnly
+                className="readonly"
+                placeholder="Номер будет присвоен автоматически"
               />
-              {errors.act_number && <span className="error-text">{errors.act_number}</span>}
+              <small className="field-hint">Номер генерируется автоматически при сохранении</small>
             </div>
             <div className="form-group">
               <label>Дата акта*</label>

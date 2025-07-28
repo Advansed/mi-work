@@ -116,9 +116,24 @@
   border-color: #ef4444;
 }
 
+.form-group input.readonly {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  cursor: not-allowed;
+  border-color: #d1d5db;
+}
+
 .form-group textarea {
   resize: vertical;
   min-height: 60px;
+}
+
+.field-hint {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: #9ca3af;
+  font-style: italic;
 }
 
 /* ============================================
