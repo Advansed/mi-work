@@ -1,6 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useShutdownAct } from './useActShutdown';
 import './ActShutdownForm.css';
+import { IonModal } from '@ionic/react';
+import ActShutdown from '../ActShutdown';
 
 interface ShutdownOrderFormProps {
   invoiceId?: string;
@@ -24,6 +26,9 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
     loadActByInvoice
   } = useShutdownAct();
 
+// Состояние для модального окна печати
+  const [showPrintModal, setShowPrintModal] = useState(false);
+
   useEffect(() => {
     if (invoiceId) {
       loadActByInvoice(invoiceId);
@@ -42,14 +47,53 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
     }
   };
 
+ // Обработчик печати
   const handlePrint = () => {
-    // Заглушка для печати
-    alert('Функция печати будет реализована позже');
+    setShowPrintModal(true);
   };
 
-  if (loading) {
-    return <div className="shutdown-form-loading">Загрузка...</div>;
-  }
+  // Закрытие модального окна печати
+  const handleClosePrintModal = () => {
+    setShowPrintModal(false);
+  };
+
+// Функция маппинга данных для печатного компонента
+  const mapDataForPrint = () => {
+    return {
+      id: data.id,
+      actNumber: data.act_number || '',
+      actDate: data.act_date,
+      representativeName: data.representative_name,
+      representativePosition: '', // Может потребоваться добавить в форму
+      reason: data.reason,
+      equipment: data.equipment,
+      apartment: data.apartment,
+      house: data.house,
+      street: data.street,
+      subscriberName: data.subscriber_name,
+      orderIssuedBy: data.order_issued_by,
+      orderIssuedPosition: '', // Может потребоваться добавить в форму
+      orderReceivedBy: data.order_received_by,
+      orderReceivedPosition: '', // Может потребоваться добавить в форму
+      executorName: data.executor_name,
+      executorPosition: '', // Может потребоваться добавить в форму
+      executionDate: data.execution_date,
+      executionTime: data.execution_time,
+      disconnectedEquipment: data.disconnected_equipment,
+      executionApartment: data.execution_apartment,
+      executionHouse: data.execution_house,
+      executionStreet: data.execution_street,
+      reconnectionDate: data.reconnection_date || '',
+      reconnectionRepresentative: data.reconnection_representative || '',
+      reconnectionPosition: '', // Может потребоваться добавить в форму
+      reconnectionSupervisor: data.reconnection_supervisor || '',
+      reconnectionSupervisorPosition: '', // Может потребоваться добавить в форму
+      reconnectionApartment: data.reconnection_apartment || '',
+      reconnectionHouse: data.reconnection_house || '',
+      reconnectionStreet: data.reconnection_street || '',
+      reconnectionSubscriber: data.reconnection_subscriber || ''
+    };
+  };
 
   return (
     <div className="shutdown-order-form">
@@ -432,6 +476,15 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
           </button>
         </div>
       </form>
+
+        {/* Модальное окно печати */}
+      <IonModal isOpen={showPrintModal} onDidDismiss={handleClosePrintModal}>
+        <ActShutdown 
+          mode    = "print"
+          data    = { mapDataForPrint() }
+          onClose = { handleClosePrintModal }
+        />
+      </IonModal>
     </div>
   );
 };
