@@ -4,12 +4,14 @@ import './ActShutdownForm.css';
 
 interface ShutdownOrderFormProps {
   actId?: string;
+  invoiceId?: string;
   onSave?: (data: any) => void;
   onCancel?: () => void;
 }
 
 const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
   actId,
+  invoiceId,
   onSave,
   onCancel
 }) => {
@@ -21,14 +23,17 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
     handleFieldChange,
     copyAddressData,
     saveAct,
-    loadAct
+    loadAct,
+    loadActByInvoice
   } = useShutdownAct(actId);
 
   useEffect(() => {
     if (actId) {
       loadAct(actId);
+    } else if (invoiceId) {
+      loadActByInvoice(invoiceId);
     }
-  }, [actId, loadAct]);
+  }, [actId, invoiceId, loadAct, loadActByInvoice]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,7 +59,10 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
   return (
     <div className="shutdown-order-form">
       <div className="form-header">
-        <h2>{actId ? 'Редактирование' : 'Создание'} акта-наряда на отключение</h2>
+        <h2>
+          {actId ? 'Редактирование' : 'Создание'} акта-наряда на отключение
+          {data.invoice_id && ` (Заявка №${data.invoice_id})`}
+        </h2>
         <div className="form-actions">
           <button type="button" onClick={handlePrint} className="btn btn-secondary">
             Печать
@@ -94,6 +102,18 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
               />
               {errors.act_date && <span className="error-message">{errors.act_date}</span>}
             </div>
+            {data.invoice_id && (
+              <div className="form-group">
+                <label>Связанная заявка</label>
+                <input
+                  type="text"
+                  value={`Заявка №${data.invoice_id}`}
+                  readOnly
+                  className="readonly"
+                />
+                <small className="field-hint">Акт создан для данной заявки</small>
+              </div>
+            )}
           </div>
         </div>
 

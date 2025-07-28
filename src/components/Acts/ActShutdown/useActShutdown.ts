@@ -4,6 +4,7 @@ import { getData } from '../../Store';
 // Типы
 export interface ActShutdownData {
   id?: string;
+  invoice_id?: string; // Связь с заявкой
   act_number?: string; // Опциональное поле - автогенерируется в SQL
   act_date: string;
   
@@ -151,7 +152,7 @@ export const useShutdownAct = (actId?: string) => {
     return Object.keys(newErrors).length === 0;
   }, [data]);
 
-  // Загрузка акта
+  // Загрузка акта по ID
   const loadAct = useCallback(async (id: string) => {
     setLoading(true);
     try {
@@ -163,6 +164,29 @@ export const useShutdownAct = (actId?: string) => {
     } catch (error) {
       console.error('Ошибка загрузки акта:', error);
       throw error;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Загрузка акта по invoice_id
+  const loadActByInvoice = useCallback(async (invoiceId: string) => {
+    setLoading(true);
+    try {
+      const result = await getData('SHUTDOWN_ORDER_GET_BY_INVOICE', { invoice_id: invoiceId });
+      
+      // Если акт найден - режим редактирования, если нет - создание нового с invoice_id
+      if (result && (Array.isArray(result) ? result.length > 0 : result.id)) {
+        const actData = Array.isArray(result) ? result[0] : result;
+        setData(actData);
+      } else {
+        // Акт не найден - создаем новый с привязкой к заявке
+        setData({ ...initialData, invoice_id: invoiceId });
+      }
+    } catch (error) {
+      console.error('Ошибка загрузки акта по заявке:', error);
+      // При ошибке создаем новый акт с invoice_id
+      setData({ ...initialData, invoice_id: invoiceId });
     } finally {
       setLoading(false);
     }
@@ -205,6 +229,7 @@ export const useShutdownAct = (actId?: string) => {
     copyAddressData,
     validateForm,
     loadAct,
+    loadActByInvoice,
     saveAct,
     
     // Утилиты

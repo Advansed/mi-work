@@ -32,6 +32,7 @@ import {
     cameraOutline
 } from 'ionicons/icons';
 import { Invoice } from './types';
+import ActShutdownForm from '../Acts/ActShutdown/ActShutdownForm';
 import './Invoices.css';
 
 interface InvoiceActsProps {
@@ -105,6 +106,20 @@ export const InvoiceActs: React.FC<InvoiceActsProps> = ({ invoice }) => {
         setCurrentView('list');
     };
 
+    // Обработчик сохранения акта отключения
+    const handleSaveShutdownAct = (data: any) => {
+        console.log('Акт отключения сохранен:', data);
+        setToastMessage(`Акт-наряд №${data.act_number || 'б/н'} успешно сохранен`);
+        setShowToast(true);
+        setCurrentView('list');
+    };
+
+    // Обработчик отмены создания акта отключения
+    const handleCancelShutdownAct = () => {
+        setCurrentView('list');
+    };
+
+    // Обработчики для других типов актов (заглушки)
     const handleSaveAct = () => {
         setToastMessage('Акт сохранен (заглушка)');
         setShowToast(true);
@@ -150,14 +165,29 @@ export const InvoiceActs: React.FC<InvoiceActsProps> = ({ invoice }) => {
                                 </IonRow>
                             ))}
                         </IonGrid>
+
+                        <IonGrid>
+                            <IonRow>
+                                <IonCol size="12">
+                                    <IonButton
+                                        expand="block"
+                                        fill="clear"
+                                        color="medium"
+                                        onClick={handleCameraCapture}
+                                    >
+                                        <IonIcon icon={cameraOutline} slot="start" />
+                                        Сканировать QR-код
+                                    </IonButton>
+                                </IonCol>
+                            </IonRow>
+                        </IonGrid>
                     </IonCardContent>
                 </IonCard>
-
             </div>
         </div>
     );
 
-    // Базовый компонент формы акта
+    // Базовый компонент формы акта (для других типов актов)
     const ActForm: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
         <div className="invoice-page">
             <div className="invoice-page-header">
@@ -229,31 +259,6 @@ export const InvoiceActs: React.FC<InvoiceActsProps> = ({ invoice }) => {
             <IonItem>
                 <IonLabel position="stacked">Исполнитель</IonLabel>
                 <IonInput placeholder="ФИО исполнителя" />
-            </IonItem>
-        </ActForm>
-    );
-
-    const ShutdownOrderForm = () => (
-        <ActForm title="Акт-наряд на отключение">
-            <IonItem>
-                <IonLabel position="stacked">Дата отключения</IonLabel>
-                <IonDatetime />
-            </IonItem>
-            <IonItem>
-                <IonLabel position="stacked">Причина отключения</IonLabel>
-                <IonSelect>
-                    <IonSelectOption value="violation">Нарушение правил</IonSelectOption>
-                    <IonSelectOption value="maintenance">Плановые работы</IonSelectOption>
-                    <IonSelectOption value="emergency">Аварийная ситуация</IonSelectOption>
-                </IonSelect>
-            </IonItem>
-            <IonItem>
-                <IonLabel position="stacked">Отключаемое оборудование</IonLabel>
-                <IonTextarea rows={3} placeholder="Список отключаемого оборудования..." />
-            </IonItem>
-            <IonItem>
-                <IonLabel position="stacked">Ответственный</IonLabel>
-                <IonInput placeholder="ФИО ответственного" />
             </IonItem>
         </ActForm>
     );
@@ -364,7 +369,13 @@ export const InvoiceActs: React.FC<InvoiceActsProps> = ({ invoice }) => {
             case 'work_completed':
                 return <WorkCompletedForm />;
             case 'shutdown_order':
-                return <ShutdownOrderForm />;
+                return (
+                    <ActShutdownForm 
+                        invoiceId={invoice.id}  // 🎯 Передача ID заявки
+                        onSave={handleSaveShutdownAct}
+                        onCancel={handleCancelShutdownAct}
+                    />
+                );
             case 'sealing':
                 return <SealingForm />;
             case 'mkd_inspection':
@@ -391,3 +402,5 @@ export const InvoiceActs: React.FC<InvoiceActsProps> = ({ invoice }) => {
         </>
     );
 };
+
+export default InvoiceActs;
