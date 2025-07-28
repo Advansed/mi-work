@@ -1,9 +1,10 @@
 import { useState, useCallback } from 'react';
+import { getData } from '../../Store';
 
 // Типы
 export interface ActShutdownData {
   id?: string;
-  act_number: string;
+  act_number?: string; // Опциональное поле - автогенерируется в SQL
   act_date: string;
   
   // Представитель и причина
@@ -44,9 +45,8 @@ export type ShutdownFormErrors = Partial<Record<keyof ActShutdownData, string>>;
 
 export type AddressCopyDirection = 'to_execution' | 'to_reconnection';
 
-// Начальные данные
+// Начальные данные (без act_number - будет автогенерирован в SQL)
 const initialData: ActShutdownData = {
-  act_number: '', // Будет автогенерирован при сохранении
   act_date: new Date().toISOString().split('T')[0],
   representative_name: '',
   reason: '',
@@ -133,7 +133,7 @@ export const useShutdownAct = (actId?: string) => {
     ];
 
     requiredFields.forEach(field => {
-      if (!data[field] || data[field].toString().trim() === '') {
+      if (!data[field] || data[field]!.toString().trim() === '') {
         newErrors[field] = 'Поле обязательно для заполнения';
       }
     });
@@ -155,15 +155,8 @@ export const useShutdownAct = (actId?: string) => {
   const loadAct = useCallback(async (id: string) => {
     setLoading(true);
     try {
-      const response = await fetch('/MI/SHUTDOWN_ORDER_GET', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id })
-      });
-      if (!response.ok) {
-        throw new Error('Ошибка загрузки акта');
-      }
-      const result = await response.json();
+      const result = await getData('SHUTDOWN_ORDER_GET', { id });
+      
       // Если процедура возвращает массив записей, берем первую
       const actData = Array.isArray(result) ? result[0] : result;
       setData(actData);
@@ -175,25 +168,6 @@ export const useShutdownAct = (actId?: string) => {
     }
   }, []);
 
-  // Генерация номера акта
-  const generateActNumber = useCallback(async () => {
-    try {
-      const response = await fetch('/MI/SHUTDOWN_ORDER_NEXT_NUMBER');
-      if (!response.ok) {
-        throw new Error('Ошибка генерации номера');
-      }
-      const result = await response.json();
-      // Процедура возвращает recordset с полем 'number'
-      const number = Array.isArray(result) ? result[0]?.number : result?.number;
-      if (number) {
-        setData(prev => ({ ...prev, act_number: number }));
-      }
-    } catch (error) {
-      console.error('Ошибка генерации номера:', error);
-      throw error;
-    }
-  }, []);
-
   // Сохранение акта
   const saveAct = useCallback(async (): Promise<ActShutdownData | null> => {
     if (!validateForm()) {
@@ -202,20 +176,11 @@ export const useShutdownAct = (actId?: string) => {
 
     setSaving(true);
     try {
-      const url = actId ? '/MI/SHUTDOWN_ORDER_UPDATE' : '/MI/SHUTDOWN_ORDER_ADD';
-      const body = actId ? { ...data, id: actId } : data;
+      const method = actId ? 'SHUTDOWN_ORDER_UPDATE' : 'SHUTDOWN_ORDER_ADD';
+      const params = actId ? { ...data, id: actId } : data;
       
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
+      const result = await getData(method, params);
 
-      if (!response.ok) {
-        throw new Error('Ошибка сохранения акта');
-      }
-
-      const result = await response.json();
       // Если процедура возвращает массив записей, берем первую
       const savedData = Array.isArray(result) ? result[0] : result;
       setData(savedData);
@@ -227,13 +192,6 @@ export const useShutdownAct = (actId?: string) => {
       setSaving(false);
     }
   }, [data, actId, validateForm]);
-
-  // Автогенерация номера при создании нового акта
-  const initializeNewAct = useCallback(async () => {
-    if (!actId) {
-      await generateActNumber();
-    }
-  }, [actId, generateActNumber]);
 
   return {
     // Состояние
@@ -248,8 +206,6 @@ export const useShutdownAct = (actId?: string) => {
     validateForm,
     loadAct,
     saveAct,
-    generateActNumber,
-    initializeNewAct,
     
     // Утилиты
     setData,
