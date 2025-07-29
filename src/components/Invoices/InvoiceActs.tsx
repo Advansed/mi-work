@@ -34,6 +34,7 @@ import {
 import { Invoice } from './types';
 import ActShutdownForm from '../Acts/ActShutdown/ActShutdownForm';
 import './Invoices.css';
+import ActPlomb from '../Acts/ActPlomb/Actplomb';
 
 interface InvoiceActsProps {
     invoice: Invoice;
@@ -377,13 +378,21 @@ export const InvoiceActs: React.FC<InvoiceActsProps> = ({ invoice }) => {
                     />
                 );
             case 'sealing':
-                return <SealingForm />;
+                return <ActPlomb 
+                    invoiceId={invoice.id}  // 🎯 Передача ID заявки
+                    onSave={handleSaveShutdownAct}
+                    onCancel={handleCancelShutdownAct}
+                />;
+
             case 'mkd_inspection':
                 return <MkdInspectionForm />;
+
             case 'private_inspection':
                 return <PrivateInspectionForm />;
+
             case 'prescription':
                 return <PrescriptionForm />;
+
             default:
                 return <ActButtonsList />;
         }

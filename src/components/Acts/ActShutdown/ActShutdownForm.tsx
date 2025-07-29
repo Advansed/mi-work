@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useShutdownAct } from './useActShutdown';
 import './ActShutdownForm.css';
 import { IonModal } from '@ionic/react';
-import ActShutdown from '../ActShutdown';
+import ActShutdown from './ActShutdown';
 
 interface ShutdownOrderFormProps {
   invoiceId?: string;
