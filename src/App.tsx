@@ -39,6 +39,7 @@ import '@ionic/react/css/palettes/dark.system.css';
 /* Theme variables */
 import './theme/variables.css';
 import './App.css'
+import ToastManager from './components/Toast/ToastManager';
 
 setupIonicReact();
 
@@ -52,6 +53,7 @@ const App: React.FC = () => {
         return (
             <IonApp>
                 <LoginForm />
+                <ToastManager />
             </IonApp>
         );
     }
@@ -89,6 +91,7 @@ const App: React.FC = () => {
                             <Redirect to={`/page/${defaultPage}`} />
                         </Route>
                     </IonRouterOutlet>
+                    <ToastManager />
                 </IonSplitPane>
             </IonReactRouter>
         </IonApp>

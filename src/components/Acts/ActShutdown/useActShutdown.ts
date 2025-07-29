@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { getData, Store } from '../../Store';
+import { useToast } from '../../Toast/useToast';
 
 // Типы
 export interface ActShutdownData {
@@ -80,6 +81,7 @@ export const useShutdownAct = (actId?: string) => {
   const [errors, setErrors] = useState<ShutdownFormErrors>({});
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const { showSuccess, showError } = useToast();
 
   // Обработчик изменения полей
   const handleFieldChange = useCallback((field: keyof ActShutdownData, value: string) => {
@@ -148,7 +150,7 @@ export const useShutdownAct = (actId?: string) => {
     // if (data.reconnection_date && new Date(data.reconnection_date) < new Date(data.execution_date)) {
     //   newErrors.reconnection_date = 'Дата подключения не может быть раньше даты отключения';
     // }
-
+    console.log(data)
     console.log( newErrors )
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -192,6 +194,7 @@ export const useShutdownAct = (actId?: string) => {
     console.log( "saveAct" )
 
     setSaving(true);
+
     try {
       const method = 'SHUTDOWN_ORDER_CREATE';
       const params = data;
@@ -199,16 +202,14 @@ export const useShutdownAct = (actId?: string) => {
       const result = await getData(method, params);
 
       if( result.success ){
-        
+        showSuccess("Данные сохранены")
+        console.log(result)
       } else {
-
+        showError( "Ошибка сохранения данных" ) 
       }
 
-      // Если процедура возвращает массив записей, берем первую
-      const savedData = Array.isArray(result) ? result[0] : result;
-      console.log(savedData)
-      setData(savedData);
-      return savedData;
+      return result;
+
     } catch (error) {
       console.error('Ошибка сохранения акта:', error);
       throw error;

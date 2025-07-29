@@ -22,6 +22,7 @@ const ToastManager: React.FC = () => {
     const toastData: any = useStoreField('toast', 1);
     
     useEffect(() => {
+        console.log("toast data ")
         if (toastData && toastData.message) {
             const newToast: ToastMessage = {
                 id:         Date.now().toString(),
