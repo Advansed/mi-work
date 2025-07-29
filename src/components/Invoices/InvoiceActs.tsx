@@ -1,3 +1,4 @@
+// src/components/Invoices/InvoiceActs.tsx
 import React, { useState } from 'react';
 import { 
     IonButton, 
@@ -5,85 +6,70 @@ import {
     IonCardContent, 
     IonCardHeader, 
     IonCardTitle, 
+    IonCol, 
+    IonGrid, 
     IonIcon, 
     IonItem, 
     IonLabel, 
-    IonList, 
-    IonToast, 
-    IonGrid,
     IonRow,
-    IonCol,
-    IonInput,
-    IonTextarea,
-    IonDatetime,
     IonSelect,
-    IonSelectOption
+    IonSelectOption,
+    IonTextarea,
+    IonDatetime
 } from '@ionic/react';
 import { 
     documentTextOutline, 
-    powerOutline, 
-    lockClosedOutline, 
     businessOutline, 
     homeOutline, 
     warningOutline,
-    arrowBackOutline,
-    saveOutline,
-    closeOutline,
-    cameraOutline
+    cameraOutline 
 } from 'ionicons/icons';
 import { Invoice } from './types';
 import ActShutdownForm from '../Acts/ActShutdown/ActShutdownForm';
-import './Invoices.css';
 import ActPlomb from '../Acts/ActPlomb/Actplomb';
+import { useToast } from '../Toast/useToast';
+import './Invoices.css';
+
+type ActType = 'list' | 'work_completed' | 'shutdown_order' | 'sealing' | 'mkd_inspection' | 'private_inspection' | 'prescription';
 
 interface InvoiceActsProps {
     invoice: Invoice;
 }
 
-// Типы актов
-type ActType = 'list' | 'work_completed' | 'shutdown_order' | 'sealing' | 'mkd_inspection' | 'private_inspection' | 'prescription';
-
-// Конфигурация кнопок актов
 const actButtons = [
     {
         type: 'work_completed' as ActType,
-        title: 'Акт выполненных работ',
-        description: 'Документ о выполнении технических работ',
+        name: 'Акт выполненных работ',
         icon: documentTextOutline,
         color: 'primary'
     },
     {
         type: 'shutdown_order' as ActType,
-        title: 'Акт-наряд на отключение',
-        description: 'Распоряжение на отключение газоснабжения',
-        icon: powerOutline,
+        name: 'Акт-наряд на отключение',
+        icon: businessOutline,
         color: 'warning'
     },
     {
         type: 'sealing' as ActType,
-        title: 'Акт пломбирования',
-        description: 'Документ об установке пломб на оборудование',
-        icon: lockClosedOutline,
+        name: 'Акт пломбирования',
+        icon: businessOutline,
         color: 'secondary'
     },
     {
         type: 'mkd_inspection' as ActType,
-        title: 'Акт проверки МКД',
-        description: 'Проверка многоквартирного дома',
-        icon: businessOutline,
+        name: 'Акт обследования МКД',
+        icon: homeOutline,
         color: 'tertiary'
     },
     {
         type: 'private_inspection' as ActType,
-        title: 'Акт проверки частники',
-        description: 'Проверка частного домовладения',
+        name: 'Акт обследования частного дома',
         icon: homeOutline,
         color: 'success'
     },
     {
         type: 'prescription' as ActType,
-        title: 'Предписание',
-        description: 'Документ с требованиями по устранению нарушений',
+        name: 'Предписание с требованиями по устранению нарушений',
         icon: warningOutline,
         color: 'danger'
     }
@@ -91,12 +77,10 @@ const actButtons = [
 
 export const InvoiceActs: React.FC<InvoiceActsProps> = ({ invoice }) => {
     const [currentView, setCurrentView] = useState<ActType>('list');
-    const [showToast, setShowToast] = useState(false);
-    const [toastMessage, setToastMessage] = useState('');
+    const { showSuccess, showInfo } = useToast();
 
     const handleCameraCapture = () => {
-        setToastMessage('Функция сканирования будет реализована');
-        setShowToast(true);
+        showInfo('Функция сканирования будет реализована');
     };
 
     const handleActButtonClick = (actType: ActType) => {
@@ -110,8 +94,7 @@ export const InvoiceActs: React.FC<InvoiceActsProps> = ({ invoice }) => {
     // Обработчик сохранения акта отключения
     const handleSaveShutdownAct = (data: any) => {
         console.log('Акт отключения сохранен:', data);
-        setToastMessage(`Акт-наряд №${data.act_number || 'б/н'} успешно сохранен`);
-        setShowToast(true);
+        showSuccess(`Акт-наряд №${data.act_number || 'б/н'} успешно сохранен`);
         setCurrentView('list');
     };
 
@@ -122,14 +105,61 @@ export const InvoiceActs: React.FC<InvoiceActsProps> = ({ invoice }) => {
 
     // Обработчики для других типов актов (заглушки)
     const handleSaveAct = () => {
-        setToastMessage('Акт сохранен (заглушка)');
-        setShowToast(true);
+        showSuccess('Акт сохранен (заглушка)');
         setCurrentView('list');
     };
 
     const handleCancelAct = () => {
         setCurrentView('list');
     };
+
+    // Компонент формы для создания актов (заглушки)
+    const ActForm: React.FC<{ children: React.ReactNode; title: string; onSave: () => void; onCancel: () => void }> = ({ 
+        children, 
+        title, 
+        onSave, 
+        onCancel 
+    }) => (
+        <div className="invoice-page">
+            <div className="invoice-page-header">
+                <h2 className="invoice-page-title">{title}</h2>
+                <p className="invoice-page-subtitle">Заявка #{invoice.number}</p>
+            </div>
+
+            <div className="invoice-page-content">
+                <IonCard>
+                    <IonCardHeader>
+                        <IonCardTitle>{title}</IonCardTitle>
+                    </IonCardHeader>
+                    <IonCardContent>
+                        {children}
+                        
+                        <IonGrid className="ion-margin-top">
+                            <IonRow>
+                                <IonCol size="6">
+                                    <IonButton 
+                                        expand="block" 
+                                        fill="outline"
+                                        onClick={onCancel}
+                                    >
+                                        Отмена
+                                    </IonButton>
+                                </IonCol>
+                                <IonCol size="6">
+                                    <IonButton 
+                                        expand="block" 
+                                        onClick={onSave}
+                                    >
+                                        Сохранить
+                                    </IonButton>
+                                </IonCol>
+                            </IonRow>
+                        </IonGrid>
+                    </IonCardContent>
+                </IonCard>
+            </div>
+        </div>
+    );
 
     // Компонент списка кнопок актов
     const ActButtonsList = () => (
@@ -148,7 +178,7 @@ export const InvoiceActs: React.FC<InvoiceActsProps> = ({ invoice }) => {
                         <IonGrid>
                             {actButtons.map((button, index) => (
                                 <IonRow key={button.type}>
-                                    <IonCol size="12">
+                                    <IonCol>
                                         <IonButton
                                             expand="block"
                                             fill="outline"
@@ -157,79 +187,22 @@ export const InvoiceActs: React.FC<InvoiceActsProps> = ({ invoice }) => {
                                             className="act-button"
                                         >
                                             <IonIcon icon={button.icon} slot="start" />
-                                            <div className="act-button-content">
-                                                <div className="act-button-title">{button.title}</div>
-                                                <div className="act-button-description">{button.description}</div>
-                                            </div>
+                                            {button.name}
                                         </IonButton>
                                     </IonCol>
                                 </IonRow>
                             ))}
                         </IonGrid>
 
-                        <IonGrid>
-                            <IonRow>
-                                <IonCol size="12">
-                                    <IonButton
-                                        expand="block"
-                                        fill="clear"
-                                        color="medium"
-                                        onClick={handleCameraCapture}
-                                    >
-                                        <IonIcon icon={cameraOutline} slot="start" />
-                                        Сканировать QR-код
-                                    </IonButton>
-                                </IonCol>
-                            </IonRow>
-                        </IonGrid>
-                    </IonCardContent>
-                </IonCard>
-            </div>
-        </div>
-    );
-
-    // Базовый компонент формы акта (для других типов актов)
-    const ActForm: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
-        <div className="invoice-page">
-            <div className="invoice-page-header">
-                <h2 className="invoice-page-title">{title}</h2>
-                <p className="invoice-page-subtitle">Заявка #{invoice.number}</p>
-            </div>
-
-            <div className="invoice-page-content">
-                <IonCard>
-                    <IonCardContent>
-                        {children}
-                        
-                        {/* Кнопки управления */}
-                        <div className="act-form-buttons">
-                            <IonButton
-                                expand="block"
-                                onClick={handleSaveAct}
-                                color="primary"
-                            >
-                                <IonIcon icon={saveOutline} slot="start" />
-                                Сохранить
-                            </IonButton>
-                            
-                            <IonButton
-                                expand="block"
-                                fill="outline"
-                                onClick={handleCancelAct}
-                                color="medium"
-                            >
-                                <IonIcon icon={closeOutline} slot="start" />
-                                Отмена
-                            </IonButton>
-                            
+                        <div className="camera-section ion-margin-top">
                             <IonButton
                                 expand="block"
                                 fill="clear"
-                                onClick={handleBackToList}
-                                color="medium"
+                                onClick={handleCameraCapture}
+                                className="camera-button"
                             >
-                                <IonIcon icon={arrowBackOutline} slot="start" />
-                                Назад к списку
+                                <IonIcon icon={cameraOutline} slot="start" />
+                                Сканировать QR-код документа
                             </IonButton>
                         </div>
                     </IonCardContent>
@@ -238,115 +211,50 @@ export const InvoiceActs: React.FC<InvoiceActsProps> = ({ invoice }) => {
         </div>
     );
 
-    // Заглушки форм актов
+    // Заглушки для форм актов
     const WorkCompletedForm = () => (
-        <ActForm title="Акт выполненных работ">
+        <ActForm title="Акт выполненных работ" onSave={handleSaveAct} onCancel={handleCancelAct}>
             <IonItem>
-                <IonLabel position="stacked">Дата выполнения работ</IonLabel>
+                <IonLabel position="stacked">Описание выполненных работ</IonLabel>
+                <IonTextarea rows={4} placeholder="Подробное описание..." />
+            </IonItem>
+            <IonItem>
+                <IonLabel position="stacked">Дата выполнения</IonLabel>
                 <IonDatetime />
-            </IonItem>
-            <IonItem>
-                <IonLabel position="stacked">Вид выполненных работ</IonLabel>
-                <IonSelect>
-                    <IonSelectOption value="maintenance">Техническое обслуживание</IonSelectOption>
-                    <IonSelectOption value="repair">Ремонт</IonSelectOption>
-                    <IonSelectOption value="installation">Установка</IonSelectOption>
-                </IonSelect>
-            </IonItem>
-            <IonItem>
-                <IonLabel position="stacked">Описание работ</IonLabel>
-                <IonTextarea rows={4} placeholder="Подробное описание выполненных работ..." />
-            </IonItem>
-            <IonItem>
-                <IonLabel position="stacked">Исполнитель</IonLabel>
-                <IonInput placeholder="ФИО исполнителя" />
-            </IonItem>
-        </ActForm>
-    );
-
-    const SealingForm = () => (
-        <ActForm title="Акт пломбирования">
-            <IonItem>
-                <IonLabel position="stacked">Дата пломбирования</IonLabel>
-                <IonDatetime />
-            </IonItem>
-            <IonItem>
-                <IonLabel position="stacked">Номера пломб</IonLabel>
-                <IonInput placeholder="Номера установленных пломб" />
-            </IonItem>
-            <IonItem>
-                <IonLabel position="stacked">Пломбируемые узлы</IonLabel>
-                <IonTextarea rows={3} placeholder="Описание пломбируемых узлов и оборудования..." />
-            </IonItem>
-            <IonItem>
-                <IonLabel position="stacked">Причина пломбирования</IonLabel>
-                <IonTextarea rows={2} placeholder="Основание для установки пломб..." />
             </IonItem>
         </ActForm>
     );
 
     const MkdInspectionForm = () => (
-        <ActForm title="Акт проверки МКД">
+        <ActForm title="Акт обследования МКД" onSave={handleSaveAct} onCancel={handleCancelAct}>
             <IonItem>
-                <IonLabel position="stacked">Дата проверки</IonLabel>
+                <IonLabel position="stacked">Результаты обследования</IonLabel>
+                <IonTextarea rows={5} placeholder="Описание состояния МКД..." />
+            </IonItem>
+            <IonItem>
+                <IonLabel position="stacked">Дата обследования</IonLabel>
                 <IonDatetime />
-            </IonItem>
-            <IonItem>
-                <IonLabel position="stacked">Тип проверки</IonLabel>
-                <IonSelect>
-                    <IonSelectOption value="planned">Плановая</IonSelectOption>
-                    <IonSelectOption value="unplanned">Внеплановая</IonSelectOption>
-                    <IonSelectOption value="control">Контрольная</IonSelectOption>
-                </IonSelect>
-            </IonItem>
-            <IonItem>
-                <IonLabel position="stacked">Проверяемые помещения</IonLabel>
-                <IonTextarea rows={3} placeholder="Список проверенных помещений..." />
-            </IonItem>
-            <IonItem>
-                <IonLabel position="stacked">Выявленные нарушения</IonLabel>
-                <IonTextarea rows={4} placeholder="Описание выявленных нарушений..." />
             </IonItem>
         </ActForm>
     );
 
     const PrivateInspectionForm = () => (
-        <ActForm title="Акт проверки частники">
+        <ActForm title="Акт обследования частного дома" onSave={handleSaveAct} onCancel={handleCancelAct}>
             <IonItem>
-                <IonLabel position="stacked">Дата проверки</IonLabel>
+                <IonLabel position="stacked">Результаты обследования</IonLabel>
+                <IonTextarea rows={5} placeholder="Описание состояния дома..." />
+            </IonItem>
+            <IonItem>
+                <IonLabel position="stacked">Дата обследования</IonLabel>
                 <IonDatetime />
-            </IonItem>
-            <IonItem>
-                <IonLabel position="stacked">Собственник</IonLabel>
-                <IonInput placeholder="ФИО собственника" />
-            </IonItem>
-            <IonItem>
-                <IonLabel position="stacked">Присутствовал при проверке</IonLabel>
-                <IonSelect>
-                    <IonSelectOption value="owner">Собственник</IonSelectOption>
-                    <IonSelectOption value="representative">Представитель</IonSelectOption>
-                    <IonSelectOption value="absent">Отсутствовал</IonSelectOption>
-                </IonSelect>
-            </IonItem>
-            <IonItem>
-                <IonLabel position="stacked">Результат проверки</IonLabel>
-                <IonTextarea rows={4} placeholder="Подробные результаты проверки..." />
             </IonItem>
         </ActForm>
     );
 
     const PrescriptionForm = () => (
-        <ActForm title="Предписание">
+        <ActForm title="Предписание" onSave={handleSaveAct} onCancel={handleCancelAct}>
             <IonItem>
-                <IonLabel position="stacked">Дата выдачи</IonLabel>
-                <IonDatetime />
-            </IonItem>
-            <IonItem>
-                <IonLabel position="stacked">Номер предписания</IonLabel>
-                <IonInput placeholder="Номер предписания" />
-            </IonItem>
-            <IonItem>
-                <IonLabel position="stacked">Основание</IonLabel>
+                <IonLabel position="stacked">Основание для выдачи</IonLabel>
                 <IonSelect>
                     <IonSelectOption value="inspection">По результатам проверки</IonSelectOption>
                     <IonSelectOption value="complaint">По жалобе</IonSelectOption>
@@ -401,13 +309,6 @@ export const InvoiceActs: React.FC<InvoiceActsProps> = ({ invoice }) => {
     return (
         <>
             {renderCurrentView()}
-            
-            <IonToast
-                isOpen={showToast}
-                onDidDismiss={() => setShowToast(false)}
-                message={toastMessage}
-                duration={2000}
-            />
         </>
     );
 };
