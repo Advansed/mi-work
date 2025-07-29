@@ -608,3 +608,183 @@
     transition: none;
   }
 }
+
+/* Основные размеры для А4 */
+.act-shutdown-container {
+  width: 210mm;
+  height: 297mm;
+  max-width: 210mm;
+  max-height: 297mm;
+  margin: 0 auto;
+  padding: 15mm;
+  box-sizing: border-box;
+  background: white;
+  font-family: 'Times New Roman', serif;
+  font-size: 12pt;
+  line-height: 1.4;
+  color: #000;
+}
+
+/* Настройки страницы для печати */
+@page {
+  size: A4;
+  margin: 15mm;
+}
+
+/* Заголовок документа */
+.act-shutdown-header {
+  text-align: center;
+  margin-bottom: 20mm;
+  page-break-inside: avoid;
+}
+
+.act-shutdown-title {
+  font-size: 16pt;
+  font-weight: bold;
+  margin-bottom: 5mm;
+  text-transform: uppercase;
+}
+
+.act-shutdown-subtitle {
+  font-size: 12pt;
+  margin-bottom: 3mm;
+}
+
+/* Основное содержимое */
+.act-shutdown-content {
+  margin-bottom: 15mm;
+}
+
+.act-shutdown-section {
+  margin-bottom: 8mm;
+  page-break-inside: avoid;
+}
+
+.act-shutdown-section-title {
+  font-size: 13pt;
+  font-weight: bold;
+  margin-bottom: 3mm;
+  border-bottom: 1px solid #000;
+  padding-bottom: 1mm;
+}
+
+/* Таблицы */
+.act-shutdown-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 5mm;
+  page-break-inside: avoid;
+}
+
+.act-shutdown-table th,
+.act-shutdown-table td {
+  border: 1px solid #000;
+  padding: 2mm;
+  text-align: left;
+  vertical-align: top;
+}
+
+.act-shutdown-table th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Подписи и печати */
+.act-shutdown-signatures {
+  margin-top: 20mm;
+  page-break-inside: avoid;
+}
+
+.signature-block {
+  display: inline-block;
+  width: 45%;
+  margin-right: 5%;
+  margin-bottom: 15mm;
+  vertical-align: top;
+}
+
+.signature-line {
+  border-bottom: 1px solid #000;
+  height: 8mm;
+  margin-bottom: 2mm;
+}
+
+.signature-label {
+  font-size: 10pt;
+  text-align: center;
+}
+
+/* Дата и номер документа */
+.act-shutdown-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10mm;
+  font-size: 11pt;
+}
+
+/* Стили для печати */
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  
+  .act-shutdown-container {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 15mm;
+    box-shadow: none;
+    border: none;
+  }
+  
+  /* Скрыть элементы, не нужные при печати */
+  .no-print,
+  .btn,
+  .button,
+  .nav,
+  .navigation,
+  .sidebar,
+  .header-controls,
+  .footer-controls {
+    display: none !important;
+  }
+  
+  /* Убрать цветные фоны и тени */
+  * {
+    background: transparent !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  
+  /* Сохранить только черные границы и текст */
+  * {
+    color: #000 !important;
+    border-color: #000 !important;
+  }
+  
+  /* Предотвратить разрывы страниц в критических местах */
+  .act-shutdown-header,
+  .act-shutdown-section,
+  .act-shutdown-signatures,
+  .signature-block {
+    page-break-inside: avoid;
+  }
+  
+  /* Принудительный разрыв страницы при необходимости */
+  .page-break {
+    page-break-before: always;
+  }
+}
+
+/* Дополнительные классы для точного позиционирования */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-left { text-align: left; }
+.font-bold { font-weight: bold; }
+.font-small { font-size: 10pt; }
+.margin-top-small { margin-top: 3mm; }
+.margin-bottom-small { margin-bottom: 3mm; }

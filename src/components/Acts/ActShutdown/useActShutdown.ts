@@ -145,10 +145,11 @@ export const useShutdownAct = (actId?: string) => {
       newErrors.execution_date = 'Дата выполнения не может быть в будущем';
     }
 
-    if (data.reconnection_date && new Date(data.reconnection_date) < new Date(data.execution_date)) {
-      newErrors.reconnection_date = 'Дата подключения не может быть раньше даты отключения';
-    }
+    // if (data.reconnection_date && new Date(data.reconnection_date) < new Date(data.execution_date)) {
+    //   newErrors.reconnection_date = 'Дата подключения не может быть раньше даты отключения';
+    // }
 
+    console.log( newErrors )
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }, [data]);
@@ -160,7 +161,7 @@ export const useShutdownAct = (actId?: string) => {
     try {
       const params = { invoice_id: invoiceId, user_id: Store.getState().login.userId }
       console.log( params )
-      const result = await getData('SHUTDOWN_ORDER_GET_BY_INVOICE', params );
+      const result = await getData('SHUTDOWN_ORDER_GET', params );
       
       if(result.success){
         // Если акт найден - режим редактирования, если нет - создание нового с invoice_id
@@ -184,18 +185,28 @@ export const useShutdownAct = (actId?: string) => {
   // Сохранение акта
   const saveAct = useCallback(async (): Promise<ActShutdownData | null> => {
     if (!validateForm()) {
+      console.log( "no validate" )
       return null;
     }
 
+    console.log( "saveAct" )
+
     setSaving(true);
     try {
-      const method = actId ? 'SHUTDOWN_ORDER_UPDATE' : 'SHUTDOWN_ORDER_ADD';
-      const params = actId ? { ...data, id: actId } : data;
+      const method = 'SHUTDOWN_ORDER_CREATE';
+      const params = data;
       
       const result = await getData(method, params);
 
+      if( result.success ){
+        
+      } else {
+
+      }
+
       // Если процедура возвращает массив записей, берем первую
       const savedData = Array.isArray(result) ? result[0] : result;
+      console.log(savedData)
       setData(savedData);
       return savedData;
     } catch (error) {
