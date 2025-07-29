@@ -1,0 +1,139 @@
+/* src/components/Toast/Toast.css */
+
+/* ============================================
+   БАЗОВЫЕ СТИЛИ TOAST
+   ============================================ */
+
+.toast-success {
+    --background: var(--ion-color-success);
+    --color: var(--ion-color-success-contrast);
+    --border-radius: 12px;
+    --box-shadow: 0 4px 16px rgba(var(--ion-color-success-rgb), 0.3);
+}
+
+.toast-error {
+    --background: var(--ion-color-danger);
+    --color: var(--ion-color-danger-contrast);
+    --border-radius: 12px;
+    --box-shadow: 0 4px 16px rgba(var(--ion-color-danger-rgb), 0.3);
+}
+
+.toast-warning {
+    --background: var(--ion-color-warning);
+    --color: var(--ion-color-warning-contrast);
+    --border-radius: 12px;
+    --box-shadow: 0 4px 16px rgba(var(--ion-color-warning-rgb), 0.3);
+}
+
+.toast-info {
+    --background: var(--ion-color-primary);
+    --color: var(--ion-color-primary-contrast);
+    --border-radius: 12px;
+    --box-shadow: 0 4px 16px rgba(var(--ion-color-primary-rgb), 0.3);
+}
+
+/* ============================================
+   АНИМАЦИИ И ЭФФЕКТЫ
+   ============================================ */
+
+.toast-success,
+.toast-error,
+.toast-warning,
+.toast-info {
+    animation: toastSlideIn 0.3s ease-out;
+}
+
+@keyframes toastSlideIn {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ============================================
+   КАСТОМИЗАЦИЯ IONIC TOAST
+   ============================================ */
+
+.toast-wrapper {
+    --min-height: 60px;
+    --max-width: 400px;
+    --start: 16px;
+    --end: 16px;
+    --top: 16px;
+}
+
+.toast-success .toast-wrapper {
+    --border-left: 4px solid var(--ion-color-success-shade);
+}
+
+.toast-error .toast-wrapper {
+    --border-left: 4px solid var(--ion-color-danger-shade);
+}
+
+.toast-warning .toast-wrapper {
+    --border-left: 4px solid var(--ion-color-warning-shade);
+}
+
+.toast-info .toast-wrapper {
+    --border-left: 4px solid var(--ion-color-primary-shade);
+}
+
+/* ============================================
+   СТИЛИ ДЛЯ ТЕМНОЙ ТЕМЫ
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+    .toast-success {
+        --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+    
+    .toast-error {
+        --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+    
+    .toast-warning {
+        --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+    
+    .toast-info {
+        --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+}
+
+/* ============================================
+   МОБИЛЬНАЯ АДАПТАЦИЯ
+   ============================================ */
+
+@media (max-width: 576px) {
+    .toast-wrapper {
+        --max-width: calc(100vw - 32px);
+        --start: 16px;
+        --end: 16px;
+    }
+}
+
+/* ============================================
+   СОСТОЯНИЯ И ИНТЕРАКТИВНОСТЬ
+   ============================================ */
+
+.toast-success .toast-button,
+.toast-error .toast-button,
+.toast-warning .toast-button,
+.toast-info .toast-button {
+    --color: inherit;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+.toast-success .toast-button:hover,
+.toast-error .toast-button:hover,
+.toast-warning .toast-button:hover,
+.toast-info .toast-button:hover {
+    opacity: 0.8;
+}

@@ -1,6 +1,7 @@
 import { combineReducers  } from 'redux'
 import { useState, useEffect, useRef } from 'react'
 import { Reducer } from 'react';
+import { micOutline } from 'ionicons/icons';
 
 export const reducers: Array<Reducer<any, any>> = []
 
@@ -12,6 +13,7 @@ export const i_state = {
     route:                              "",         
     back:                               0,
     message:                            '',
+    toast:                              null
 }
 
 for(const [key, value] of Object.entries(i_state)){
