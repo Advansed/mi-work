@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useInvoices } from '../useInvoices';
 import { InvoicesBreadcrumb } from './InvoicesBreadcrumb';
 import { InvoicesList } from './InvoicesList';
@@ -24,6 +24,12 @@ const InvoicesPage: React.FC = () => {
         selectInvoice
     } = useInvoices();
 
+    useEffect(() => {
+        if (navigation.position === 1 && !selectedInvoice) {
+            navigateToPosition(0);
+        }
+    }, [navigation.position, selectedInvoice, navigateToPosition]);
+
     const renderCurrentPage = () => {
         switch (navigation.position) {
             case 0:
@@ -41,11 +47,9 @@ const InvoicesPage: React.FC = () => {
                         formatPhone             = { formatPhone }
                     />
                 );
-
             case 1:
                 if (!selectedInvoice) {
-                    navigateToPosition(0);
-                    return null;
+                    return <div>Загрузка...</div>; // ✅ Заменить на это
                 }
                 return (
                     <InvoiceView
@@ -57,6 +61,21 @@ const InvoicesPage: React.FC = () => {
                         onNavigateToPrint={() => navigateToPosition(3)}
                     />
                 );
+            // case 1:
+            //     if (!selectedInvoice) {
+            //         navigateToPosition(0);
+            //         return null;
+            //     }
+            //     return (
+            //         <InvoiceView
+            //             invoice={selectedInvoice}
+            //             invoiceStatus={getInvoiceStatus(selectedInvoice)}
+            //             formatDate={formatDate}
+            //             formatPhone={formatPhone}
+            //             onNavigateToActs={() => navigateToPosition(2)}
+            //             onNavigateToPrint={() => navigateToPosition(3)}
+            //         />
+            //     );
 
             case 2:
                 if (!selectedInvoice) {
