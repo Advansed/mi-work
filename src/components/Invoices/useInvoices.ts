@@ -3,7 +3,6 @@ import { getData, useStoreField } from '../Store';
 import { 
     Invoice, 
     InvoiceStatus, 
-    InvoiceFilters, 
     InvoicesResponse, 
     UseInvoicesReturn, 
     InvoicePosition, 
@@ -19,12 +18,6 @@ export const useInvoices = (): UseInvoicesReturn => {
     const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    
-    // Фильтры
-    const [filtersState, setFiltersState] = useState<InvoiceFilters>({
-        search: '',
-        status: 'all'
-    });
     
     // Навигация
     const [navigation, setNavigation] = useState<InvoiceNavigation>({
@@ -87,11 +80,6 @@ export const useInvoices = (): UseInvoicesReturn => {
             setRefreshing(false);
         }
     }, [loginData?.token]);
-
-    // Установка фильтров
-    const setFilters = useCallback((newFilters: Partial<InvoiceFilters>) => {
-        setFiltersState(prev => ({ ...prev, ...newFilters }));
-    }, []);
 
     // Очистка ошибки
     const clearError = useCallback(() => {
@@ -168,38 +156,9 @@ export const useInvoices = (): UseInvoicesReturn => {
         return phone;
     }, []);
 
-    // Фильтрованный список заявок
-    const filteredInvoices = useMemo(() => {
-        let result = [...invoices];
-
-        // Поиск по номеру заявки и адресу
-        if (filtersState.search) {
-            const searchLower = filtersState.search.toLowerCase();
-            result = result.filter(invoice => 
-                invoice.number.toLowerCase().includes(searchLower) ||
-                invoice.address.toLowerCase().includes(searchLower)
-            );
-        }
-
-        // Фильтр по статусу
-        if (filtersState.status !== 'all') {
-            result = result.filter(invoice => {
-                const status = getInvoiceStatus(invoice);
-                return status.type === filtersState.status;
-            });
-        }
-
-        // Фильтр по дате (если указан)
-        if (filtersState.dateFrom) {
-            const fromDate = new Date(filtersState.dateFrom);
-            result = result.filter(invoice => new Date(invoice.date) >= fromDate);
-        }
-
-        if (filtersState.dateTo) {
-            const toDate = new Date(filtersState.dateTo);
-            toDate.setHours(23, 59, 59, 999); // Конец дня
-            result = result.filter(invoice => new Date(invoice.date) <= toDate);
-        }
+    // Сортированный список заявок (по приоритету и дате)
+    const sortedInvoices = useMemo(() => {
+        const result = [...invoices];
 
         // Сортировка по приоритету и дате
         result.sort((a, b) => {
@@ -216,7 +175,7 @@ export const useInvoices = (): UseInvoicesReturn => {
         });
 
         return result;
-    }, [invoices, filtersState, getInvoiceStatus]);
+    }, [invoices, getInvoiceStatus]);
 
     // Выбранная заявка
     const selectedInvoice = useMemo(() => {
@@ -260,17 +219,14 @@ export const useInvoices = (): UseInvoicesReturn => {
     }, [loadInvoices, loginData?.token]);
 
     return {
-        invoices,
-        filteredInvoices,
+        invoices: sortedInvoices,
         loading,
         refreshing,
         error,
-        filters: filtersState,
         navigation,
         selectedInvoice,
         loadInvoices,
         refreshInvoices,
-        setFilters,
         clearError,
         getInvoiceStatus,
         formatDate,

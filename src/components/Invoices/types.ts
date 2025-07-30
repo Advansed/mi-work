@@ -7,7 +7,6 @@ export interface Lic {
     name:   string;
     code:   string;
     plot:   string;
-
 }
 
 export interface Invoice {
@@ -29,13 +28,6 @@ export interface InvoiceStatus {
     label: string;
     color: 'danger' | 'warning' | 'success';
     priority: number;
-}
-
-export interface InvoiceFilters {
-    search: string;
-    status: 'all' | 'overdue' | 'urgent' | 'normal';
-    dateFrom?: string;
-    dateTo?: string;
 }
 
 export interface InvoicesResponse {
@@ -72,9 +64,7 @@ export interface InvoicesListProps {
     loading: boolean;
     refreshing: boolean;
     error: string | null;
-    filters: InvoiceFilters;
     onRefresh: () => Promise<void>;
-    onFiltersChange: (filters: Partial<InvoiceFilters>) => void;
     onClearError: () => void;
     onInvoiceSelect: (invoiceId: string) => void;
     getInvoiceStatus: (invoice: Invoice) => InvoiceStatus;
@@ -115,16 +105,13 @@ export interface InvoicesBreadcrumbProps {
 
 export interface UseInvoicesReturn {
     invoices: Invoice[];
-    filteredInvoices: Invoice[];
     loading: boolean;
     refreshing: boolean;
     error: string | null;
-    filters: InvoiceFilters;
     navigation: InvoiceNavigation;
     selectedInvoice: Invoice | null;
     loadInvoices: () => Promise<void>;
     refreshInvoices: () => Promise<void>;
-    setFilters: (filters: Partial<InvoiceFilters>) => void;
     clearError: () => void;
     getInvoiceStatus: (invoice: Invoice) => InvoiceStatus;
     formatDate: (dateString: string) => string;

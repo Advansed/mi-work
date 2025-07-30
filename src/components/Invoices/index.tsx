@@ -14,7 +14,6 @@ export { useInvoices } from './useInvoices';
 export type {
     Invoice,
     InvoiceStatus,
-    InvoiceFilters,
     InvoicesResponse,
     UseInvoicesReturn
 } from './types';

@@ -2,7 +2,6 @@ import React from 'react';
 import { 
     IonButton, 
     IonCard, 
-    IonCardContent, 
     IonChip, 
     IonIcon, 
     IonItem, 
@@ -10,9 +9,6 @@ import {
     IonList, 
     IonRefresher, 
     IonRefresherContent, 
-    IonSearchbar,
-    IonSelect,
-    IonSelectOption,
     IonText,
     IonAlert
 } from '@ionic/react';
@@ -25,9 +21,7 @@ export const InvoicesList: React.FC<InvoicesListProps> = ({
     loading,
     refreshing,
     error,
-    filters,
     onRefresh,
-    onFiltersChange,
     onClearError,
     onInvoiceSelect,
     getInvoiceStatus,
@@ -57,28 +51,6 @@ export const InvoicesList: React.FC<InvoicesListProps> = ({
                 <IonRefresherContent />
             </IonRefresher>
 
-            {/* Фильтры */}
-            <div style={{ padding: '16px', background: 'white' }}>
-                <IonSearchbar
-                    value={filters.search}
-                    onIonInput={(e) => onFiltersChange({ search: e.detail.value! })}
-                    placeholder="Поиск по номеру или адресу"
-                    debounce={300}
-                />
-                
-                <IonSelect
-                    value={filters.status}
-                //    onSelectionChange={(e) => onFiltersChange({ status: e.detail.value })}
-                    placeholder="Статус заявки"
-                    style={{ marginTop: '8px' }}
-                >
-                    <IonSelectOption value="all">Все заявки</IonSelectOption>
-                    <IonSelectOption value="overdue">Просроченные</IonSelectOption>
-                    <IonSelectOption value="urgent">Срочные</IonSelectOption>
-                    <IonSelectOption value="normal">Обычные</IonSelectOption>
-                </IonSelect>
-            </div>
-
             {/* Список заявок */}
             <div className="invoice-page-content">
                 {loading && !refreshing ? (
@@ -87,12 +59,6 @@ export const InvoicesList: React.FC<InvoicesListProps> = ({
                     </div>
                 ) : invoices.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '40px' }}>
-                        <IonText color="medium">
-                            {filters.search || filters.status !== 'all' 
-                                ? 'Заявки не найдены' 
-                                : 'Нет активных заявок'
-                            }
-                        </IonText>
                     </div>
                 ) : (
                     <IonList>

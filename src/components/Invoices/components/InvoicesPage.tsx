@@ -8,15 +8,13 @@ import { InvoicePrintForm } from './InvoicePrintForm';
 
 const InvoicesPage: React.FC = () => {
     const {
-        filteredInvoices,
+        invoices,
         loading,
         refreshing,
         error,
-        filters,
         navigation,
         selectedInvoice,
         refreshInvoices,
-        setFilters,
         clearError,
         getInvoiceStatus,
         formatDate,
@@ -31,18 +29,16 @@ const InvoicesPage: React.FC = () => {
             case 0:
                 return (
                     <InvoicesList
-                        invoices={filteredInvoices}
-                        loading={loading}
-                        refreshing={refreshing}
-                        error={error}
-                        filters={filters}
-                        onRefresh={refreshInvoices}
-                        onFiltersChange={setFilters}
-                        onClearError={clearError}
-                        onInvoiceSelect={selectInvoice}
-                        getInvoiceStatus={getInvoiceStatus}
-                        formatDate={formatDate}
-                        formatPhone={formatPhone}
+                        invoices                = { invoices }
+                        loading                 = { loading }
+                        refreshing              = { refreshing }
+                        error                   = { error }
+                        onRefresh               = { refreshInvoices }
+                        onClearError            = { clearError }
+                        onInvoiceSelect         = { selectInvoice }
+                        getInvoiceStatus        = { getInvoiceStatus }
+                        formatDate              = { formatDate }
+                        formatPhone             = { formatPhone }
                     />
                 );
 
