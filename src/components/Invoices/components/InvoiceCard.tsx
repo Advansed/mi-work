@@ -18,7 +18,7 @@ import {
     warningOutline,
     checkmarkCircleOutline
 } from 'ionicons/icons';
-import { Invoice, InvoiceStatus } from './types';
+import { Invoice, InvoiceStatus } from '../types';
 import './InvoiceCard.css'
 
 interface InvoiceCardProps {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { IonButton, IonIcon } from '@ionic/react';
 import { chevronBackOutline } from 'ionicons/icons';
-import { InvoicePosition, InvoiceBreadcrumbItem } from './types';
+import { InvoicePosition, InvoiceBreadcrumbItem } from '../types';
 import './Invoices.css';
 
 interface InvoicesBreadcrumbProps {

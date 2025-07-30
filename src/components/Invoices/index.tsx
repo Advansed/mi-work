@@ -3,10 +3,9 @@
 // ============================================
 
 // Основные компоненты
-export { default as InvoicesPage } from './InvoicesPage';
-export { default as InvoiceCard } from './InvoiceCard';
-export { default as InvoiceModal } from './InvoiceModal';
-export { default as InvoiceFiltersComponent } from './InvoiceFilters';
+export { default as InvoicesPage } from './components/InvoicesPage';
+export { default as InvoiceCard } from './components/InvoiceCard';
+export { default as InvoiceFiltersComponent } from './components/InvoiceFilters';
 
 // Хуки
 export { useInvoices } from './useInvoices';

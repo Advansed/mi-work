@@ -1,0 +1,82 @@
+/* Заголовок с многоуровневой структурой */
+.invoice-page-header {
+    padding: 16px;
+    background: var(--ion-background-color);
+    border-bottom: 1px solid var(--ion-color-step-100);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.invoice-header-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.invoice-header-info {
+    flex: 1;
+}
+
+.invoice-page-title {
+    margin: 0 0 4px 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--ion-color-primary);
+}
+
+.invoice-page-subtitle {
+    margin: 0;
+    font-size: 14px;
+    color: var(--ion-color-medium);
+}
+
+.invoice-header-status {
+    margin-left: 16px;
+}
+
+.status-chip-header {
+    --border-radius: 20px;
+    height: 36px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.status-chip-header ion-icon {
+    margin-right: 6px;
+    font-size: 16px;
+}
+
+.invoice-header-actions {
+    display: flex;
+    justify-content: center;
+}
+
+.acts-button {
+    --border-radius: 8px;
+    height: 40px;
+    min-width: 120px;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 576px) {
+    .invoice-header-main {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .invoice-header-status {
+        margin-left: 0;
+        align-self: flex-end;
+    }
+    
+    .invoice-page-title {
+        font-size: 20px;
+    }
+    
+    .acts-button {
+        width: 100%;
+    }
+}

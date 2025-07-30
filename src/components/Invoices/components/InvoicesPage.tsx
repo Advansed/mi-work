@@ -1,5 +1,5 @@
 import React from 'react';
-import { useInvoices } from './useInvoices';
+import { useInvoices } from '../useInvoices';
 import { InvoicesBreadcrumb } from './InvoicesBreadcrumb';
 import { InvoicesList } from './InvoicesList';
 import { InvoiceView } from './InvoiceView';

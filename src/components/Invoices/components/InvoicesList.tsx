@@ -17,7 +17,7 @@ import {
     IonAlert
 } from '@ionic/react';
 import { callOutline, locationOutline, timeOutline, chevronForwardOutline } from 'ionicons/icons';
-import { InvoicesListProps } from './types';
+import { InvoicesListProps } from '../types';
 import './Invoices.css';
 
 export const InvoicesList: React.FC<InvoicesListProps> = ({

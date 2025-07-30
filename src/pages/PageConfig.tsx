@@ -19,7 +19,7 @@ import { PageConfigMap, UserRole, PageName, MenuGroup, UserAccess, PageConfig } 
 
 // Основные страницы
 //const DashboardPage = React.lazy(() => import('../components/Dashboard/DashboardPage'));
-const InvoicesPage = React.lazy(() => import('../components/Invoices/InvoicesPage'));
+const InvoicesPage = React.lazy(() => import('../components/Invoices/components/InvoicesPage'));
 // const MaintenancePage = React.lazy(() => import('../components/Maintenance/MaintenancePage'));
 // const RepairsPage = React.lazy(() => import('../components/Repairs/RepairsPage'));
 // const SchedulePage = React.lazy(() => import('../components/Schedule/SchedulePage'));

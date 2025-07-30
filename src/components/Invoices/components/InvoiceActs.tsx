@@ -24,13 +24,13 @@ import {
     warningOutline,
     cameraOutline 
 } from 'ionicons/icons';
-import { Invoice } from './types';
-import ActShutdownForm from '../Acts/ActShutdown/ActShutdownForm';
-import ActPlomb from '../Acts/ActPlomb/Actplomb';
-import { useToast } from '../Toast/useToast';
-import './Invoices.css';
-import ActHouseInspects from '../Acts/ActHouseInspect/ActHouseInspect';
-import ActPrescript from '../Acts/ActPrescript/ActPrescript';
+import { Invoice } from '../types';
+import ActShutdownForm from '../../Acts/ActShutdown/ActShutdownForm';
+import ActPlomb from '../../Acts/ActPlomb/Actplomb';
+import { useToast } from '../../Toast/useToast';
+import './InvoiceActs.css';
+import ActHouseInspects from '../../Acts/ActHouseInspect/ActHouseInspect';
+import ActPrescript from '../../Acts/ActPrescript/ActPrescript';
 
 type ActType = 'list' | 'work_completed' | 'shutdown_order' | 'sealing' | 'mkd_inspection' | 'private_inspection' | 'prescription';
 

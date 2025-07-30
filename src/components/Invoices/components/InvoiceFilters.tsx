@@ -21,7 +21,7 @@ import {
     calendarOutline,
     checkmarkOutline
 } from 'ionicons/icons';
-import { InvoiceFilters } from './types';
+import { InvoiceFilters } from '../types';
 
 interface InvoiceFiltersProps {
     filters: InvoiceFilters;
