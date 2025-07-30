@@ -8,16 +8,17 @@ import {
     InvoicePosition, 
     InvoiceNavigation 
 } from './types';
+import { useToast } from '../Toast/useToast';
 
 export const useInvoices = (): UseInvoicesReturn => {
     // Получаем данные авторизации из Store
     const loginData = useStoreField('login', 2);
     
     // Основное состояние
-    const [invoices, setInvoices] = useState<Invoice[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [refreshing, setRefreshing] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [ invoices, setInvoices ] = useState<Invoice[]>([]);
+    const [ loading, setLoading ] = useState(false);
+    const [ refreshing, setRefreshing ] = useState(false);
+    const { showError } = useToast();
     
     // Навигация
     const [navigation, setNavigation] = useState<InvoiceNavigation>({
@@ -29,12 +30,11 @@ export const useInvoices = (): UseInvoicesReturn => {
     // Загрузка заявок
     const loadInvoices = useCallback(async () => {
         if (!loginData?.token) {
-            setError('Нет токена авторизации');
+            showError('Нет токена авторизации');
             return;
         }
 
         setLoading(true);
-        setError(null);
 
         try {
             const response = await getData('get_invoices', {
@@ -46,11 +46,11 @@ export const useInvoices = (): UseInvoicesReturn => {
             if (response.success && response.data) {
                 setInvoices(response.data);
             } else {
-                setError(response.message || 'Ошибка загрузки заявок');
+                showError(response.message || 'Ошибка загрузки заявок');
             }
         } catch (err) {
             console.error('Error loading invoices:', err);
-            setError('Ошибка соединения. Проверьте интернет.');
+            showError('Ошибка соединения. Проверьте интернет.');
         } finally {
             setLoading(false);
         }
@@ -61,7 +61,6 @@ export const useInvoices = (): UseInvoicesReturn => {
         if (!loginData?.token) return;
 
         setRefreshing(true);
-        setError(null);
 
         try {
             const response = await getData('get_invoices', {
@@ -71,20 +70,16 @@ export const useInvoices = (): UseInvoicesReturn => {
             if (response.success && response.data) {
                 setInvoices(response.data);
             } else {
-                setError(response.message || 'Ошибка обновления заявок');
+                showError(response.message || 'Ошибка обновления заявок');
             }
         } catch (err) {
             console.error('Error refreshing invoices:', err);
-            setError('Ошибка соединения');
+            showError('Ошибка соединения');
         } finally {
             setRefreshing(false);
         }
     }, [loginData?.token]);
 
-    // Очистка ошибки
-    const clearError = useCallback(() => {
-        setError(null);
-    }, []);
 
     // Определение статуса заявки по срокам
     const getInvoiceStatus = useCallback((invoice: Invoice): InvoiceStatus => {
@@ -222,12 +217,10 @@ export const useInvoices = (): UseInvoicesReturn => {
         invoices: sortedInvoices,
         loading,
         refreshing,
-        error,
         navigation,
         selectedInvoice,
         loadInvoices,
         refreshInvoices,
-        clearError,
         getInvoiceStatus,
         formatDate,
         formatPhone,

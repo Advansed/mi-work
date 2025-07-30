@@ -107,12 +107,10 @@ export interface UseInvoicesReturn {
     invoices: Invoice[];
     loading: boolean;
     refreshing: boolean;
-    error: string | null;
     navigation: InvoiceNavigation;
     selectedInvoice: Invoice | null;
     loadInvoices: () => Promise<void>;
     refreshInvoices: () => Promise<void>;
-    clearError: () => void;
     getInvoiceStatus: (invoice: Invoice) => InvoiceStatus;
     formatDate: (dateString: string) => string;
     formatPhone: (phone: string) => string;
