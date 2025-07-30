@@ -20,6 +20,7 @@ export interface ActPlombData {
   act_date: string;
   
   // Адрес
+  address:  string;
   apartment: string;
   house: string;
   street: string;
@@ -44,6 +45,7 @@ export type PlombFormErrors = Partial<Record<Exclude<keyof ActPlombData, 'meters
 const initialData: ActPlombData = {
   id: '',
   act_date: new Date().toISOString().split('T')[0],
+  address: '',
   apartment: '',
   house: '',
   street: '',

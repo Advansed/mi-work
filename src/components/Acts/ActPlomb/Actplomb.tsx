@@ -1,6 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useActPlomb, ActPlombData } from './useActPlomb';
 import './ActPlomb.css'
+import { IonModal } from '@ionic/react';
+import ActShutdown from '../ActShutdown/ActShutdown';
+import ActPlombPrint from './ActPlombPrint';
 
 interface ActPlombProps {
   invoiceId?: string;
@@ -26,6 +29,12 @@ const ActPlomb: React.FC<ActPlombProps> = ({
     saveAct
   } = useActPlomb();
 
+  const [showPrintModal, setShowPrintModal] = useState(false);
+
+  const handleClosePrintModal = () => {
+    setShowPrintModal(false);
+  };
+
   // Загрузка данных при монтировании
   useEffect(() => {
     if (invoiceId) {
@@ -48,6 +57,7 @@ const ActPlomb: React.FC<ActPlombProps> = ({
   // Обработчик печати (заглушка)
   const handlePrint = () => {
     // TODO: Открыть ActPlombPrint.tsx
+    setShowPrintModal( true )
     console.log('Печать акта - будет реализовано в ActPlombPrint.tsx');
   };
 
@@ -315,6 +325,15 @@ const ActPlomb: React.FC<ActPlombProps> = ({
           </div>
         </div>
       </div>
+          {/* Модальное окно печати */}
+      <IonModal isOpen={showPrintModal} onDidDismiss={handleClosePrintModal}>
+          <ActPlombPrint
+              data={data} 
+              mode="print" 
+              onClose={ handleClosePrintModal } 
+          />
+      </IonModal>
+
     </>
   );
 };
