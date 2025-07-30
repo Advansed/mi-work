@@ -2,17 +2,26 @@
 // ОСНОВНЫЕ ИНТЕРФЕЙСЫ ДЛЯ МОДУЛЯ INVOICES
 // ============================================
 
+export interface Lic {
+    id:     string;
+    name:   string;
+    code:   string;
+    plot:   string;
+
+}
+
 export interface Invoice {
-    id: string;
-    lineno: number;
-    number: string;
-    date: string;
-    phone: string;
-    address: string;
-    service: string;
-    term: string;
+    id:         string;
+    lineno:     number;
+    number:     string;
+    date:       string;
+    phone:      string;
+    address:    string;
+    service:    string;
+    term:       string;
+    lic:        Lic
     term_begin: string;
-    term_end: string;
+    term_end:   string;
 }
 
 export interface InvoiceStatus {

@@ -53,11 +53,20 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
                                     </IonChip>
                                 </IonLabel>
                             </IonItem>
+
                             <IonItem>
                                 <IonIcon icon={locationOutline} slot="start" />
                                 <IonLabel>
                                     <h3>Адрес</h3>
                                     <p>{invoice.address}</p>
+                                </IonLabel>
+                            </IonItem>
+
+                            <IonItem>
+                                <IonIcon icon={locationOutline} slot="start" />
+                                <IonLabel>
+                                    <h3>ЛицевойСчет</h3>
+                                    <p>{invoice.lic.code}</p>
                                 </IonLabel>
                             </IonItem>
 

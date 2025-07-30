@@ -30,6 +30,7 @@ import ActPlomb from '../Acts/ActPlomb/Actplomb';
 import { useToast } from '../Toast/useToast';
 import './Invoices.css';
 import ActHouseInspects from '../Acts/ActHouseInspect/ActHouseInspect';
+import ActPrescript from '../Acts/ActPrescript/ActPrescript';
 
 type ActType = 'list' | 'work_completed' | 'shutdown_order' | 'sealing' | 'mkd_inspection' | 'private_inspection' | 'prescription';
 
@@ -308,10 +309,10 @@ export const InvoiceActs: React.FC<InvoiceActsProps> = ({ invoice }) => {
 
             case 'prescription':
 
-                return <PrescriptionForm />;
+                return <ActPrescript />;
 
             default:
-                
+
                 return <ActButtonsList />;
         }
     };
