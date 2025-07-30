@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { getData, Store } from '../../Store';
+import { useToast } from '../../Toast/useToast';
 
 // Типы данных
 export interface PlombMeter {
@@ -25,7 +26,7 @@ export interface ActPlombData {
   subscriber_name: string;
   
   // Представитель УСД
-  representative_name: string;
+  usd_representative: string;
   representative_position: string;
   
   // Дата получения
@@ -47,7 +48,7 @@ const initialData: ActPlombData = {
   house: '',
   street: '',
   subscriber_name: '',
-  representative_name: '',
+  usd_representative: '',
   representative_position: '',
   received_date: '',
   meters: []
@@ -67,6 +68,7 @@ export const useActPlomb = (actId?: string) => {
   const [errors, setErrors] = useState<PlombFormErrors>({ meters: {} });
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const { showSuccess, showError } = useToast();
 
   // Обработчик изменения основных полей
   const handleFieldChange = useCallback((field: keyof ActPlombData, value: string) => {
@@ -159,12 +161,10 @@ export const useActPlomb = (actId?: string) => {
     // Обязательные основные поля
     const requiredFields: (keyof ActPlombData)[] = [
       'act_date',
-      'apartment',
       'house', 
       'street',
       'subscriber_name',
-      'representative_name',
-      'representative_position'
+      'usd_representative',
     ];
 
     requiredFields.forEach(field => {
@@ -244,12 +244,11 @@ export const useActPlomb = (actId?: string) => {
       const result = await getData('PLOMB_ACT_CREATE', data);
 
       if (result.success) {
-        const savedData = result.data;
-        setData(savedData);
-        return savedData;
+          showSuccess("Акт сохранен")
       } else {
-        throw new Error(result.message || 'Ошибка сохранения');
+          showError("Не получилось сохранить")
       }
+      return result
     } catch (error) {
       console.error('Ошибка сохранения акта:', error);
       throw error;

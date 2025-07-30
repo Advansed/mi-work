@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useActPlomb, ActPlombData } from './useActPlomb';
+import './ActPlomb.css'
 
 interface ActPlombProps {
   invoiceId?: string;
@@ -52,226 +53,6 @@ const ActPlomb: React.FC<ActPlombProps> = ({
 
   // Стили
   const styles = `
-    .act-plomb-container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      font-family: 'Times New Roman', serif;
-    }
-
-    .act-header {
-      text-align: center;
-      margin-bottom: 30px;
-      border-bottom: 2px solid #0066cc;
-      padding-bottom: 15px;
-    }
-
-    .company-info {
-      font-size: 14px;
-      color: #333;
-      margin-bottom: 10px;
-    }
-
-    .act-title {
-      font-size: 18px;
-      font-weight: bold;
-      margin: 15px 0;
-      text-transform: uppercase;
-    }
-
-    .act-form {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    .form-section {
-      margin-bottom: 25px;
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
-      padding: 15px;
-    }
-
-    .section-title {
-      font-size: 16px;
-      font-weight: bold;
-      color: #0066cc;
-      margin-bottom: 15px;
-      padding-bottom: 5px;
-      border-bottom: 1px solid #e0e0e0;
-    }
-
-    .form-row {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 15px;
-      align-items: flex-start;
-    }
-
-    .form-group {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .form-group.half {
-      flex: 0 0 48%;
-    }
-
-    .form-group.third {
-      flex: 0 0 32%;
-    }
-
-    .form-label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 5px;
-      color: #333;
-      font-size: 14px;
-    }
-
-    .form-input {
-      width: 100%;
-      padding: 8px 12px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 14px;
-      transition: border-color 0.3s;
-    }
-
-    .form-input:focus {
-      outline: none;
-      border-color: #0066cc;
-      box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
-    }
-
-    .form-input.error {
-      border-color: #dc3545;
-    }
-
-    .error-message {
-      color: #dc3545;
-      font-size: 12px;
-      margin-top: 4px;
-    }
-
-    .meters-section {
-      background: #f8f9fa;
-      border-radius: 6px;
-      padding: 15px;
-    }
-
-    .meter-item {
-      background: white;
-      border: 1px solid #dee2e6;
-      border-radius: 6px;
-      padding: 15px;
-      margin-bottom: 15px;
-      position: relative;
-    }
-
-    .meter-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-
-    .meter-number {
-      font-weight: bold;
-      color: #0066cc;
-    }
-
-    .remove-meter-btn {
-      background: #dc3545;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 5px 10px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-
-    .remove-meter-btn:hover {
-      background: #c82333;
-    }
-
-    .add-meter-btn {
-      background: #28a745;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 10px 20px;
-      cursor: pointer;
-      font-size: 14px;
-      margin-top: 10px;
-    }
-
-    .add-meter-btn:hover {
-      background: #218838;
-    }
-
-    .add-meter-btn:disabled {
-      background: #6c757d;
-      cursor: not-allowed;
-    }
-
-    .action-buttons {
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-      margin-top: 30px;
-      padding-top: 20px;
-      border-top: 1px solid #e0e0e0;
-    }
-
-    .btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: background-color 0.3s;
-    }
-
-    .btn-primary {
-      background: #0066cc;
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: #0056b3;
-    }
-
-    .btn-secondary {
-      background: #6c757d;
-      color: white;
-    }
-
-    .btn-secondary:hover {
-      background: #545b62;
-    }
-
-    .btn-success {
-      background: #28a745;
-      color: white;
-    }
-
-    .btn-success:hover {
-      background: #218838;
-    }
-
-    .btn:disabled {
-      background: #e9ecef;
-      color: #6c757d;
-      cursor: not-allowed;
-    }
-
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: #6c757d;
-    }
   `;
 
   if (loading) {
@@ -304,6 +85,7 @@ const ActPlomb: React.FC<ActPlombProps> = ({
             <div className="section-title">Основная информация</div>
             
             <div className="form-row">
+
               <div className="form-group half">
                 <label className="form-label">Дата акта *</label>
                 <input
@@ -315,15 +97,6 @@ const ActPlomb: React.FC<ActPlombProps> = ({
                 {errors.act_date && <div className="error-message">{errors.act_date}</div>}
               </div>
               
-              <div className="form-group half">
-                <label className="form-label">Дата получения</label>
-                <input
-                  type="date"
-                  className="form-input"
-                  value={data.received_date || ''}
-                  onChange={(e) => handleFieldChange('received_date', e.target.value)}
-                />
-              </div>
             </div>
           </div>
 
@@ -332,29 +105,8 @@ const ActPlomb: React.FC<ActPlombProps> = ({
             <div className="section-title">Адрес и абонент</div>
             
             <div className="form-row">
-              <div className="form-group third">
-                <label className="form-label">Квартира *</label>
-                <input
-                  type="text"
-                  className={`form-input ${errors.apartment ? 'error' : ''}`}
-                  value={data.apartment}
-                  onChange={(e) => handleFieldChange('apartment', e.target.value)}
-                />
-                {errors.apartment && <div className="error-message">{errors.apartment}</div>}
-              </div>
-              
-              <div className="form-group third">
-                <label className="form-label">Дом *</label>
-                <input
-                  type="text"
-                  className={`form-input ${errors.house ? 'error' : ''}`}
-                  value={data.house}
-                  onChange={(e) => handleFieldChange('house', e.target.value)}
-                />
-                {errors.house && <div className="error-message">{errors.house}</div>}
-              </div>
-              
-              <div className="form-group third">
+
+              <div className="form-group third w-100">
                 <label className="form-label">Улица *</label>
                 <input
                   type="text"
@@ -364,10 +116,37 @@ const ActPlomb: React.FC<ActPlombProps> = ({
                 />
                 {errors.street && <div className="error-message">{errors.street}</div>}
               </div>
+
+              <div className='flex fl-space w-100'>
+
+                <div className="form-group third w-50">
+                  <label className="form-label">Дом *</label>
+                  <input
+                    type="text"
+                    className={`form-input ${errors.house ? 'error' : ''}`}
+                    value={data.house}
+                    onChange={(e) => handleFieldChange('house', e.target.value)}
+                  />
+                  {errors.house && <div className="error-message">{errors.house}</div>}
+                </div>
+
+                <div className="form-group third w-50">
+                  <label className="form-label">Квартира *</label>
+                  <input
+                    type="text"
+                    className={`form-input ${errors.apartment ? 'error' : ''}`}
+                    value={data.apartment}
+                    onChange={(e) => handleFieldChange('apartment', e.target.value)}
+                  />
+                  {errors.apartment && <div className="error-message">{errors.apartment}</div>}
+                </div>
+
+              </div>
+
             </div>
 
             <div className="form-row">
-              <div className="form-group">
+              <div className="form-group w-100">
                 <label className="form-label">ФИО абонента *</label>
                 <input
                   type="text"
@@ -385,15 +164,15 @@ const ActPlomb: React.FC<ActPlombProps> = ({
             <div className="section-title">Представитель УСД</div>
             
             <div className="form-row">
-              <div className="form-group half">
+              <div className="form-group w-100">
                 <label className="form-label">ФИО представителя *</label>
                 <input
                   type="text"
-                  className={`form-input ${errors.representative_name ? 'error' : ''}`}
-                  value={data.representative_name}
-                  onChange={(e) => handleFieldChange('representative_name', e.target.value)}
+                  className={`form-input ${errors.usd_representative ? 'error' : ''}`}
+                  value={data.usd_representative}
+                  onChange={(e) => handleFieldChange('usd_representative', e.target.value)}
                 />
-                {errors.representative_name && <div className="error-message">{errors.representative_name}</div>}
+                {errors.usd_representative && <div className="error-message">{errors.usd_representative}</div>}
               </div>
               
               <div className="form-group half">
