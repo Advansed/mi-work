@@ -29,6 +29,7 @@ import ActShutdownForm from '../Acts/ActShutdown/ActShutdownForm';
 import ActPlomb from '../Acts/ActPlomb/Actplomb';
 import { useToast } from '../Toast/useToast';
 import './Invoices.css';
+import ActHouseInspects from '../Acts/ActHouseInspect/ActHouseInspect';
 
 type ActType = 'list' | 'work_completed' | 'shutdown_order' | 'sealing' | 'mkd_inspection' | 'private_inspection' | 'prescription';
 
@@ -278,30 +279,39 @@ export const InvoiceActs: React.FC<InvoiceActsProps> = ({ invoice }) => {
             case 'work_completed':
                 return <WorkCompletedForm />;
             case 'shutdown_order':
-                return (
-                    <ActShutdownForm 
-                        invoiceId={invoice.id}  // 🎯 Передача ID заявки
-                        onSave={handleSaveShutdownAct}
-                        onCancel={handleCancelShutdownAct}
-                    />
-                );
+
+                return <ActShutdownForm 
+                    invoiceId   = { invoice.id }  // 🎯 Передача ID заявки
+                    onSave      = { handleSaveShutdownAct }
+                    onCancel    = { handleCancelShutdownAct }
+                />
+
             case 'sealing':
+
                 return <ActPlomb 
-                    invoiceId={invoice.id}  // 🎯 Передача ID заявки
-                    onSave={handleSaveShutdownAct}
-                    onCancel={handleCancelShutdownAct}
+                    invoiceId   = { invoice.id }  // 🎯 Передача ID заявки
+                    onSave      = { handleSaveShutdownAct }
+                    onCancel    = { handleCancelShutdownAct }
                 />;
 
             case 'mkd_inspection':
+
                 return <MkdInspectionForm />;
 
             case 'private_inspection':
-                return <PrivateInspectionForm />;
+
+                return <ActHouseInspects 
+                    invoiceId   = { invoice.id }  // 🎯 Передача ID заявки
+                    onSave      = { handleSaveShutdownAct }
+                    onCancel    = { handleCancelShutdownAct }                
+                />;
 
             case 'prescription':
+
                 return <PrescriptionForm />;
 
             default:
+                
                 return <ActButtonsList />;
         }
     };

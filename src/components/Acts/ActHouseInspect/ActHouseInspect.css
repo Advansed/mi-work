@@ -1,0 +1,579 @@
+/* ============================================
+   ОСНОВНЫЕ СТИЛИ ФОРМЫ
+   ============================================ */
+
+.house-inspect-form {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 16px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.house-inspect-loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  font-size: 16px;
+  color: #6b7280;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e5e7eb;
+  border-top: 4px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ============================================
+   ЗАГОЛОВОК ФОРМЫ
+   ============================================ */
+
+.house-inspect-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.header-content h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.header-subtitle {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* ============================================
+   СЕКЦИИ ФОРМЫ (АККОРДЕОНЫ)
+   ============================================ */
+
+.form-section {
+  margin-bottom: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #ffffff;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.form-section:hover {
+  border-color: #d1d5db;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: #f9fafb;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.section-header:hover {
+  background: #f3f4f6;
+}
+
+.section-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.accordion-icon {
+  font-size: 12px;
+  color: #6b7280;
+  transition: transform 0.2s ease;
+}
+
+.accordion-icon.open {
+  transform: rotate(180deg);
+}
+
+.section-content {
+  padding: 20px;
+  background: #ffffff;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 1000px;
+  }
+}
+
+/* ============================================
+   ПОЛЯ ФОРМЫ
+   ============================================ */
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-row:last-child {
+  margin-bottom: 0;
+}
+
+.form-group {
+  flex: 1;
+  min-width: 0;
+}
+
+.form-group.w-100 {
+  flex: 1 1 100%;
+}
+
+.form-group.half {
+  flex: 1 1 calc(50% - 8px);
+}
+
+.form-group.third {
+  flex: 1 1 calc(33.333% - 11px);
+}
+
+.form-group.quarter {
+  flex: 1 1 calc(25% - 12px);
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  line-height: 1.4;
+}
+
+.form-label.required::after {
+  content: " *";
+  color: #ef4444;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-input.error,
+.form-textarea.error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.form-input[readonly],
+.form-textarea[readonly] {
+  background-color: #f9fafb;
+  color: #6b7280;
+  cursor: not-allowed;
+  border-color: #e5e7eb;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+
+.error-text {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #ef4444;
+  line-height: 1.3;
+}
+
+.error-banner {
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  color: #dc2626;
+  font-size: 14px;
+}
+
+/* ============================================
+   КНОПКИ
+   ============================================ */
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-sizing: border-box;
+  line-height: 1.4;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  background: #1d4ed8;
+  transform: translateY(0);
+}
+
+.btn-outline {
+  background: transparent;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+}
+
+.btn-outline:hover:not(:disabled) {
+  background: #f9fafb;
+  border-color: #9ca3af;
+  color: #374151;
+}
+
+.btn-outline:active {
+  background: #f3f4f6;
+}
+
+.btn-small {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+/* ============================================
+   СЧЕТЧИКИ
+   ============================================ */
+
+.meters-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.meter-item {
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: #f9fafb;
+}
+
+.meter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.meter-header h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.add-meter-btn {
+  margin-top: 16px;
+  width: 100%;
+  justify-content: center;
+}
+
+/* ============================================
+   АДАПТИВНОСТЬ
+   ============================================ */
+
+@media (max-width: 768px) {
+  .house-inspect-form {
+    margin: 8px;
+    padding: 12px;
+  }
+
+  .house-inspect-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .form-group,
+  .form-group.half,
+  .form-group.third,
+  .form-group.quarter {
+    flex: 1 1 100%;
+  }
+
+  .section-content {
+    padding: 16px;
+  }
+
+  .section-header {
+    padding: 12px 16px;
+  }
+
+  .section-header h3 {
+    font-size: 15px;
+  }
+
+  .meter-item {
+    padding: 12px;
+  }
+
+  .meter-header {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .btn {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .house-inspect-form {
+    margin: 4px;
+    padding: 8px;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .section-content {
+    padding: 12px;
+  }
+
+  .section-header {
+    padding: 10px 12px;
+  }
+
+  .form-input,
+  .form-textarea {
+    font-size: 16px; /* Предотвращение zoom на iOS */
+    padding: 10px 12px;
+  }
+
+  .form-label {
+    font-size: 13px;
+  }
+
+  .meter-item {
+    padding: 10px;
+  }
+}
+
+/* ============================================
+   СПЕЦИФИЧЕСКИЕ СТИЛИ
+   ============================================ */
+
+/* Улучшения для числовых полей */
+.form-input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.form-input[type="number"]::-webkit-outer-spin-button,
+.form-input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Улучшения для полей даты и времени */
+.form-input[type="date"],
+.form-input[type="time"] {
+  cursor: pointer;
+  position: relative;
+}
+
+/* Обеспечение корректного отображения date/time picker на мобильных */
+.form-input[type="date"]::-webkit-calendar-picker-indicator,
+.form-input[type="time"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(0.5);
+  opacity: 0.8;
+}
+
+.form-input[type="date"]::-webkit-calendar-picker-indicator:hover,
+.form-input[type="time"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* Стили для Firefox */
+.form-input[type="date"]::-moz-focus-inner,
+.form-input[type="time"]::-moz-focus-inner {
+  border: 0;
+}
+
+/* Минимальная ширина для date/time полей */
+.form-input[type="date"] {
+  min-width: 140px;
+}
+
+.form-input[type="time"] {
+  min-width: 100px;
+}
+
+/* Placeholder стили */
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: #9ca3af;
+  opacity: 1;
+}
+
+/* Hover эффекты для интерактивных элементов */
+.form-section {
+  transition: all 0.2s ease;
+}
+
+.section-header:active {
+  background: #e5e7eb;
+}
+
+/* Стили для валидации */
+.form-group.valid .form-input,
+.form-group.valid .form-textarea {
+  border-color: #10b981;
+}
+
+.form-group.valid .form-input:focus,
+.form-group.valid .form-textarea:focus {
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+/* Улучшения доступности */
+.btn:focus,
+.form-input:focus,
+.form-textarea:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+/* Анимация для кнопок */
+.btn {
+  transform: translateY(0);
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+/* Стили загрузки */
+.house-inspect-content {
+  position: relative;
+}
+
+.house-inspect-content.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Стили для печати */
+@media print {
+  .house-inspect-form {
+    box-shadow: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .header-actions,
+  .accordion-icon,
+  .btn {
+    display: none !important;
+  }
+
+  .section-header {
+    background: transparent !important;
+    cursor: default;
+  }
+
+  .section-content {
+    display: block !important;
+  }
+
+  .form-section {
+    border: 1px solid #000;
+    page-break-inside: avoid;
+  }
+}
