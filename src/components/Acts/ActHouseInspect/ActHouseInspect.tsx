@@ -5,6 +5,8 @@ import {
   HouseMeterData 
 } from './useActHouseInspects';
 import './ActHouseInspect.css';
+import { IonModal } from '@ionic/react';
+import ActHouseInspectPrint from './ActHouseInspectPrint';
 
 // ============================================
 // ИНТЕРФЕЙСЫ КОМПОНЕНТА
@@ -55,6 +57,15 @@ const ActHouseInspects: React.FC<ActHouseInspectsProps> = ({
     meters: false
   });
 
+  const [showPrintModal, setShowPrintModal] = useState(false);
+
+  const handleClosePrintModal = () => {
+    setShowPrintModal(false);
+  };
+
+  const handlePrint = ()=>{
+    setShowPrintModal( true )
+  }
   // ============================================
   // ЭФФЕКТЫ
   // ============================================
@@ -107,6 +118,13 @@ const ActHouseInspects: React.FC<ActHouseInspectsProps> = ({
               disabled={saving}
             >
               Отмена
+            </button>
+            <button
+              type="button"
+              className="btn btn-outline"
+              onClick={ handlePrint }
+            >
+              Печать
             </button>
             <button
               type="button"
@@ -651,22 +669,34 @@ const ActHouseInspects: React.FC<ActHouseInspectsProps> = ({
   }
 
   return (
-    <div className="house-inspect-form">
-      {renderHeader()}
-      
-      <div className="house-inspect-content">
-        {Object.keys(errors).length > 0 && (
-          <div className="error-banner">
-            Исправьте ошибки в форме перед сохранением
-          </div>
-        )}
+    <>
+      <div className="house-inspect-form">
+        {renderHeader()}
         
-        {renderMainSection()}
-        {renderParticipantsSection()}
-        {renderResultsSection()}
-        {renderMetersSection()}
+        <div className="house-inspect-content">
+          {Object.keys(errors).length > 0 && (
+            <div className="error-banner">
+              Исправьте ошибки в форме перед сохранением
+            </div>
+          )}
+          
+          {renderMainSection()}
+          {renderParticipantsSection()}
+          {renderResultsSection()}
+          {renderMetersSection()}
+        </div>
       </div>
-    </div>
+
+      {/* Модальное окно печати */}
+      <IonModal isOpen={showPrintModal} onDidDismiss={handleClosePrintModal}>
+          <ActHouseInspectPrint
+              data = { data } 
+              mode="print" 
+              onClose={ handleClosePrintModal } 
+          />
+      </IonModal>
+
+    </>
   );
 };
 

@@ -89,7 +89,7 @@ const formatTimeForInput = (timeString?: string): string => {
 };
 
 // Начальные данные
-const initialData: HouseInspectData = {
+export const initialData: HouseInspectData = {
   act_number: '',
   act_date: formatDateForInput(),
   act_time: formatTimeForInput(),

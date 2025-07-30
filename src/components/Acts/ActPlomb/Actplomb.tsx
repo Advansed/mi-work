@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useActPlomb, ActPlombData } from './useActPlomb';
 import './ActPlomb.css'
 import { IonModal } from '@ionic/react';
-import ActShutdown from '../ActShutdown/ActShutdown';
 import ActPlombPrint from './ActPlombPrint';
 
 interface ActPlombProps {
@@ -325,7 +324,8 @@ const ActPlomb: React.FC<ActPlombProps> = ({
           </div>
         </div>
       </div>
-          {/* Модальное окно печати */}
+      
+      {/* Модальное окно печати */}
       <IonModal isOpen={showPrintModal} onDidDismiss={handleClosePrintModal}>
           <ActPlombPrint
               data={data} 
