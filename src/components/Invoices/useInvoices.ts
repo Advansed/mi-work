@@ -21,9 +21,9 @@ export const useInvoices = (): UseInvoicesReturn => {
     const [error, setError] = useState<string | null>(null);
     const { showError } = useToast();
     
-    // Refs для cleanup
+    // Refs для cleanup и отмены запросов
     const mountedRef = useRef(true);
-    const lastRequestRef = useRef<number>(0);
+    const abortControllerRef = useRef<AbortController | null>(null);
     
     // Навигация
     const [navigation, setNavigation] = useState<InvoiceNavigation>({
@@ -37,6 +37,10 @@ export const useInvoices = (): UseInvoicesReturn => {
         mountedRef.current = true;
         return () => {
             mountedRef.current = false;
+            // Отменяем активный запрос при размонтировании
+            if (abortControllerRef.current) {
+                abortControllerRef.current.abort();
+            }
         };
     }, []);
 
@@ -45,7 +49,7 @@ export const useInvoices = (): UseInvoicesReturn => {
         setError(null);
     }, []);
 
-    // Общая функция загрузки заявок
+    // Общая функция загрузки заявок с корректной отменой запросов
     const fetchInvoicesData = useCallback(async (isRefresh = false): Promise<void> => {
         if (!loginData?.token) {
             const errorMsg = 'Нет токена авторизации';
@@ -54,6 +58,15 @@ export const useInvoices = (): UseInvoicesReturn => {
             return;
         }
 
+        // Отменяем предыдущий запрос
+        if (abortControllerRef.current) {
+            abortControllerRef.current.abort();
+        }
+
+        // Создаем новый AbortController
+        const abortController = new AbortController();
+        abortControllerRef.current = abortController;
+
         // Устанавливаем состояние загрузки
         if (isRefresh) {
             setRefreshing(true);
@@ -61,17 +74,13 @@ export const useInvoices = (): UseInvoicesReturn => {
             setLoading(true);
         }
 
-        // Уникальный ID запроса для дебаунсинга
-        const requestId = Date.now();
-        lastRequestRef.current = requestId;
-
         try {
             const response = await getData('get_invoices', {
                 token: loginData.token
             }) as InvoicesResponse;
 
-            // Проверяем, что компонент все еще смонтирован и это последний запрос
-            if (!mountedRef.current || lastRequestRef.current !== requestId) {
+            // Проверяем, что компонент все еще смонтирован и запрос не отменен
+            if (!mountedRef.current || abortController.signal.aborted) {
                 return;
             }
 
@@ -85,38 +94,63 @@ export const useInvoices = (): UseInvoicesReturn => {
                 setError(errorMsg);
                 showError(errorMsg);
             }
-        } catch (err) {
-            // Проверяем, что компонент все еще смонтирован
-            if (!mountedRef.current || lastRequestRef.current !== requestId) {
+        } catch (err: any) {
+            // Проверяем, что компонент все еще смонтирован и это не отмена запроса
+            if (!mountedRef.current || err.name === 'AbortError') {
                 return;
             }
 
             console.error('Error loading invoices:', err);
-            const errorMsg = 'Ошибка соединения. Проверьте интернет.';
+            const errorMsg = 'Ошибка соединения при загрузке заявок';
             setError(errorMsg);
             showError(errorMsg);
         } finally {
             // Проверяем, что компонент все еще смонтирован
-            if (mountedRef.current && lastRequestRef.current === requestId) {
+            if (mountedRef.current) {
                 setLoading(false);
                 setRefreshing(false);
+            }
+            
+            // Очищаем ссылку на AbortController
+            if (abortControllerRef.current === abortController) {
+                abortControllerRef.current = null;
             }
         }
     }, [loginData?.token, showError]);
 
-    // Загрузка заявок
-    const loadInvoices = useCallback(async () => {
-        await fetchInvoicesData(false);
+    // Основная функция загрузки
+    const loadInvoices = useCallback(() => {
+        return fetchInvoicesData(false);
     }, [fetchInvoicesData]);
 
-    // Обновление заявок (pull-to-refresh)
-    const refreshInvoices = useCallback(async () => {
-        await fetchInvoicesData(true);
+    // Функция обновления
+    const refreshInvoices = useCallback(() => {
+        return fetchInvoicesData(true);
     }, [fetchInvoicesData]);
 
-    // Определение статуса заявки по срокам
+    // Валидация позиции навигации
+    const isValidPosition = useCallback((position: any): position is InvoicePosition => {
+        return typeof position === 'number' && position >= 0 && position <= 3;
+    }, []);
+
+    // Мемоизированная сортировка заявок
+    const sortedInvoices = useMemo(() => {
+        return [...invoices].sort((a, b) => {
+            const dateA = new Date(a.date).getTime();
+            const dateB = new Date(b.date).getTime();
+            return dateB - dateA; // Новые сначала
+        });
+    }, [invoices]);
+
+    // Мемоизированный поиск выбранной заявки
+    const selectedInvoice = useMemo(() => {
+        if (!navigation.selectedInvoiceId) return null;
+        return invoices.find(invoice => invoice.id === navigation.selectedInvoiceId) || null;
+    }, [invoices, navigation.selectedInvoiceId]);
+
+    // Определение статуса заявки
     const getInvoiceStatus = useCallback((invoice: Invoice): InvoiceStatus => {
-        if (!invoice || !invoice.term_end) {
+        if (!invoice.term_end || !invoice.date) {
             return {
                 type: 'normal',
                 label: 'Обычная',
@@ -126,29 +160,18 @@ export const useInvoices = (): UseInvoicesReturn => {
         }
 
         try {
+            const termEnd = new Date(invoice.term_end);
             const now = new Date();
-            const termDate = new Date(invoice.term_end);
-            
-            // Проверяем валидность даты
-            if (isNaN(termDate.getTime())) {
-                return {
-                    type: 'normal',
-                    label: 'Обычная',
-                    color: 'success',
-                    priority: 1
-                };
-            }
+            const diffDays = Math.ceil((termEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 
-            const diffHours = (termDate.getTime() - now.getTime()) / (1000 * 60 * 60);
-
-            if (diffHours < 0) {
+            if (diffDays < 0) {
                 return {
                     type: 'overdue',
                     label: 'Просрочена',
                     color: 'danger',
                     priority: 3
                 };
-            } else if (diffHours <= 24) {
+            } else if (diffDays <= 3) {
                 return {
                     type: 'urgent',
                     label: 'Срочная',
@@ -174,7 +197,7 @@ export const useInvoices = (): UseInvoicesReturn => {
         }
     }, []);
 
-    // Исправление 1: Завершение функции formatDate
+    // Завершенная функция formatDate
     const formatDate = useCallback((dateString: string): string => {
         if (!dateString || typeof dateString !== 'string') return '';
         
@@ -202,7 +225,11 @@ export const useInvoices = (): UseInvoicesReturn => {
             } else if (diffDays < 30) {
                 const weeks = Math.floor(diffDays / 7);
                 return `${weeks} нед. назад`;
+            } else if (diffDays < 365) {
+                const months = Math.floor(diffDays / 30);
+                return `${months} мес. назад`;
             } else {
+                // Для старых дат показываем полную дату
                 return date.toLocaleDateString('ru-RU', {
                     day: '2-digit',
                     month: '2-digit',
@@ -215,55 +242,26 @@ export const useInvoices = (): UseInvoicesReturn => {
         }
     }, []);
 
-    // Форматирование телефона с проверками
+    // Форматирование телефона
     const formatPhone = useCallback((phone: string): string => {
         if (!phone || typeof phone !== 'string') return '';
         
-        try {
-            const cleaned = phone.replace(/\D/g, '');
-            if (cleaned.length === 11 && cleaned.startsWith('7')) {
-                return `+7 (${cleaned.substring(1, 4)}) ${cleaned.substring(4, 7)}-${cleaned.substring(7, 9)}-${cleaned.substring(9, 11)}`;
-            }
-            return phone;
-        } catch (err) {
-            console.error('Error formatting phone:', err);
+        // Убираем все символы кроме цифр
+        const digits = phone.replace(/\D/g, '');
+        
+        if (digits.length === 11 && digits.startsWith('7')) {
+            // Российский номер: +7 (999) 999-99-99
+            return `+7 (${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7, 9)}-${digits.slice(9)}`;
+        } else if (digits.length === 10) {
+            // Номер без кода страны: (999) 999-99-99
+            return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 8)}-${digits.slice(8)}`;
+        } else {
+            // Возвращаем как есть, если формат неизвестен
             return phone;
         }
     }, []);
 
-    
-    // Исправление 2: Добавление мемоизации для sortedInvoices
-    const sortedInvoices = useMemo(() => {
-        return [...invoices].sort((a, b) => {
-            const statusA = getInvoiceStatus(a);
-            const statusB = getInvoiceStatus(b);
-            
-            // Сначала сортируем по приоритету статуса (больший приоритет выше)
-            if (statusA.priority !== statusB.priority) {
-                return statusB.priority - statusA.priority;
-            }
-            
-            // Затем по дате окончания срока (ближайшие сроки выше)
-            const dateA = new Date(a.term_end || a.date);
-            const dateB = new Date(b.term_end || b.date);
-            
-            return dateA.getTime() - dateB.getTime();
-        });
-    }, [invoices, getInvoiceStatus]);
-
-
-    // Выбранная заявка
-    const selectedInvoice = useMemo(() => {
-        if (!navigation.selectedInvoiceId || !Array.isArray(invoices)) return null;
-        return invoices.find(invoice => invoice?.id === navigation.selectedInvoiceId) || null;
-    }, [invoices, navigation.selectedInvoiceId]);
-
-    // Валидация позиции навигации
-    const isValidPosition = useCallback((position: number): position is InvoicePosition => {
-        return Number.isInteger(position) && position >= 0 && position <= 3;
-    }, []);
-
-    // Методы навигации с валидацией
+    // Навигация по позициям
     const navigateToPosition = useCallback((position: InvoicePosition, invoiceId?: string) => {
         if (!isValidPosition(position)) {
             console.error('Invalid navigation position:', position);
@@ -316,7 +314,7 @@ export const useInvoices = (): UseInvoicesReturn => {
 
             return () => clearTimeout(timeoutId);
         }
-    }, [loginData?.token]);
+    }, [loginData?.token, loadInvoices]);
 
     return {
         invoices: sortedInvoices,
