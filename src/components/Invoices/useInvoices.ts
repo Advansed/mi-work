@@ -174,7 +174,7 @@ export const useInvoices = (): UseInvoicesReturn => {
         }
     }, []);
 
-    // Форматирование даты с проверками
+    // Исправление 1: Завершение функции formatDate
     const formatDate = useCallback((dateString: string): string => {
         if (!dateString || typeof dateString !== 'string') return '';
         
@@ -199,6 +199,9 @@ export const useInvoices = (): UseInvoicesReturn => {
                 });
             } else if (diffDays < 7) {
                 return `${diffDays} дн. назад`;
+            } else if (diffDays < 30) {
+                const weeks = Math.floor(diffDays / 7);
+                return `${weeks} нед. назад`;
             } else {
                 return date.toLocaleDateString('ru-RU', {
                     day: '2-digit',
@@ -228,30 +231,26 @@ export const useInvoices = (): UseInvoicesReturn => {
         }
     }, []);
 
-    // Сортированный список заявок (оптимизировано)
+    
+    // Исправление 2: Добавление мемоизации для sortedInvoices
     const sortedInvoices = useMemo(() => {
-        if (!Array.isArray(invoices) || invoices.length === 0) return [];
-
         return [...invoices].sort((a, b) => {
-            try {
-                const statusA = getInvoiceStatus(a);
-                const statusB = getInvoiceStatus(b);
-                
-                // Сначала по приоритету (срочные вверху)
-                if (statusA.priority !== statusB.priority) {
-                    return statusB.priority - statusA.priority;
-                }
-                
-                // Потом по дате (новые вверху)
-                const dateA = new Date(a.date || 0).getTime();
-                const dateB = new Date(b.date || 0).getTime();
-                return dateB - dateA;
-            } catch (err) {
-                console.error('Error sorting invoices:', err);
-                return 0;
+            const statusA = getInvoiceStatus(a);
+            const statusB = getInvoiceStatus(b);
+            
+            // Сначала сортируем по приоритету статуса (больший приоритет выше)
+            if (statusA.priority !== statusB.priority) {
+                return statusB.priority - statusA.priority;
             }
+            
+            // Затем по дате окончания срока (ближайшие сроки выше)
+            const dateA = new Date(a.term_end || a.date);
+            const dateB = new Date(b.term_end || b.date);
+            
+            return dateA.getTime() - dateB.getTime();
         });
     }, [invoices, getInvoiceStatus]);
+
 
     // Выбранная заявка
     const selectedInvoice = useMemo(() => {
