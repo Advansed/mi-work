@@ -1,10 +1,9 @@
 import React, { useCallback, useState } from 'react';
-import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonChip, IonIcon, IonItem, IonLabel, IonList } from '@ionic/react';
+import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonChip, IonIcon, IonItem, IonLabel, IonList, IonModal } from '@ionic/react';
 import { callOutline, locationOutline, timeOutline, documentOutline, printOutline, codeWorkingOutline, warningOutline, checkmarkCircleOutline, searchOutline, ellipsisHorizontalOutline } from 'ionicons/icons';
 import { Invoice, InvoiceStatus } from '../types';
 import './InvoiceView.css';
-import AddressSearchModal from '../../dadata/AddressSearchModal';
-import { DaDataSuggestion } from '../../dadata/dadata';
+import { Lics } from '../../Lics/Lics';
 
 interface InvoiceViewProps {
     invoice: Invoice;
@@ -50,18 +49,6 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
         setIsAddressSearchModalOpen(true);
     }, []);
 
-    // ============================================
-    // ОБРАБОТЧИК РЕЗУЛЬТАТА ПОИСКА АДРЕСА
-    // ============================================
-    const handleAddressFound = useCallback((address: DaDataSuggestion, subscribers?: any[]) => {
-        console.log('Найден адрес:', address);
-        console.log('Абоненты:', subscribers);
-        
-        // TODO: Реализовать навигацию к найденному абоненту
-        // Например, открыть новую заявку или перейти к существующей
-        
-        setIsAddressSearchModalOpen(false);
-    }, []);
 
     // ============================================
     // ОБРАБОТЧИК ЗАКРЫТИЯ МОДАЛЬНОГО ОКНА
@@ -192,13 +179,15 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
             </div>
 
             {/* Модальное окно поиска адреса */}
-            <AddressSearchModal
-                isOpen          = { isAddressSearchModalOpen }
-                onDidDismiss    = { handleCloseAddressSearch }
-                currentAddress  = { invoice.address }
-                currentLicCode  = { invoice.lic?.code }
-                onAddressFound  = { handleAddressFound }
-            />
+            <IonModal
+                className='responsive-modal'
+                isOpen = { isAddressSearchModalOpen }
+                onDidDismiss={()=>{ setIsAddressSearchModalOpen(false)}}
+                
+            >
+                <Lics initialAddress = { invoice.address } />
+            </IonModal>
+    
         </div>
     );
 };
