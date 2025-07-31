@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonChip, IonIcon, IonItem, IonLabel, IonList } from '@ionic/react';
-import { callOutline, locationOutline, timeOutline, documentOutline, printOutline, codeWorkingOutline, warningOutline, checkmarkCircleOutline } from 'ionicons/icons';
+import { callOutline, locationOutline, timeOutline, documentOutline, printOutline, codeWorkingOutline, warningOutline, checkmarkCircleOutline, searchOutline, ellipsisHorizontalOutline } from 'ionicons/icons';
 import { Invoice, InvoiceStatus } from '../types';
 import './InvoiceView.css';
 
@@ -50,6 +50,19 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
                 return codeWorkingOutline;
         }
     }, []);
+
+        // Добавить функцию-обработчик в компонент InvoiceView:
+    const handleAccountSearch = useCallback(() => {
+        if (!invoice.lic?.code) {
+            return;
+        }
+        
+        // Заглушка - пока просто выводим в консоль
+        console.log('Поиск по лицевому счету:', invoice.lic.code);
+        
+        // TODO: Реализовать логику поиска
+        // Здесь будет вызов API или навигация к странице поиска
+    }, [invoice.lic?.code]);
 
     if (!invoice) {
         return (
@@ -119,6 +132,15 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
                                     <h3>Лицевой счет</h3>
                                     <p>{invoice.lic?.code || 'Не указан'}</p>
                                 </IonLabel>
+                                <IonButton 
+                                    fill="outline" 
+                                    size="small"
+                                    slot="end"
+                                    onClick={handleAccountSearch}
+                                    
+                                >
+                                    <IonIcon icon={ ellipsisHorizontalOutline } color= "primary" />
+                                </IonButton>
                             </IonItem>
 
                             <IonItem button onClick={handleCall} disabled={!invoice.phone}>
