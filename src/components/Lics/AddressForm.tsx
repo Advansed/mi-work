@@ -14,21 +14,31 @@ import {
     IonList,
     IonPopover
 } from '@ionic/react';
-import { locationOutline, ellipsisHorizontal, chevronDownOutline } from 'ionicons/icons';
+import { locationOutline, ellipsisHorizontal, chevronDownOutline, saveOutline } from 'ionicons/icons';
 import { useDaData } from '../dadata-component/useDaData';
 import { ConfidenceLevel, StandardizedAddress } from '../dadata-component/types';
 import { useToast } from '../Toast/useToast';
 
 interface LicsProps {
     initialAddress?: string;
+    invoiceId?: string;
     onAddressChange?: (address: string, isStandardized: boolean) => void;
+    onAddressSaved?: (address: string) => Promise<void>;
+    disabled?: boolean;
 }
 
-export function Lics({ initialAddress = '', onAddressChange }: LicsProps) {
+export function AddressForm({ 
+    initialAddress = '', 
+    invoiceId,
+    onAddressChange, 
+    onAddressSaved,
+    disabled = false 
+}: LicsProps) {
     const [address, setAddress] = useState<string>(initialAddress);
     const [standardizedAddress, setStandardizedAddress] = useState<string>('');
     const [isStandardized, setIsStandardized] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [saving, setSaving] = useState<boolean>(false);
     const [suggestions, setSuggestions] = useState<StandardizedAddress[]>([]);
     const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
     
@@ -41,6 +51,15 @@ export function Lics({ initialAddress = '', onAddressChange }: LicsProps) {
     });
 
     const { showSuccess, showError, showWarning } = useToast();
+
+    // Синхронизируем с внешним адресом
+    useEffect(() => {
+        if (initialAddress !== address) {
+            setAddress(initialAddress);
+            setIsStandardized(false);
+            setStandardizedAddress('');
+        }
+    }, [initialAddress]);
 
     const handleAddressChange = (value: string) => {
         setAddress(value);
@@ -122,6 +141,22 @@ export function Lics({ initialAddress = '', onAddressChange }: LicsProps) {
         }
     };
 
+    const handleSaveAddress = async () => {
+        if (!onAddressSaved || !isStandardized || !standardizedAddress) {
+            return;
+        }
+
+        setSaving(true);
+        try {
+            await onAddressSaved(standardizedAddress);
+            showSuccess('Адрес сохранен в заявку');
+        } catch (error) {
+            showError('Ошибка при сохранении адреса');
+        } finally {
+            setSaving(false);
+        }
+    };
+
     const formatSuggestionText = (suggestion: StandardizedAddress) => {
         const { city, street, house, apartment } = suggestion;
         return `${city}, ${street}, д. ${house}${apartment ? `, кв. ${apartment}` : ''}`;
@@ -141,6 +176,8 @@ export function Lics({ initialAddress = '', onAddressChange }: LicsProps) {
         return 'danger';
     };
 
+    const isControlsDisabled = disabled || loading || saving;
+
     return (
         <IonCard>
             <IonCardHeader>
@@ -155,13 +192,14 @@ export function Lics({ initialAddress = '', onAddressChange }: LicsProps) {
                         value={address}
                         placeholder="Введите адрес"
                         onIonInput={(e) => handleAddressChange(e.detail.value!)}
-                        readonly={loading}
+                        readonly={isControlsDisabled}
                     />
                     {suggestions.length > 0 && (
                         <IonButton
                             fill="clear"
                             slot="end"
                             onClick={() => setShowSuggestions(!showSuggestions)}
+                            disabled={isControlsDisabled}
                         >
                             <IonIcon icon={chevronDownOutline} />
                         </IonButton>
@@ -180,7 +218,8 @@ export function Lics({ initialAddress = '', onAddressChange }: LicsProps) {
                     <IonButton
                         expand="block"
                         onClick={handleStandardize}
-                        disabled={loading || !address.trim()}
+                        disabled={isControlsDisabled || !address.trim()}
+                        color="primary"
                     >
                         {loading ? (
                             <>
@@ -192,6 +231,30 @@ export function Lics({ initialAddress = '', onAddressChange }: LicsProps) {
                         )}
                     </IonButton>
                 </IonItem>
+
+                {/* Кнопка сохранения в заявку */}
+                {invoiceId && onAddressSaved && isStandardized && (
+                    <IonItem>
+                        <IonButton
+                            expand="block"
+                            onClick={handleSaveAddress}
+                            disabled={isControlsDisabled || !standardizedAddress}
+                            color="success"
+                        >
+                            {saving ? (
+                                <>
+                                    <IonSpinner name="crescent" />
+                                    <span style={{ marginLeft: '8px' }}>Сохранение...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <IonIcon icon={saveOutline} slot="start" />
+                                    Сохранить в заявку
+                                </>
+                            )}
+                        </IonButton>
+                    </IonItem>
+                )}
 
                 {/* Выпадающий список предложений */}
                 <IonPopover
@@ -208,6 +271,7 @@ export function Lics({ initialAddress = '', onAddressChange }: LicsProps) {
                                 key={index}
                                 button
                                 onClick={() => handleSuggestionSelect(suggestion)}
+                                disabled={isControlsDisabled}
                             >
                                 <div style={{ width: '100%' }}>
                                     <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>

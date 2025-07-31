@@ -1,44 +1,99 @@
+// src/components/Invoices/types.ts
+
 // ============================================
-// ОСНОВНЫЕ ИНТЕРФЕЙСЫ ДЛЯ МОДУЛЯ INVOICES
+// ТИПЫ ДЛЯ ОБНОВЛЕНИЯ АДРЕСА
 // ============================================
 
-export interface Lic {
-    id:     string;
-    name:   string;
-    code:   string;
-    plot:   string;
+export interface AddressUpdateResult {
+    success: boolean;
+    message?: string;
 }
 
+export interface AddressUpdateRequest {
+    invoice_id: string;
+    address: string;
+}
+
+// ============================================
+// ОБНОВЛЕННЫЙ ИНТЕРФЕЙС UseInvoicesReturn
+// ============================================
+
+export interface UseInvoicesReturn {
+    invoices: Invoice[];
+    loading: boolean;
+    refreshing: boolean;
+    error: string | null;
+    navigation: InvoiceNavigation;
+    selectedInvoice: Invoice | null;
+    loadInvoices: () => Promise<void>;
+    refreshInvoices: () => Promise<void>;
+    clearError: () => void;
+    getInvoiceStatus: (invoice: Invoice) => InvoiceStatus;
+    formatDate: (dateString: string) => string;
+    formatPhone: (phone: string) => string;
+    navigateToPosition: (position: InvoicePosition, invoiceId?: string) => void;
+    goBack: () => void;
+    selectInvoice: (invoiceId: string) => void;
+    updateInvoiceAddress: (invoiceId: string, newAddress: string) => Promise<AddressUpdateResult>; // НОВЫЙ МЕТОД
+}
+
+// ============================================
+// ОБНОВЛЕННЫЙ ИНТЕРФЕЙС InvoiceViewProps
+// ============================================
+
+export interface InvoiceViewProps {
+    invoice: Invoice;
+    invoiceStatus: InvoiceStatus;
+    formatDate: (dateString: string) => string;
+    formatPhone: (phone: string) => string;
+    onNavigateToActs: () => void;
+    onNavigateToPrint: () => void;
+    onUpdateAddress?: (invoiceId: string, newAddress: string) => Promise<AddressUpdateResult>; // НОВЫЙ PROP
+}
+
+// ============================================
+// ОБНОВЛЕННЫЙ ИНТЕРФЕЙС LicsProps
+// ============================================
+
+export interface LicsProps {
+    initialAddress?: string;
+    invoiceId?: string; // НОВЫЙ PROP - ID заявки
+    onAddressChange?: (address: string, isStandardized: boolean) => void;
+    onAddressSaved?: (address: string) => Promise<void>; // НОВЫЙ PROP - callback сохранения
+    disabled?: boolean; // НОВЫЙ PROP - блокировка интерфейса
+}
+
+// ============================================
+// СУЩЕСТВУЮЩИЕ ТИПЫ (без изменений)
+// ============================================
+
 export interface Invoice {
-    id:         string;
-    lineno:     number;
-    number:     string;
-    date:       string;
-    phone:      string;
-    address:    string;
-    service:    string;
-    term:       string;
-    lic:        Lic
+    id: string;
+    number: string;
+    date: string;
+    applicant: string;
+    phone: string;
+    address: string;
+    lic: string;
+    lineno: number;
+    service: string;
+    term: number;
     term_begin: string;
-    term_end:   string;
+    term_end: string;
+    done: boolean;
 }
 
 export interface InvoiceStatus {
-    type: 'overdue' | 'urgent' | 'normal';
-    label: string;
-    color: 'danger' | 'warning' | 'success';
-    priority: number;
+    text: string;
+    color: 'primary' | 'secondary' | 'tertiary' | 'success' | 'warning' | 'danger' | 'light' | 'medium' | 'dark';
+    icon: string;
 }
 
 export interface InvoicesResponse {
     success: boolean;
-    data?: Invoice[];
+    data: Invoice[];
     message?: string;
 }
-
-// ============================================
-// ТИПЫ ДЛЯ НАВИГАЦИИ МЕЖДУ СТРАНИЦАМИ
-// ============================================
 
 export type InvoicePosition = 0 | 1 | 2 | 3;
 
@@ -55,10 +110,6 @@ export interface InvoiceBreadcrumbItem {
     accessible: boolean;
 }
 
-// ============================================
-// ПРОПСЫ ДЛЯ КОМПОНЕНТОВ
-// ============================================
-
 export interface InvoicesListProps {
     invoices: Invoice[];
     loading: boolean;
@@ -70,15 +121,6 @@ export interface InvoicesListProps {
     getInvoiceStatus: (invoice: Invoice) => InvoiceStatus;
     formatDate: (dateString: string) => string;
     formatPhone: (phone: string) => string;
-}
-
-export interface InvoiceViewProps {
-    invoice: Invoice;
-    invoiceStatus: InvoiceStatus;
-    formatDate: (dateString: string) => string;
-    formatPhone: (phone: string) => string;
-    onNavigateToActs: () => void;
-    onNavigateToPrint: () => void;
 }
 
 export interface InvoiceActsProps {
@@ -99,32 +141,6 @@ export interface InvoicesBreadcrumbProps {
     onGoBack: () => void;
 }
 
-// ============================================
-// ВОЗВРАЩАЕМЫЙ ТИП ХУКА useInvoices
-// ============================================
-
-export interface UseInvoicesReturn {
-    invoices: Invoice[];
-    loading: boolean;
-    refreshing: boolean;
-    error: string | null;
-    navigation: InvoiceNavigation;
-    selectedInvoice: Invoice | null;
-    loadInvoices: () => Promise<void>;
-    refreshInvoices: () => Promise<void>;
-    clearError: () => void;
-    getInvoiceStatus: (invoice: Invoice) => InvoiceStatus;
-    formatDate: (dateString: string) => string;
-    formatPhone: (phone: string) => string;
-    navigateToPosition: (position: InvoicePosition, invoiceId?: string) => void;
-    goBack: () => void;
-    selectInvoice: (invoiceId: string) => void;
-}
-
-// ============================================
-// ТИПЫ ДЛЯ АКТОВ И ДОКУМЕНТОВ
-// ============================================
-
 export interface InvoiceAct {
     id: string;
     name: string;
@@ -142,107 +158,3 @@ export interface ActFormData {
     createdDate: string;
     file?: File;
 }
-
-// ============================================
-// ТИПЫ ДЛЯ ПЕЧАТНЫХ ФОРМ
-// ============================================
-
-export interface PrintForm {
-    id: string;
-    name: string;
-    description: string;
-    template: string;
-    requiredFields: string[];
-}
-
-export interface QRCodeData {
-    invoiceId: string;
-    amount: number;
-    description: string;
-    paymentUrl: string;
-}
-
-// ============================================
-// ТИПЫ ДЛЯ ОБОРУДОВАНИЯ
-// ============================================
-
-export interface GasEquipment {
-    id: string;
-    brand: string;
-    model: string;
-    serialNumber: string;
-    installDate: string;
-    lastMaintenanceDate?: string;
-    status: 'active' | 'inactive' | 'requires_maintenance';
-}
-
-export interface EquipmentService {
-    id: string;
-    equipmentId: string;
-    serviceType: string;
-    description: string;
-    cost: number;
-    executedDate: string;
-    executedBy: string;
-}
-
-// ============================================
-// ТИПЫ ДЛЯ ПРЕДПИСАНИЙ
-// ============================================
-
-export interface Prescription {
-    id: string;
-    invoiceId: string;
-    number: string;
-    issueDate: string;
-    reason: string;
-    description: string;
-    requirements: string[];
-    deadline: string;
-    status: 'issued' | 'executed' | 'overdue';
-    issuedBy: string;
-}
-
-export interface PrescriptionReason {
-    code: string;
-    description: string;
-    isDefault?: boolean;
-}
-
-// ============================================
-// УТИЛИТАРНЫЕ ТИПЫ
-// ============================================
-
-export type InvoiceActionType = 
-    | 'call'
-    | 'navigate' 
-    | 'view_acts'
-    | 'print_forms'
-    | 'create_prescription'
-    | 'add_equipment'
-    | 'mark_completed';
-
-export interface InvoiceAction {
-    type: InvoiceActionType;
-    label: string;
-    icon: string;
-    available: boolean;
-    requiresConfirmation?: boolean;
-}
-
-// ============================================
-// КОНСТАНТЫ
-// ============================================
-
-export const INVOICE_STATUS_COLORS = {
-    overdue: 'danger',
-    urgent: 'warning', 
-    normal: 'success'
-} as const;
-
-export const INVOICE_POSITIONS = {
-    LIST: 0,
-    VIEW: 1,
-    ACTS: 2,
-    PRINT: 3
-} as const;
