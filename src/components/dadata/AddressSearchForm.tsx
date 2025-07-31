@@ -75,8 +75,8 @@ export const AddressSearchForm: React.FC<AddressSearchFormProps> = ({
     // ============================================
     // API КЛЮЧ DADATA (в реальном проекте - из env)
     // ============================================
-    const DADATA_API_KEY = "50bfb3453a528d091723900fdae5ca5a30369832";
-    const DADATA_URL = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
+    const DADATA_API_KEY    = "50bfb3453a528d091723900fdae5ca5a30369832";
+    const DADATA_URL        = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
 
     // ============================================
     // ПОИСК АДРЕСОВ ЧЕРЕЗ DADATA API
