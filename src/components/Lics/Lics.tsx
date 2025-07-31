@@ -50,9 +50,12 @@ export function Lics({ initialAddress = '', onAddressChange }: LicsProps) {
             return;
         }
 
+
         setLoading(true);
         try {
             const result = await standardizeAddress(address);
+
+            console.log(result)
             
             if (result.success && result.data) {
                 const { city, street, house, apartment } = result.data;
