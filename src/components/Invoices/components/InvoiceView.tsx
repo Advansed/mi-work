@@ -131,14 +131,6 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
                                     <h3>Адрес</h3>
                                     <p>{invoice.address || 'Адрес не указан'}</p>
                                 </IonLabel>
-                            </IonItem>
-
-                            <IonItem>
-                                <IonIcon icon={locationOutline} slot="start" />
-                                <IonLabel>
-                                    <h3>Лицевой счет</h3>
-                                    <p>{invoice.lic?.code || 'Не указан'}</p>
-                                </IonLabel>
                                 <IonButton 
                                     fill="outline" 
                                     size="small"
@@ -148,6 +140,14 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
                                 >
                                     <IonIcon icon={ ellipsisHorizontalOutline } color= "primary" />
                                 </IonButton>
+                            </IonItem>
+
+                            <IonItem>
+                                <IonIcon icon={locationOutline} slot="start" />
+                                <IonLabel>
+                                    <h3>Лицевой счет</h3>
+                                    <p>{invoice.lic?.code || 'Не указан'}</p>
+                                </IonLabel>
                             </IonItem>
 
                             <IonItem button onClick={handleCall} disabled={!invoice.phone}>

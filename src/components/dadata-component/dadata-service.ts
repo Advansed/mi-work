@@ -82,11 +82,12 @@ class DaDataService {
     const timeoutId = setTimeout(() => controller.abort(), this.config.timeout);
 
     try {
-      const response = await fetch(`${this.config.baseUrl}/suggest/address`, {
+      const response = await fetch( `${this.config.baseUrl}/suggest/address`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${this.config.apiKey}`
+          'Content-Type':   'application/json',
+          'Authorization':  `Token ${this.config.apiKey}`,
+          'X-secret':       '050209ff2af5411fac79a59ff57e91f10466fa9e'
         },
         body: JSON.stringify({
           query: address,
