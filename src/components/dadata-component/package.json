@@ -1,0 +1,36 @@
+{
+
+  "name": "dadata-address-component",
+
+  "version": "1.0.0",
+
+  "description": "React компонент для стандартизации адресов через DaData API",
+
+  "main": "index.ts",
+
+  "scripts": {
+
+      "build": "tsc",
+
+      "test": "jest"
+
+  },
+  "dependencies": {
+
+    "react": "^18.0.0"
+
+  },
+  "devDependencies": {
+
+      "@types/react": "^18.0.0",
+
+      "typescript": "^5.0.0"
+
+  },
+
+  "peerDependencies": {
+
+      "react": ">=16.8.0"
+
+  }
+}
