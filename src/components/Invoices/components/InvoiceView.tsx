@@ -1,8 +1,10 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonChip, IonIcon, IonItem, IonLabel, IonList } from '@ionic/react';
 import { callOutline, locationOutline, timeOutline, documentOutline, printOutline, codeWorkingOutline, warningOutline, checkmarkCircleOutline, searchOutline, ellipsisHorizontalOutline } from 'ionicons/icons';
 import { Invoice, InvoiceStatus } from '../types';
 import './InvoiceView.css';
+import AddressSearchModal from '../../dadata/AddressSearchModal';
+import { DaDataSuggestion } from '../../dadata/dadata';
 
 interface InvoiceViewProps {
     invoice: Invoice;
@@ -38,6 +40,36 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
         }
     }, [invoice.phone]);
 
+    const [isAddressSearchModalOpen, setIsAddressSearchModalOpen] = useState(false);
+
+
+    // ============================================
+    // ОБРАБОТЧИК ПОИСКА ЛИЦЕВОГО СЧЕТА
+    // ============================================
+    const handleAccountSearch = useCallback(() => {
+        setIsAddressSearchModalOpen(true);
+    }, []);
+
+    // ============================================
+    // ОБРАБОТЧИК РЕЗУЛЬТАТА ПОИСКА АДРЕСА
+    // ============================================
+    const handleAddressFound = useCallback((address: DaDataSuggestion, subscribers?: any[]) => {
+        console.log('Найден адрес:', address);
+        console.log('Абоненты:', subscribers);
+        
+        // TODO: Реализовать навигацию к найденному абоненту
+        // Например, открыть новую заявку или перейти к существующей
+        
+        setIsAddressSearchModalOpen(false);
+    }, []);
+
+    // ============================================
+    // ОБРАБОТЧИК ЗАКРЫТИЯ МОДАЛЬНОГО ОКНА
+    // ============================================
+    const handleCloseAddressSearch = useCallback(() => {
+        setIsAddressSearchModalOpen(false);
+    }, []);
+
     const getStatusIcon = useCallback((statusType: InvoiceStatus['type']) => {
         switch (statusType) {
             case 'overdue':
@@ -51,18 +83,6 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
         }
     }, []);
 
-        // Добавить функцию-обработчик в компонент InvoiceView:
-    const handleAccountSearch = useCallback(() => {
-        if (!invoice.lic?.code) {
-            return;
-        }
-        
-        // Заглушка - пока просто выводим в консоль
-        console.log('Поиск по лицевому счету:', invoice.lic.code);
-        
-        // TODO: Реализовать логику поиска
-        // Здесь будет вызов API или навигация к странице поиска
-    }, [invoice.lic?.code]);
 
     if (!invoice) {
         return (
@@ -170,6 +190,15 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
                 </IonCard>
 
             </div>
+
+            {/* Модальное окно поиска адреса */}
+            <AddressSearchModal
+                isOpen          = { isAddressSearchModalOpen }
+                onDidDismiss    = { handleCloseAddressSearch }
+                currentAddress  = { invoice.address }
+                currentLicCode  = { invoice.lic?.code }
+                onAddressFound  = { handleAddressFound }
+            />
         </div>
     );
 };
