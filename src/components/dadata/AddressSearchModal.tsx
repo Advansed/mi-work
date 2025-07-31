@@ -19,9 +19,9 @@ import {
     IonText
 } from '@ionic/react';
 import { closeOutline, searchOutline, locationOutline, callOutline } from 'ionicons/icons';
-import AddressSearchForm from './AddressSearchForm';
 import { DaDataSuggestion } from './dadata';
 import './AddressSearchModal.css';
+import IncrementalAddressForm from './AddressForm';
 
 interface AddressSearchModalProps {
     isOpen: boolean;
@@ -196,11 +196,14 @@ export const AddressSearchModal: React.FC<AddressSearchModalProps> = ({
                         </IonCardTitle>
                     </IonCardHeader>
                     <IonCardContent>
-                        <AddressSearchForm
-                            onAddressSelect={handleAddressSelect}
-                            placeholder="Введите адрес для поиска..."
-                            label="Адрес"
-                        />
+                        <IncrementalAddressForm
+                            options={{ 
+                                debounceMs: 500, 
+                                maxSuggestions: 5 
+                            }}
+                            showProgress={true}
+                            showFullAddress={true}
+                        />   
                     </IonCardContent>
                 </IonCard>
 

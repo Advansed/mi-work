@@ -7,8 +7,11 @@ import {
     DaDataSuggestion,
     DaDataApiError,
     DADATA_DEFAULTS,
-    FormattedAddress
+    FormattedAddress,
+    DaDataLocation
 } from './dadata';
+
+import { AddressLevel } from './AddressTypes';
 
 // ============================================
 // СЕРВИС ДЛЯ РАБОТЫ С DADATA API
@@ -234,6 +237,110 @@ export class DaDataService {
             apiKey,
             ...options
         });
+    }
+
+    async searchByLevel(
+        level: AddressLevel, 
+        query: string, 
+        parentFiasId?: string
+    ): Promise<DaDataSuggestion[]> {
+        if (!query || query.length < 2) {
+            return [];
+        }
+
+        // Отменяем предыдущий запрос
+        this.cancelRequest();
+        this.controller = new AbortController();
+
+        const locationFilter = this.buildLocationFilter(level, parentFiasId);
+        const bounds = this.getLevelBounds(level);
+
+        const requestBody: DaDataAddressRequest = {
+            query,
+            count: 10,
+            ...bounds,
+            ...locationFilter
+        };
+
+        try {
+            const response = await fetch(`${this.config.baseUrl}/suggest/address`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `Token ${this.config.apiKey}`
+                },
+                body: JSON.stringify(requestBody),
+                signal: this.controller.signal
+            });
+
+            if (!response.ok) {
+                throw new DaDataApiError(
+                    response.status,
+                    `HTTP error! status: ${response.status}`,
+                    await response.text()
+                );
+            }
+
+            const data: DaDataResponse = await response.json();
+            return data.suggestions || [];
+
+        } catch (error) {
+            if (error instanceof Error && error.name === 'AbortError') {
+                return [];
+            }
+
+            if (error instanceof DaDataApiError) {
+                throw error;
+            }
+
+            throw new DaDataApiError(
+                0,
+                'Ошибка сети при обращении к DaData API',
+                error instanceof Error ? error.message : 'Неизвестная ошибка'
+            );
+        }
+    }
+
+    /**
+     * Построение фильтра местоположения для определенного уровня
+     */
+    private buildLocationFilter(level: AddressLevel, parentFiasId?: string): Partial<DaDataAddressRequest> {
+        if (!parentFiasId) {
+            return {};
+        }
+
+        const locations: DaDataLocation[] = [];
+
+        switch (level) {
+            case 'city':
+                locations.push({ region_fias_id: parentFiasId });
+                break;
+            case 'street':
+                locations.push({ city_fias_id: parentFiasId });
+                break;
+            case 'house':
+                locations.push({ street_fias_id: parentFiasId });
+                break;
+            default:
+                break;
+        }
+
+        return locations.length > 0 ? { locations } : {};
+    }
+
+    /**
+     * Получение границ поиска для определенного уровня
+     */
+    private getLevelBounds(level: AddressLevel): Partial<any> {
+        const bounds = {
+            region: { from_bound: { value: 'region' }, to_bound: { value: 'region' } },
+            city: { from_bound: { value: 'city' }, to_bound: { value: 'city' } },
+            street: { from_bound: { value: 'street' }, to_bound: { value: 'street' } },
+            house: { from_bound: { value: 'house' }, to_bound: { value: 'house' } }
+        };
+
+        return bounds[level] || {};
     }
 }
 
