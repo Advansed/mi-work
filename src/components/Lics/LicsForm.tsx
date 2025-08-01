@@ -11,6 +11,8 @@ const LicsForm = ({ address, invoiceId, onUpdateLics, isOpen, onClose }) => {
         , loadSettlements, loadStreets, loadHouses, loadKv, loadLics 
     } = useLics()
 
+    const [ level, setLevel ] = useState<any>([])
+
     const handleSelect = ( item )=>{
         switch( item.type ){
             case "ulus": 
@@ -71,7 +73,7 @@ const LicsForm = ({ address, invoiceId, onUpdateLics, isOpen, onClose }) => {
                     </div>
                     
 
-                    <div className='mt-1'>
+                    {/* <div className='mt-1'>
                         {
                             settlements.length > 0 
                                 ? <>
@@ -120,7 +122,14 @@ const LicsForm = ({ address, invoiceId, onUpdateLics, isOpen, onClose }) => {
                                 </>  
                                 : <></>
                         }
-                    </div>
+                    </div> */}
+
+                    {   level.map(config => (
+                        <div className='mt-1'>
+                            <div className=' fs-09'> { config.title} </div>
+                            <DropdownFilter options = { config.data } onSelect = { handleSelect }/>
+                        </div>
+                    ))}
 
                 </div>
                 
