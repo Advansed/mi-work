@@ -1,164 +1,99 @@
-import React, { useState, useEffect, useRef } from 'react';
+// Оптимизированный DropdownFilter.tsx
+import React, { useState, useCallback, useMemo } from 'react';
 import { DropdownFilterProps, DropdownOption } from '../useLics';
 
-const DropdownFilter: React.FC<DropdownFilterProps> = ({ options = [], onSelect }) => {
-  const [value, setValue] = useState('');
-  const [open, setOpen] = useState(false);
-  const [highlightedIndex, setHighlightedIndex] = useState(-1);
-  
-  const inputRef = useRef<HTMLInputElement>(null);
-  const listRef = useRef<HTMLDivElement>(null);
-  
-  const filtered = options.filter(item => 
-    item.name.toLowerCase().includes(value.toLowerCase())
-  );
 
-  // Сброс выделения при изменении фильтра
-  useEffect(() => {
-    setHighlightedIndex(-1);
-  }, [value]);
+const DropdownFilter: React.FC<DropdownFilterProps> = ({ 
+    options = [], 
+    onSelect 
+}) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedOption, setSelectedOption] = useState<DropdownOption | null>(null);
 
-  // Автоскролл к выделенному элементу
-  useEffect(() => {
-    if (highlightedIndex >= 0 && listRef.current) {
-      const highlightedElement = listRef.current.children[highlightedIndex] as HTMLElement;
-      if (highlightedElement) {
-        highlightedElement.scrollIntoView({
-          block: 'nearest',
-          behavior: 'smooth'
-        });
-      }
-    }
-  }, [highlightedIndex]);
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!open) {
-      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-        e.preventDefault();
-        setOpen(true);
-        setHighlightedIndex(0);
-      }
-      return;
-    }
-
-    switch (e.key) {
-      case 'ArrowDown':
-        e.preventDefault();
-        setHighlightedIndex(prev => 
-          prev < filtered.length - 1 ? prev + 1 : 0
+    // Мемоизированная фильтрация опций
+    const filteredOptions = useMemo(() => {
+        if (!searchTerm.trim()) return options;
+        
+        return options.filter(option =>
+            option.name.toLowerCase().includes(searchTerm.toLowerCase())
         );
-        break;
+    }, [options, searchTerm]);
 
-      case 'ArrowUp':
-        e.preventDefault();
-        setHighlightedIndex(prev => 
-          prev > 0 ? prev - 1 : filtered.length - 1
-        );
-        break;
+    // Оптимизированные обработчики с useCallback
+    const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(e.target.value);
+        if (!isOpen) setIsOpen(true);
+    }, [isOpen]);
 
-      case 'Enter':
-        e.preventDefault();
-        if (highlightedIndex >= 0 && filtered[highlightedIndex]) {
-          selectItem(filtered[highlightedIndex]);
+    const handleOptionSelect = useCallback((option: DropdownOption) => {
+        setSelectedOption(option);
+        setSearchTerm(option.name);
+        setIsOpen(false);
+        
+        if (onSelect) {
+            onSelect(option);
         }
-        break;
+    }, [onSelect]);
 
-      case 'Escape':
-        e.preventDefault();
-        setOpen(false);
-        setHighlightedIndex(-1);
-        inputRef.current?.blur();
-        break;
+    const handleInputFocus = useCallback(() => {
+        setIsOpen(true);
+    }, []);
 
-      case 'Tab':
-        setOpen(false);
-        setHighlightedIndex(-1);
-        break;
-    }
-  };
+    const handleInputBlur = useCallback(() => {
+        // Задержка для обработки клика по опции
+        setTimeout(() => setIsOpen(false), 200);
+    }, []);
 
-  const selectItem = (item: DropdownOption) => {
-    setValue(item.name);
-    setOpen(false);
-    setHighlightedIndex(-1);
-    onSelect?.(item);
-    inputRef.current?.focus();
-  };
-
-  const handleMouseEnter = (index: number) => {
-    setHighlightedIndex(index);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
-    setOpen(true);
-    setHighlightedIndex(-1);
-  };
-
-  const handleInputFocus = () => {
-    setOpen(true);
-  };
-
-  const handleInputBlur = () => {
-    // Задержка для обработки клика по элементу списка
-    setTimeout(() => {
-      setOpen(false);
-      setHighlightedIndex(-1);
-    }, 150);
-  };
-
-  return (
-    <div className="dropdown-container">
-      <input
-        ref={inputRef}
-        value={value}
-        onChange={handleInputChange}
-        onFocus={handleInputFocus}
-        onBlur={handleInputBlur}
-        onKeyDown={handleKeyDown}
-        className="dropdown-input"
-        autoComplete="off"
-        role="combobox"
-        aria-expanded={open}
-        aria-haspopup="listbox"
-        aria-activedescendant={
-          highlightedIndex >= 0 ? `option-${highlightedIndex}` : undefined
+    const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+        if (e.key === 'Escape') {
+            setIsOpen(false);
+        } else if (e.key === 'Enter' && filteredOptions.length > 0) {
+            handleOptionSelect(filteredOptions[0]);
         }
-      />
-      
-      {open && filtered.length > 0 && (
-        <div 
-          ref={listRef}
-          className="dropdown-list"
-          role="listbox"
-        >
-          {filtered.map((item, index) => (
-            <div
-              key={item.id}
-              id={`option-${index}`}
-              onClick={() => selectItem(item)}
-              onMouseEnter={() => handleMouseEnter(index)}
-              className={`dropdown-item ${
-                index === highlightedIndex ? 'dropdown-item--highlighted' : ''
-              }`}
-              role="option"
-              aria-selected={index === highlightedIndex}
-            >
-              {item.name}
-            </div>
-          ))}
+    }, [filteredOptions, handleOptionSelect]);
+
+    return (
+        <div className="dropdown-container">
+            <input
+                type="text"
+                className="dropdown-input"
+                value={searchTerm}
+                onChange={handleInputChange}
+                onFocus={handleInputFocus}
+                onBlur={handleInputBlur}
+                onKeyDown={handleKeyDown}
+                placeholder="Начните вводить для поиска..."
+                autoComplete="off"
+            />
+            
+            {isOpen && (
+                <div className="dropdown-list">
+                    {filteredOptions.length > 0 ? (
+                        filteredOptions.map((option, index) => (
+                            <div
+                                key={`${option.type}-${option.id}-${index}`}
+                                className="dropdown-item"
+                                onClick={() => handleOptionSelect(option)}
+                            >
+                                {option.name}
+                            </div>
+                        ))
+                    ) : (
+                        <div className="dropdown-item dropdown-item--empty">
+                            Не найдено
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
-      )}
-      
-      {open && filtered.length === 0 && value && (
-        <div className="dropdown-list">
-          <div className="dropdown-item dropdown-item--empty">
-            Нет результатов
-          </div>
-        </div>
-      )}
-    </div>
-  );
+    );
 };
 
-export default DropdownFilter;
+export default React.memo(DropdownFilter, (prevProps, nextProps) => {
+    // Кастомная функция сравнения для более точного контроля рендеринга
+    return (
+        prevProps.options === nextProps.options &&
+        prevProps.onSelect === nextProps.onSelect
+    );
+});
