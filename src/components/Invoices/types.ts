@@ -34,7 +34,7 @@ export interface UseInvoicesReturn {
     navigateToPosition: (position: InvoicePosition, invoiceId?: string) => void;
     goBack: () => void;
     selectInvoice: (invoiceId: string) => void;
-    updateInvoiceAddress: (invoiceId: string, newAddress: string) => Promise<AddressUpdateResult>; // НОВЫЙ МЕТОД
+    // updateInvoiceAddress: (invoiceId: string, newAddress: string) => Promise<AddressUpdateResult>; // НОВЫЙ МЕТОД
 }
 
 // ============================================
@@ -67,6 +67,14 @@ export interface LicsProps {
 // СУЩЕСТВУЮЩИЕ ТИПЫ (без изменений)
 // ============================================
 
+export interface Lics {
+    
+    code:   string;
+    name:   string;
+    plot:   string;
+}
+
+
 export interface Invoice {
     id: string;
     number: string;
@@ -74,7 +82,7 @@ export interface Invoice {
     applicant: string;
     phone: string;
     address: string;
-    lic: string;
+    lic: Lics;
     lineno: number;
     service: string;
     term: number;
@@ -86,7 +94,6 @@ export interface Invoice {
 export interface InvoiceStatus {
     text: string;
     color: 'primary' | 'secondary' | 'tertiary' | 'success' | 'warning' | 'danger' | 'light' | 'medium' | 'dark';
-    icon: string;
 }
 
 export interface InvoicesResponse {

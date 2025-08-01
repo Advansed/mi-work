@@ -5,6 +5,7 @@ import { InvoicesList } from './InvoicesList';
 import { InvoiceView } from './InvoiceView';
 import { InvoiceActs } from './InvoiceActs';
 import { InvoicePrintForm } from './InvoicePrintForm';
+import { getData, Store } from '../../Store';
 
 const InvoicesPage: React.FC = () => {
     const {
@@ -30,8 +31,41 @@ const InvoicesPage: React.FC = () => {
         }
     }, [navigation.position, selectedInvoice, navigateToPosition]);
 
+
+    const handleUpdateAddress = async (invoiceId: string, newAddress: string): Promise<{success: boolean, message?: string}> => {
+        try {
+            const params = {
+                token:          Store.getState().login.token,
+                invoice_id:     invoiceId,
+                address:        newAddress
+            }
+            
+            const result = await getData('invoice_address', params );
+            
+            if ( result.success ) {
+                invoices.forEach(elem => {
+                    if(elem.id === invoiceId) elem.address = newAddress;
+                });
+
+                return result
+            }
+            
+            return {
+            success: false,
+            message: 'No response from database'
+            };
+            
+        } catch (error) {
+            return {
+            success: false,
+            message: error instanceof Error ? error.message : 'Unknown error'
+            };
+        }
+    };
+
     const renderCurrentPage = () => {
         switch (navigation.position) {
+            
             case 0:
                 return (
                     <InvoicesList
@@ -47,6 +81,7 @@ const InvoicesPage: React.FC = () => {
                         formatPhone             = { formatPhone }
                     />
                 );
+
             case 1:
                 if (!selectedInvoice) {
                     return <div>Загрузка...</div>; // ✅ Заменить на это
@@ -59,23 +94,9 @@ const InvoicesPage: React.FC = () => {
                         formatPhone={formatPhone}
                         onNavigateToActs={() => navigateToPosition(2)}
                         onNavigateToPrint={() => navigateToPosition(3)}
+                        onUpdateAddress={  handleUpdateAddress }
                     />
                 );
-            // case 1:
-            //     if (!selectedInvoice) {
-            //         navigateToPosition(0);
-            //         return null;
-            //     }
-            //     return (
-            //         <InvoiceView
-            //             invoice={selectedInvoice}
-            //             invoiceStatus={getInvoiceStatus(selectedInvoice)}
-            //             formatDate={formatDate}
-            //             formatPhone={formatPhone}
-            //             onNavigateToActs={() => navigateToPosition(2)}
-            //             onNavigateToPrint={() => navigateToPosition(3)}
-            //         />
-            //     );
 
             case 2:
                 if (!selectedInvoice) {

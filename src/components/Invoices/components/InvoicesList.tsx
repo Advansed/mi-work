@@ -47,7 +47,7 @@ export const InvoicesList: React.FC<InvoicesListProps> = ({
                 <p className="invoice-page-subtitle">Всего: {invoices.length}</p>
             </div>
 
-            <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
+            <IonRefresher slot="fixed" onIonRefresh={ handleRefresh }>
                 <IonRefresherContent />
             </IonRefresher>
 
@@ -73,7 +73,7 @@ export const InvoicesList: React.FC<InvoicesListProps> = ({
                                     >
                                         <div slot="start" style={{ marginRight: '12px' }}>
                                             <IonChip color={status.color} >
-                                                {status.label}
+                                                { status.text }
                                             </IonChip>
                                         </div>
 

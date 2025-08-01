@@ -152,10 +152,8 @@ export const useInvoices = (): UseInvoicesReturn => {
     const getInvoiceStatus = useCallback((invoice: Invoice): InvoiceStatus => {
         if (!invoice.term_end || !invoice.date) {
             return {
-                type: 'normal',
-                label: 'Обычная',
-                color: 'success',
-                priority: 1
+                text:   'Обычная',
+                color:  'success'
             };
         }
 
@@ -166,33 +164,25 @@ export const useInvoices = (): UseInvoicesReturn => {
 
             if (diffDays < 0) {
                 return {
-                    type: 'overdue',
-                    label: 'Просрочена',
-                    color: 'danger',
-                    priority: 3
+                    text: 'Просрочена',
+                    color: 'danger'
                 };
             } else if (diffDays <= 3) {
                 return {
-                    type: 'urgent',
-                    label: 'Срочная',
-                    color: 'warning',
-                    priority: 2
+                    text: 'Срочная',
+                    color: 'warning'
                 };
             } else {
                 return {
-                    type: 'normal',
-                    label: 'Обычная',
-                    color: 'success',
-                    priority: 1
+                    text: 'Обычная',
+                    color: 'success'
                 };
             }
         } catch (err) {
             console.error('Error calculating invoice status:', err);
             return {
-                type: 'normal',
-                label: 'Обычная',
-                color: 'success',
-                priority: 1
+                text: 'Обычная',
+                color: 'success'
             };
         }
     }, []);

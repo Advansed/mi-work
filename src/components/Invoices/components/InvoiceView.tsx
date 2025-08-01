@@ -1,7 +1,7 @@
 // src/components/Invoices/components/InvoiceView.tsx
 import React, { useCallback, useState } from 'react';
 import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonChip, IonIcon, IonItem, IonLabel, IonList, IonModal, IonSpinner } from '@ionic/react';
-import { callOutline, locationOutline, timeOutline, documentOutline, printOutline, codeWorkingOutline, warningOutline, checkmarkCircleOutline, searchOutline, ellipsisHorizontalOutline } from 'ionicons/icons';
+import { callOutline, locationOutline, timeOutline, documentOutline, printOutline, codeWorkingOutline, warningOutline, checkmarkCircleOutline, searchOutline, ellipsisHorizontalOutline, ribbonOutline, alertCircleOutline, personCircleOutline, calendarOutline } from 'ionicons/icons';
 import { Invoice, InvoiceStatus } from '../types';
 import './InvoiceView.css';
 import { AddressForm } from '../../Lics/AddressForm';
@@ -47,9 +47,15 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
         }
     }, [invoice.phone]);
 
+    console.log( invoiceStatus )
+
     // ============================================
     // ОБРАБОТЧИК ПОИСКА ЛИЦЕВОГО СЧЕТА
     // ============================================
+    const handleAddressSearch = useCallback(() => {
+        setIsAddressSearchModalOpen(true);
+    }, []);
+
     const handleAccountSearch = useCallback(() => {
         setIsAddressSearchModalOpen(true);
     }, []);
@@ -103,11 +109,16 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
 
                 <IonCardHeader>
                     <IonCardTitle>
-                        Заявка #{invoice.number}
-                        <IonChip color={invoiceStatus.color} className="status-chip">
-                            <IonIcon icon={invoiceStatus.icon} />
-                            <span>{invoiceStatus.text}</span>
-                        </IonChip>
+                        <div className='flex fl-space'>
+                            <div>
+                                Заявка #{invoice.number}
+                                <IonChip color={invoiceStatus.color} className="status-chip">
+                                    <IonIcon icon={ alertCircleOutline }  className='w-15 h-15'/>
+                                    <span>{invoiceStatus.text}</span>
+                                </IonChip>
+                            </div>
+                            <IonButton onClick={ onNavigateToActs }>Акты...</IonButton>
+                        </div>                        
                     </IonCardTitle>
                 </IonCardHeader>
                 
@@ -124,6 +135,7 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
 
                         {/* Заявитель */}
                         <IonItem>
+                            <IonIcon icon={ personCircleOutline} slot="start" />
                             <IonLabel>
                                 <h3>Заявитель</h3>
                                 <p>{invoice.applicant}</p>
@@ -150,14 +162,31 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
                             <IonButton 
                                 fill="outline" 
                                 slot="end" 
-                                onClick={handleAccountSearch}
+                                onClick={handleAddressSearch}
                             >
                                 <IonIcon icon={searchOutline}  color= "primary" />
                             </IonButton>
                         </IonItem>
 
+                        <IonItem>
+                            <IonIcon icon={ codeWorkingOutline } slot="start" />
+                            <IonLabel>
+                                <h3>Лицевой счет</h3>
+                                <p>{ invoice.lic.code || "НЕ УКАЗАНО" }</p>
+                                {isUpdatingAddress && <IonSpinner name="dots" />}
+                            </IonLabel>
+                            <IonButton 
+                                fill="outline" 
+                                slot="end" 
+                                onClick={handleAccountSearch}
+                            >
+                                <IonIcon icon={ ellipsisHorizontalOutline }  color= "primary" />
+                            </IonButton>
+                        </IonItem>
+
                         {/* Услуга */}
                         <IonItem>
+                            <IonIcon icon={ ribbonOutline } slot="start" />
                             <IonLabel>
                                 <h3>Услуга</h3>
                                 <p>{invoice.service}</p>
@@ -166,6 +195,7 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
 
                         {/* Срок выполнения */}
                         <IonItem>
+                            <IonIcon icon={ calendarOutline } slot="start" />
                             <IonLabel>
                                 <h3>Срок выполнения</h3>
                                 <p>{invoice.term} дней</p>
@@ -177,62 +207,38 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
 
             </IonCard>
 
-            {/* Действия */}
-            <IonCard>
-                <IonCardHeader>
-                    <IonCardTitle>Действия</IonCardTitle>
-                </IonCardHeader>
-                
-                <IonCardContent>
-                    <IonList>
-                        <IonItem button onClick={onNavigateToActs}>
-                            <IonIcon icon={documentOutline} slot="start" />
-                            <IonLabel>
-                                <h3>Акты и документы</h3>
-                                <p>Просмотр и создание актов</p>
-                            </IonLabel>
-                        </IonItem>
-
-                        <IonItem button onClick={onNavigateToPrint}>
-                            <IonIcon icon={printOutline} slot="start" />
-                            <IonLabel>
-                                <h3>Печать документов</h3>
-                                <p>Формирование отчетов</p>
-                            </IonLabel>
-                        </IonItem>
-                    </IonList>
-                </IonCardContent>
-            </IonCard>
-
+           
             {/* Модальное окно для поиска и стандартизации адреса */}
             <IonModal 
                 isOpen={isAddressSearchModalOpen} 
                 onDidDismiss={handleModalClose}
                 canDismiss={!isUpdatingAddress}
             >
-                <IonCardHeader>
-                    <IonCardTitle>Стандартизация адреса</IonCardTitle>
-                </IonCardHeader>
-                
-                <IonCardContent>
-                    <AddressForm
-                        initialAddress={currentAddress}
-                        invoiceId={invoice.id}
-                        onAddressChange={handleAddressChange}
-                        onAddressSaved={handleAddressUpdate}
-                        disabled={isUpdatingAddress}
-                    />
+                <div>
+                    <IonCardHeader>
+                        <IonCardTitle>Стандартизация адреса</IonCardTitle>
+                    </IonCardHeader>
                     
-                    <IonButton 
-                        expand="block" 
-                        fill="clear" 
-                        onClick={handleModalClose}
-                        disabled={isUpdatingAddress}
-                        style={{ marginTop: '20px' }}
-                    >
-                        Закрыть
-                    </IonButton>
-                </IonCardContent>
+                    <IonCardContent>
+                        <AddressForm
+                            initialAddress={currentAddress}
+                            invoiceId={invoice.id}
+                            onAddressChange={handleAddressChange}
+                            onAddressSaved={handleAddressUpdate}
+                            disabled={isUpdatingAddress}
+                        />
+                        
+                        <IonButton 
+                            expand="block" 
+                            fill="clear" 
+                            onClick={handleModalClose}
+                            disabled={isUpdatingAddress}
+                            style={{ marginTop: '20px' }}
+                        >
+                            Закрыть
+                        </IonButton>
+                    </IonCardContent>
+                </div>
             </IonModal>
         </div>
     );
