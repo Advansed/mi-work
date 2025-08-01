@@ -1,78 +1,142 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IonModal, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonButtons, IonIcon } from '@ionic/react';
 import { close } from 'ionicons/icons';
-import { DropdownFilterProps, useLics } from './useLics';
+import { useLics } from './useLics';
 import './LicsForm.css'
+import DropdownFilter from './components/DropDownFilter';
 
 const LicsForm = ({ address, invoiceId, onUpdateLics, isOpen, onClose }) => {
-    const { ulus } = useLics()
+    const [ info, setInfo ] = useState<any>([])
+    const { 
+          uluses, settlements, streets, houses, kv, lics
+        , loadSettlements, loadStreets, loadHouses, loadKv, loadLics 
+    } = useLics()
 
-    const DropdownFilter: React.FC<DropdownFilterProps> = ({ options = [], onSelect }) => {
-        const [value, setValue] = useState('');
-        const [open, setOpen] = useState(false);
+    const handleSelect1 = ( item )=>{
+        setInfo( [ item ] )
+        loadSettlements( item.items )
+        console.log("select ulus: " + item.name)
+    }
+    const handleSelect2 = ( item )=>{
+        setInfo( [ ...info, item ] )
+        console.log("select settlement: " + item.name)
+        loadStreets( item.id )
+    }
+    const handleSelect3 = ( item )=>{
+        setInfo( [ ...info, item ] )
+        console.log("select street: " + item.name)
+        loadHouses( item.id )
+    }
+    const handleSelect4 = ( item )=>{
+        setInfo( [ ...info, item ] )
+        console.log("select house: " + item.name + '-' + item.type )
+        if(item.type === 'house')
+            loadLics( item.items )
+        else 
+            loadKv( item.items )
+    }
+    const handleSelect5 = ( item )=>{
+        setInfo( [ ...info, item ] )
+        console.log("select kv: " + item.name)
+        loadLics( item.items )
         
-        const filtered = options.filter(item => 
-            item.name.toLowerCase().includes(value.toLowerCase())
-        );
+    }
+    const handleSelect6 = ( item )=>{
+        setInfo( [ ...info, item ] )
+        console.log("select lic: " + item.name)
+        
+    }
 
-        return (
-            <div className="dropdown-container">
-            <input
-                value={value}
-                onChange={(e) => { setValue(e.target.value); setOpen(true); }}
-                onFocus={() => setOpen(true)}
-                onBlur={() => setTimeout(() => setOpen(false), 100)}
-                className="dropdown-input"
-            />
-            {open && (
-                <div className="dropdown-list">
-                {filtered.map(item => (
-                    <div
-                    key={item.id}
-                    onClick={() => { setValue(item.name); setOpen(false); onSelect?.(item); }}
-                    className="dropdown-item"
-                    >
-                    {item.name}
-                    </div>
-                ))}
+    useEffect(()=>{
+       // clearAll("ulus")
+        console.log("useEffect lics form")
+    },[])
+
+    return (
+        <IonModal isOpen={isOpen} onDidDismiss={onClose}>
+        <IonHeader>
+            <IonToolbar>
+            <IonTitle>Лицевой счет</IonTitle>
+            <IonButtons slot="end">
+                <IonButton onClick={onClose}>
+                <IonIcon icon={close} />
+                </IonButton>
+            </IonButtons>
+            </IonToolbar>
+        </IonHeader>
+        
+        <IonContent className="ion-padding">
+            <div className='ml-1 mr-1'>
+                <div>
+                    <div className=' fs-09'> Улусы </div>
+                    <DropdownFilter options = { uluses } onSelect = { handleSelect1 }/>
                 </div>
-            )}
+                
+
+                <div className='mt-1'>
+                    {
+                        settlements.length > 0 
+                            ? <>
+                                <div className=' fs-09'> Населенные пункты </div>
+                                <DropdownFilter options = { settlements } onSelect = { handleSelect2 }/>
+                            </>  
+                            : <></>
+                    }
+                </div>
+                <div className='mt-1'>
+                    {
+                        streets.length > 0 
+                            ? <>
+                                <div className=' fs-09'> Улица </div>
+                                <DropdownFilter options = { streets } onSelect = { handleSelect3 }/>
+                            </>  
+                            : <></>
+                    }
+                </div>
+                <div className='mt-1'>
+                    {
+                        houses.length > 0 
+                            ? <>
+                                <div className=' fs-09'> Дом </div>
+                                <DropdownFilter options = { houses } onSelect = { handleSelect4 }/>
+                            </>  
+                            : <></>
+                    }
+                </div>
+                <div className='mt-1'>
+                    {
+                        kv.length > 0 
+                            ? <>
+                                <div className=' fs-09'> Квартира </div>
+                                <DropdownFilter options = { kv } onSelect = { handleSelect5 }/>
+                            </>  
+                            : <></>
+                    }
+                </div>
+                <div className='mt-1'>
+                    {
+                        lics.length > 0 
+                            ? <>
+                                <div className=' fs-09'> Лицевой счет </div>
+                                <DropdownFilter options = { lics } onSelect = { handleSelect6 }/>
+                            </>  
+                            : <></>
+                    }
+                </div>
+
             </div>
-        );
-    };
-
-
-  return (
-    <IonModal isOpen={isOpen} onDidDismiss={onClose}>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Лицевой счет</IonTitle>
-          <IonButtons slot="end">
-            <IonButton onClick={onClose}>
-              <IonIcon icon={close} />
-            </IonButton>
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
-      
-      <IonContent className="ion-padding">
-        <div>
             
-            <DropdownFilter options = { ulus } />
-
-        </div>
-        
-        <div className="flex justify-end gap-2 mt-4">
-          <IonButton fill="outline" onClick={onClose}>
-            Отмена
-          </IonButton>
-          <IonButton onClick={() => onUpdateLics && onUpdateLics()}>
-            Сохранить
-          </IonButton>
-        </div>
-      </IonContent>
-    </IonModal>
-  );
+            <div className="flex justify-end gap-2 mt-4">
+            <IonButton fill="outline" onClick={onClose}>
+                Отмена
+            </IonButton>
+            <IonButton onClick={() => onUpdateLics && onUpdateLics()}>
+                Сохранить
+            </IonButton>
+            </div>
+        </IonContent>
+        </IonModal>
+    );
 };
 
 export default LicsForm;

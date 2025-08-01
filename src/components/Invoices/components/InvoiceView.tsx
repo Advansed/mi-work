@@ -58,7 +58,6 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
 
     const handleAccountSearch = useCallback(() => {
         setIsAccountSearchModalOpen(true);
-        console.log(": account :")
     }, []);
 
     // ============================================
@@ -242,13 +241,19 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
                 </div>
             </IonModal>
 
-            <LicsForm
-                address         = { invoice.address } 
-                invoiceId       = { invoice.id } 
-                onUpdateLics    = { ()=>{}} 
-                isOpen          = { isAccountSearchModalOpen } 
-                onClose         = { ()=>{ setIsAccountSearchModalOpen(false)} }
-            />
+            {
+                isAccountSearchModalOpen 
+                    ? <>
+                        <LicsForm
+                            address         = { invoice.address } 
+                            invoiceId       = { invoice.id } 
+                            onUpdateLics    = { ()=>{}} 
+                            isOpen          = { isAccountSearchModalOpen } 
+                            onClose         = { ()=>{ setIsAccountSearchModalOpen(false)} }
+                        />
+                    </>
+                    : <></>
+            }
         </div>
     );
 };
