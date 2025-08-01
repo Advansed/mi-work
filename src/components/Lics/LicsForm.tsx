@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { IonModal, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonButtons, IonIcon } from '@ionic/react';
 import { close } from 'ionicons/icons';
 import { DropdownFilterProps, useLics } from './useLics';
+import './LicsForm.css'
 
 const LicsForm = ({ address, invoiceId, onUpdateLics, isOpen, onClose }) => {
     const { ulus } = useLics()
