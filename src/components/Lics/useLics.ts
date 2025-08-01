@@ -22,8 +22,7 @@ export const useLics = ():useLicsReturn => {
 
     const loadUlus = useCallback(async ()=> {
         const res = await getData("getSettlements", { token: Store.getState().login.token })
-        console.log(res)
-        if(res.success){
+        if(!res.error){
             setUlus( res.data )
         } else setUlus([])
     }, []) // Пустые зависимости, так как функция не зависит от пропсов/стейта
@@ -33,7 +32,7 @@ export const useLics = ():useLicsReturn => {
     },[loadUlus])
 
  
-    const namedUlus = useMemo(() => {
+    const namedUlus = useMemo(() => {   
         return ulus.map((ul, ind) => {
             return { id: ind, name: ul.ulus }
         });

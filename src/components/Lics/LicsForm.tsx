@@ -6,8 +6,6 @@ import { DropdownFilterProps, useLics } from './useLics';
 const LicsForm = ({ address, invoiceId, onUpdateLics, isOpen, onClose }) => {
     const { ulus } = useLics()
 
-    console.log( ulus )
-
     const DropdownFilter: React.FC<DropdownFilterProps> = ({ options = [], onSelect }) => {
         const [value, setValue] = useState('');
         const [open, setOpen] = useState(false);
