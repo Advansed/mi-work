@@ -37,7 +37,7 @@ const LicsForm = ({ address, invoiceId, onUpdateLics, isOpen, onClose }) => {
                 console.log("select kv: " + item.name)
                 loadLics( item.items )
                 break;
-            case "kv":
+            case "lics":
                 console.log("select lic: " + item.name)
                 break;
         };
