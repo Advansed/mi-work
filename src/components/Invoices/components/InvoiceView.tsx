@@ -5,6 +5,7 @@ import { callOutline, locationOutline, timeOutline, documentOutline, printOutlin
 import { Invoice, InvoiceStatus } from '../types';
 import './InvoiceView.css';
 import { AddressForm } from '../../Lics/AddressForm';
+import LicsForm from '../../Lics/LicsForm';
 
 interface InvoiceViewProps {
     invoice: Invoice;
@@ -29,6 +30,7 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
     const [currentAddress, setCurrentAddress] = useState(invoice.address);
     const [isUpdatingAddress, setIsUpdatingAddress] = useState(false);
     const [isAddressSearchModalOpen, setIsAddressSearchModalOpen] = useState(false);
+    const [isAccountSearchModalOpen, setIsAccountSearchModalOpen] = useState(false);
 
     const handleCall = useCallback(() => {
         if (!invoice.phone) {
@@ -47,8 +49,6 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
         }
     }, [invoice.phone]);
 
-    console.log( invoiceStatus )
-
     // ============================================
     // ОБРАБОТЧИК ПОИСКА ЛИЦЕВОГО СЧЕТА
     // ============================================
@@ -57,7 +57,8 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
     }, []);
 
     const handleAccountSearch = useCallback(() => {
-        setIsAddressSearchModalOpen(true);
+        setIsAccountSearchModalOpen(true);
+        console.log(": account :")
     }, []);
 
     // ============================================
@@ -240,6 +241,14 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
                     </IonCardContent>
                 </div>
             </IonModal>
+
+            <LicsForm
+                address         = { invoice.address } 
+                invoiceId       = { invoice.id } 
+                onUpdateLics    = { ()=>{}} 
+                isOpen          = { isAccountSearchModalOpen } 
+                onClose         = { ()=>{ setIsAccountSearchModalOpen(false)} }
+            />
         </div>
     );
 };
