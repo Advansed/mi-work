@@ -39,16 +39,49 @@ const LicsForm = ({ address, invoiceId, onUpdateLics, isOpen, onClose }) => {
                 console.log("select kv: " + item.name)
                 loadLics( item.items )
                 break;
-            case "lics":
+            case "lic":
                 console.log("select lic: " + item.name)
                 break;
         };
     }
 
-    useEffect(()=>{
-       // clearAll("ulus")
-        console.log("useEffect lics form")
-    },[])
+    useEffect(() => {
+        if (settlements && settlements.length > 0) {
+            setLevel([{                          
+                type: 'settle',                          
+                label: 'Населенный пункт',                          
+                render: () => <DropdownFilter options={settlements} onSelect={handleSelect}/>                     
+            }]);
+        }
+        if (streets && streets.length > 0) {
+            setLevel([ ...level, {                          
+                type: 'street',                          
+                label: 'Улица',                          
+                render: () => <DropdownFilter options={streets} onSelect={handleSelect}/>                     
+            }]);
+        }
+        if (houses && houses.length > 0) {
+            setLevel([ ...level, {                          
+                type: 'house',                          
+                label: 'Дом',                          
+                render: () => <DropdownFilter options={ houses } onSelect={handleSelect}/>                     
+            }]);
+        }
+        if (kv && kv.length > 0) {
+            setLevel([ ...level, {                          
+                type: 'kv',                          
+                label: 'Квартира',                          
+                render: () => <DropdownFilter options={ kv } onSelect={handleSelect}/>                     
+            }]);
+        }
+        if (lics && lics.length > 0) {
+            setLevel([ ...level, {                          
+                type: 'lic',                          
+                label: 'Лицевой счет',                          
+                render: () => <DropdownFilter options={ lics } onSelect={handleSelect}/>                     
+            }]);
+        }
+    }, [ settlements, streets, houses, kv, lics ]);
 
     return (
         <>
@@ -126,8 +159,9 @@ const LicsForm = ({ address, invoiceId, onUpdateLics, isOpen, onClose }) => {
 
                     {   level.map(config => (
                         <div className='mt-1'>
-                            <div className=' fs-09'> { config.title} </div>
-                            <DropdownFilter options = { config.data } onSelect = { handleSelect }/>
+                            <div className=' fs-09'> { config.label } </div>
+                            { config.render() }
+                            {/* <DropdownFilter options = { config.data } onSelect = { handleSelect }/> */}
                         </div>
                     ))}
 
