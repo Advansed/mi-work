@@ -28,6 +28,7 @@ interface useLicsReturn {
     loadKv:                 ( items )   => Promise<void>;
     loadLics:               ( items )   => Promise<void>;
     clearAll:               ( name )    => Promise<void>;
+    loading:                boolean;
 }
 
 export const useLics = ():useLicsReturn => {
@@ -38,12 +39,15 @@ export const useLics = ():useLicsReturn => {
     const [ houses,     setHouses ]     = useState<any>([])
     const [ kv,         setKv ]         = useState<any>([])
     const [ lics,       setLics ]       = useState<any>([])
+    const [ loading,    setLoading ]    = useState( false )
 
     const loadUluses        = useCallback(async ()=> {
+        setLoading( true)
         const res = await getData("getSettlements", { token: Store.getState().login.token })
         if(!res.error){
             setUluses( res.data )
         } 
+        setLoading( false)
     }, []) // Пустые зависимости, так как функция не зависит от пропсов/стейта
 
     const loadSettlements   = useCallback(async ( items: any[])=> {
@@ -54,15 +58,19 @@ export const useLics = ():useLicsReturn => {
     
     const loadStreets       = useCallback(async ( id )=> {
         
+        setLoading(true)
         const res = await getData("getStreets", { token: Store.getState().login.token, s_id: id } )
         console.log(res)
         if(!res.error){
             setStreets( res.data )
         } 
-        
+        setLoading(false)
+
     }, []) // Пустые зависимости, так как функция не зависит от пропсов/стейта
     
     const loadHouses        = useCallback(async ( ids )=> {
+
+        setLoading(true)
         const params = { token: Store.getState().login.token, ids: JSON.parse(ids) }
         console.log( params )
         const res = await getData("getHouses", params )
@@ -70,6 +78,7 @@ export const useLics = ():useLicsReturn => {
         if(!res.error){
             setHouses( res.data )
         } 
+        setLoading(false)
         
     }, []) // Пустые зависимости, так как функция не зависит от пропсов/стейта
     
@@ -165,7 +174,9 @@ export const useLics = ():useLicsReturn => {
         loadHouses,
         loadKv,
         loadLics,
-        clearAll
+        clearAll,
+
+        loading
     }
 }
 
