@@ -34,8 +34,8 @@ export const useLics = ():useLicsReturn => {
 
  
     const namedUlus = useMemo(() => {
-        return ulus.map((ul) => {
-            return { id: '', name: ul.ulus }
+        return ulus.map((ul, ind) => {
+            return { id: ind, name: ul.ulus }
         });
     }, [ ulus ]);
 
