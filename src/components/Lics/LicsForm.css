@@ -103,6 +103,7 @@
    ============================================ */
 
 .lics-level-container {
+  position: relative;
   margin-bottom: 0.5em;
   padding: 0.5em;
   background: var(--lics-corporate-white);

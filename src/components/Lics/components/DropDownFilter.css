@@ -102,7 +102,7 @@
   border-radius: 8px;
   max-height: 240px;
   overflow-y: auto;
-  z-index: 1000;
+  z-index: 9999; /* Увеличен с 1000 до 9999 */
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
   animation: dropdown-slide-down 0.2s ease-out;
   backdrop-filter: blur(8px);

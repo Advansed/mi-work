@@ -26,32 +26,42 @@ const LicsForm: React.FC<LicsFormProps> = ({
         loadSettlements, loadStreets, loadHouses, loadKv, loadLics 
     } = useLics();
 
+    const [ info, setInfo ] = useState('')
+
     // Оптимизированный handleSelect с useCallback
     const handleSelect = useCallback((item: any) => {
         switch (item.type) {
             case "ulus": 
+                setInfo( item.name )
                 loadSettlements(item.items);
                 break;
             case "settle":
+                console.log( info )
+                console.log( item.name )
+                setInfo( info + ' > ' + item.name )
                 loadStreets(item.id);
                 break;
             case "street":
+                setInfo( info + ' > ' + item.name )
                 loadHouses(item.id);
                 break;
             case "house":
+                setInfo( info + ' > ' + item.name )
                 loadLics(item.items);
                 break;
             case "build":
+                setInfo( info + ' > ' + item.name )
                 loadKv(item.items);
                 break;
             case "kv":
+                setInfo( info + ' > ' + item.name )
                 loadLics(item.items);
                 break;
             case "lics":
                 // Выбран лицевой счет
                 break;
         }
-    }, [loadSettlements, loadStreets, loadHouses, loadKv, loadLics]);
+    }, [loadSettlements, loadStreets, loadHouses, loadKv, loadLics, info]);
 
     // Мемоизированная конфигурация уровней - один useEffect вместо множественных
     const levelConfig = useMemo(() => {
@@ -59,6 +69,7 @@ const LicsForm: React.FC<LicsFormProps> = ({
 
         // Улусы всегда показываем первыми
         if (uluses.length > 0) {
+            config.length = 0;
             config.push({
                 type: 'ulus',
                 label: 'Улус',
@@ -68,6 +79,7 @@ const LicsForm: React.FC<LicsFormProps> = ({
 
         // Поселения
         if (settlements.length > 0) {
+            config.length = 0;
             config.push({
                 type: 'settle',
                 label: 'Населенный пункт',
@@ -77,6 +89,7 @@ const LicsForm: React.FC<LicsFormProps> = ({
 
         // Улицы
         if (streets.length > 0) {
+            config.length = 0;
             config.push({
                 type: 'street',
                 label: 'Улица',
@@ -86,6 +99,7 @@ const LicsForm: React.FC<LicsFormProps> = ({
 
         // Дома
         if (houses.length > 0) {
+            config.length = 0;
             config.push({
                 type: 'house',
                 label: 'Дом',
@@ -95,6 +109,7 @@ const LicsForm: React.FC<LicsFormProps> = ({
 
         // Квартиры
         if (kv.length > 0) {
+            config.length = 0;
             config.push({
                 type: 'kv',
                 label: 'Квартира',
@@ -104,6 +119,7 @@ const LicsForm: React.FC<LicsFormProps> = ({
 
         // Лицевые счета
         if (lics.length > 0) {
+            config.length = 0;
             config.push({
                 type: 'lics',
                 label: 'Лицевой счет',
@@ -156,11 +172,8 @@ const LicsForm: React.FC<LicsFormProps> = ({
                 </IonHeader>
                 
                 <IonContent className="ion-padding">
-                    <div className="flex fl-space">
-                        <div></div>
-                        <div className='flex'>
-
-                        </div>
+                    <div className="flex fl-space pb-1">
+                        { info }
                     </div>
                     <div className="space-y-4">
                         {levelConfig.map((config, index) => (
