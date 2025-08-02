@@ -1,96 +1,338 @@
+/* ============================================
+   КОРПОРАТИВНЫЙ СТИЛЬ ДЛЯ DROPDOWNFILTER - ТОЛЬКО CSS
+   ============================================ */
+
+/* Основные CSS переменные */
+:root {
+  --dropdown-corporate-primary: #1E3A8A;      /* Темно-синий */
+  --dropdown-corporate-secondary: #E5E7EB;    /* Светло-серый */
+  --dropdown-corporate-accent: #F97316;       /* Оранжевый */
+  --dropdown-corporate-white: #FFFFFF;        /* Белый */
+  --dropdown-corporate-text: #1F2937;         /* Темно-серый текст */
+  --dropdown-corporate-blue: #3B82F6;         /* Синий */
+  
+  /* Дополнительные корпоративные цвета */
+  --dropdown-corporate-border: #d1d5db;
+  --dropdown-corporate-shadow: rgba(0, 0, 0, 0.1);
+  --dropdown-corporate-hover: #f3f4f6;
+  --dropdown-corporate-focus: rgba(30, 58, 138, 0.1);
+  --dropdown-corporate-selected: rgba(249, 115, 22, 0.1);
+}
+
+/* ============================================
+   ОСНОВНОЙ КОНТЕЙНЕР DROPDOWN
+   ============================================ */
+
 .dropdown-container {
   position: relative;
   width: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
+/* ============================================
+   ПОЛЕ ВВОДА
+   ============================================ */
 
 .dropdown-input {
   width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
+  padding: 12px 16px;
+  padding-right: 40px;
+  border: 2px solid var(--dropdown-corporate-border);
+  border-radius: 8px;
   font-size: 14px;
-  background: white;
+  font-weight: 500;
+  background: var(--dropdown-corporate-white);
+  color: var(--dropdown-corporate-text);
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  position: relative;
+}
+
+/* Иконка поиска */
+.dropdown-input::before {
+  content: '🔍';
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: var(--dropdown-corporate-border);
+  pointer-events: none;
+  z-index: 1;
 }
 
 .dropdown-input:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 1px #3b82f6;
+  border-color: var(--dropdown-corporate-primary);
+  background: var(--dropdown-corporate-focus);
+  box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.1);
+  transform: translateY(-1px);
 }
+
+.dropdown-input:hover:not(:focus) {
+  border-color: var(--dropdown-corporate-accent);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.dropdown-input::placeholder {
+  color: #9ca3af;
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* Состояние с выбранным значением */
+.dropdown-input.has-value {
+  background: var(--dropdown-corporate-selected);
+  border-color: var(--dropdown-corporate-accent);
+  font-weight: 600;
+  color: var(--dropdown-corporate-primary);
+}
+
+/* ============================================
+   ВЫПАДАЮЩИЙ СПИСОК
+   ============================================ */
 
 .dropdown-list {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 4px);
   left: 0;
   right: 0;
-  background: white;
-  border: 1px solid #d1d5db;
-  border-top: none;
-  border-radius: 0 0 4px 4px;
-  max-height: 200px;
+  background: var(--dropdown-corporate-white);
+  border: 2px solid var(--dropdown-corporate-primary);
+  border-radius: 8px;
+  max-height: 240px;
   overflow-y: auto;
   z-index: 1000;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+  animation: dropdown-slide-down 0.2s ease-out;
+  backdrop-filter: blur(8px);
 }
 
+/* Анимация появления списка */
+@keyframes dropdown-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ============================================
+   ЭЛЕМЕНТЫ СПИСКА
+   ============================================ */
+
 .dropdown-item {
-  padding: 8px 12px;
+  padding: 12px 16px;
   cursor: pointer;
   font-size: 14px;
-  color: #374151;
-  border-bottom: 1px solid #f3f4f6;
+  color: var(--dropdown-corporate-text);
+  border-bottom: 1px solid var(--dropdown-corporate-secondary);
   transition: all 0.15s ease;
   user-select: none;
+  position: relative;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
 }
 
 .dropdown-item:last-child {
   border-bottom: none;
+  border-radius: 0 0 6px 6px;
 }
 
+.dropdown-item:first-child {
+  border-radius: 6px 6px 0 0;
+}
+
+/* Обычное состояние при наведении */
 .dropdown-item:hover {
-  background-color: #f9fafb;
+  background: var(--dropdown-corporate-hover);
+  color: var(--dropdown-corporate-primary);
+  padding-left: 20px;
+  border-left: 4px solid var(--dropdown-corporate-accent);
 }
 
+/* Выделенное состояние (клавиши стрелок) */
 .dropdown-item--highlighted {
-  background-color: #3b82f6;
-  color: white;
+  background: var(--dropdown-corporate-primary);
+  color: var(--dropdown-corporate-white);
+  padding-left: 20px;
+  border-left: 4px solid var(--dropdown-corporate-accent);
+  font-weight: 600;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .dropdown-item--highlighted:hover {
-  background-color: #2563eb;
+  background: var(--dropdown-corporate-accent);
+  color: var(--dropdown-corporate-white);
 }
 
+/* Пустое состояние */
 .dropdown-item--empty {
   color: #9ca3af;
   font-style: italic;
   cursor: default;
-  background-color: #f9fafb;
+  background: var(--dropdown-corporate-secondary);
+  text-align: center;
+  padding: 20px 16px;
+  border: none;
+  position: relative;
+}
+
+.dropdown-item--empty::before {
+  content: '🔍';
+  font-size: 24px;
+  display: block;
+  margin-bottom: 8px;
+  opacity: 0.5;
 }
 
 .dropdown-item--empty:hover {
-  background-color: #f9fafb;
+  background: var(--dropdown-corporate-secondary);
+  padding-left: 16px;
+  border-left: none;
 }
 
-/* Плавная анимация при навигации */
-.dropdown-item--highlighted {
-  transform: translateX(2px);
-}
+/* ============================================
+   СТИЛИ СКРОЛЛБАРА
+   ============================================ */
 
-/* Скролл стили */
 .dropdown-list::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .dropdown-list::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--dropdown-corporate-secondary);
+  border-radius: 4px;
+  margin: 8px 0;
 }
 
 .dropdown-list::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
+  background: var(--dropdown-corporate-primary);
+  border-radius: 4px;
+  transition: background 0.3s ease;
 }
 
 .dropdown-list::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: var(--dropdown-corporate-accent);
+}
+
+/* ============================================
+   СЧЕТЧИК РЕЗУЛЬТАТОВ
+   ============================================ */
+
+.dropdown-list::before {
+  content: attr(data-count) ' результатов';
+  display: block;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dropdown-corporate-primary);
+  background: var(--dropdown-corporate-focus);
+  border-bottom: 1px solid var(--dropdown-corporate-border);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ============================================
+   ГРУППИРОВКА ЭЛЕМЕНТОВ
+   ============================================ */
+
+.dropdown-item[data-group] {
+  position: relative;
+}
+
+.dropdown-item[data-group]:not([data-group=""]):first-of-type::before {
+  content: attr(data-group);
+  position: absolute;
+  top: -24px;
+  left: 0;
+  right: 0;
+  padding: 4px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--dropdown-corporate-accent);
+  background: var(--dropdown-corporate-white);
+  border-bottom: 2px solid var(--dropdown-corporate-accent);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ============================================
+   АДАПТИВНОСТЬ
+   ============================================ */
+
+@media (max-width: 768px) {
+  .dropdown-input {
+    padding: 14px 16px;
+    font-size: 16px; /* Предотвращает зум на iOS */
+  }
+  
+  .dropdown-list {
+    max-height: 200px;
+  }
+  
+  .dropdown-item {
+    padding: 14px 16px;
+    min-height: 48px;
+    font-size: 15px;
+  }
+}
+
+/* ============================================
+   СОСТОЯНИЯ ЗАГРУЗКИ
+   ============================================ */
+
+.dropdown-container.loading .dropdown-input {
+  background-image: linear-gradient(90deg, 
+    var(--dropdown-corporate-white) 0%, 
+    var(--dropdown-corporate-focus) 50%, 
+    var(--dropdown-corporate-white) 100%);
+  background-size: 200% 100%;
+  animation: dropdown-loading 1.5s infinite;
+}
+
+@keyframes dropdown-loading {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ============================================
+   УЛУЧШЕННЫЕ ИНТЕРАКТИВНЫЕ СОСТОЯНИЯ
+   ============================================ */
+
+.dropdown-item:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
+}
+
+.dropdown-container:focus-within .dropdown-input {
+  border-color: var(--dropdown-corporate-primary);
+}
+
+/* Индикатор активного состояния */
+.dropdown-item--highlighted::after {
+  content: '✓';
+  margin-left: auto;
+  font-weight: bold;
+  color: var(--dropdown-corporate-accent);
+}
+
+/* ============================================
+   ТЕМНАЯ ТЕМА (ОПЦИОНАЛЬНО)
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --dropdown-corporate-white: #1f2937;
+    --dropdown-corporate-text: #f9fafb;
+    --dropdown-corporate-border: #374151;
+    --dropdown-corporate-hover: #374151;
+    --dropdown-corporate-secondary: #111827;
+  }
 }

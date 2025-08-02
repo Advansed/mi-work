@@ -1,96 +1,259 @@
-.dropdown-container {
+/* ============================================
+   КОРПОРАТИВНЫЙ СТИЛЬ ДЛЯ LICSFORM - ТОЛЬКО CSS
+   ============================================ */
+
+/* Основные CSS переменные */
+:root {
+  --lics-corporate-primary: #1E3A8A;      /* Темно-синий */
+  --lics-corporate-secondary: #E5E7EB;    /* Светло-серый */
+  --lics-corporate-accent: #F97316;       /* Оранжевый */
+  --lics-corporate-white: #FFFFFF;        /* Белый */
+  --lics-corporate-text: #1F2937;         /* Темно-серый текст */
+  --lics-corporate-blue: #3B82F6;         /* Синий */
+  
+  /* Дополнительные корпоративные цвета */
+  --lics-corporate-border: #d1d5db;
+  --lics-corporate-shadow: rgba(0, 0, 0, 0.1);
+  --lics-corporate-hover: #f3f4f6;
+  --lics-corporate-success: #10b981;
+  --lics-corporate-warning: #f59e0b;
+  --lics-corporate-error: #ef4444;
+}
+
+/* ============================================
+   МОДАЛЬНОЕ ОКНО LICSFORM
+   ============================================ */
+
+/* Основное модальное окно */
+.lics-form-modal ion-modal {
+  --background: var(--lics-corporate-white);
+  --border-radius: 16px;
+  --box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --backdrop-opacity: 0.4;
+  --max-width: 600px;
+  --max-height: 90vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Заголовок модального окна */
+.lics-form-modal ion-header {
+  --background: var(--lics-corporate-primary);
+  --color: var(--lics-corporate-white);
+  border-bottom: 4px solid var(--lics-corporate-accent);
+  box-shadow: 0 2px 8px var(--lics-corporate-shadow);
+}
+
+.lics-form-modal ion-toolbar {
+  --background: var(--lics-corporate-primary);
+  --color: var(--lics-corporate-white);
+  --border-width: 0;
+  --padding-start: 20px;
+  --padding-end: 20px;
+  min-height: 64px;
+}
+
+.lics-form-modal ion-title {
+  color: var(--lics-corporate-white);
+  font-weight: 600;
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Добавим иконку перед заголовком */
+.lics-form-modal ion-title::before {
+  content: '🏠';
+  font-size: 20px;
+  background: var(--lics-corporate-white);
+  border-radius: 6px;
+  padding: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Кнопка закрытия */
+.lics-form-modal .close-button {
+  --color: var(--lics-corporate-white);
+  --background: rgba(255, 255, 255, 0.1);
+  --border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.lics-form-modal .close-button:hover {
+  --background: var(--lics-corporate-accent);
+  transform: scale(1.1);
+}
+
+/* ============================================
+   КОНТЕНТ МОДАЛЬНОГО ОКНА
+   ============================================ */
+
+.lics-form-modal ion-content {
+  --background: var(--lics-corporate-white);
+  --padding-top: 24px;
+  --padding-bottom: 24px;
+  --padding-start: 20px;
+  --padding-end: 20px;
+}
+
+/* ============================================
+   КОНТЕЙНЕРЫ ДЛЯ УРОВНЕЙ АДРЕСА
+   ============================================ */
+
+.lics-level-container {
+  margin-bottom: 0.5em;
+  padding: 0.5em;
+  background: var(--lics-corporate-white);
+  border: 2px solid var(--lics-corporate-border);
+  border-radius: 12px;
+  border-left: 6px solid var(--lics-corporate-primary);
+  box-shadow: 0 4px 16px var(--lics-corporate-shadow);
+  transition: all 0.3s ease;
   position: relative;
-  width: 100%;
 }
 
-.dropdown-input {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  font-size: 14px;
-  background: white;
-  outline: none;
-  transition: border-color 0.2s ease;
+.lics-level-container:hover {
+  border-left-color: var(--lics-corporate-accent);
+  box-shadow: 0 6px 24px rgba(249, 115, 22, 0.2);
+  transform: translateY(-2px);
 }
 
-.dropdown-input:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 1px #3b82f6;
-}
-
-.dropdown-list {
+/* Декоративный элемент в правом верхнем углу */
+.lics-level-container::before {
+  content: '';
   position: absolute;
-  top: 100%;
-  left: 0;
+  top: 0;
   right: 0;
-  background: white;
-  border: 1px solid #d1d5db;
-  border-top: none;
-  border-radius: 0 0 4px 4px;
-  max-height: 200px;
-  overflow-y: auto;
-  z-index: 1000;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--lics-corporate-accent), var(--lics-corporate-primary));
+  clip-path: polygon(100% 0%, 0% 0%, 100% 100%);
+  border-radius: 0 12px 0 0;
 }
 
-.dropdown-item {
-  padding: 8px 12px;
-  cursor: pointer;
+/* Заголовок уровня */
+.lics-level-label {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 600;
   font-size: 14px;
-  color: #374151;
-  border-bottom: 1px solid #f3f4f6;
-  transition: all 0.15s ease;
-  user-select: none;
+  color: var(--lics-corporate-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  padding-left: 20px;
 }
 
-.dropdown-item:last-child {
-  border-bottom: none;
+.lics-level-label::before {
+  content: '▶';
+  position: absolute;
+  left: 0;
+  color: var(--lics-corporate-accent);
+  font-size: 12px;
 }
 
-.dropdown-item:hover {
-  background-color: #f9fafb;
+/* ============================================
+   LOADING СОСТОЯНИЕ
+   ============================================ */
+
+.lics-form-modal ion-loading {
+  --background: rgba(30, 58, 138, 0.95);
+  --color: var(--lics-corporate-white);
+  --spinner-color: var(--lics-corporate-accent);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.dropdown-item--highlighted {
-  background-color: #3b82f6;
-  color: white;
+/* ============================================
+   АДАПТИВНОСТЬ
+   ============================================ */
+
+@media (max-width: 768px) {
+  .lics-form-modal ion-modal {
+    --max-width: 95vw;
+    --max-height: 95vh;
+  }
+  
+  .lics-level-container {
+    margin-bottom: 16px;
+    padding: 16px;
+  }
+  
+  .lics-form-modal ion-content {
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --padding-top: 16px;
+    --padding-bottom: 16px;
+  }
 }
 
-.dropdown-item--highlighted:hover {
-  background-color: #2563eb;
+/* ============================================
+   АНИМАЦИИ
+   ============================================ */
+
+@keyframes lics-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.dropdown-item--empty {
-  color: #9ca3af;
-  font-style: italic;
-  cursor: default;
-  background-color: #f9fafb;
+.lics-level-container {
+  animation: lics-slide-in 0.3s ease-out;
 }
 
-.dropdown-item--empty:hover {
-  background-color: #f9fafb;
+/* Задержка анимации для каждого следующего элемента */
+.lics-level-container:nth-child(1) { animation-delay: 0s; }
+.lics-level-container:nth-child(2) { animation-delay: 0.1s; }
+.lics-level-container:nth-child(3) { animation-delay: 0.2s; }
+.lics-level-container:nth-child(4) { animation-delay: 0.3s; }
+.lics-level-container:nth-child(5) { animation-delay: 0.4s; }
+.lics-level-container:nth-child(6) { animation-delay: 0.5s; }
+
+/* ============================================
+   СОСТОЯНИЯ УСПЕХА И ОШИБКИ
+   ============================================ */
+
+.lics-level-container.success {
+  border-left-color: var(--lics-corporate-success);
+  background: rgba(16, 185, 129, 0.02);
 }
 
-/* Плавная анимация при навигации */
-.dropdown-item--highlighted {
-  transform: translateX(2px);
+.lics-level-container.error {
+  border-left-color: var(--lics-corporate-error);
+  background: rgba(239, 68, 68, 0.02);
 }
 
-/* Скролл стили */
-.dropdown-list::-webkit-scrollbar {
-  width: 6px;
+.lics-level-container.warning {
+  border-left-color: var(--lics-corporate-warning);
+  background: rgba(245, 158, 11, 0.02);
 }
 
-.dropdown-list::-webkit-scrollbar-track {
-  background: #f1f1f1;
+/* ============================================
+   ДОПОЛНИТЕЛЬНЫЕ УЛУЧШЕНИЯ
+   ============================================ */
+
+/* Скрытие системных скроллбаров и замена на кастомные */
+.lics-form-modal ion-content::-webkit-scrollbar {
+  width: 8px;
 }
 
-.dropdown-list::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
+.lics-form-modal ion-content::-webkit-scrollbar-track {
+  background: var(--lics-corporate-secondary);
+  border-radius: 4px;
 }
 
-.dropdown-list::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+.lics-form-modal ion-content::-webkit-scrollbar-thumb {
+  background: var(--lics-corporate-primary);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.lics-form-modal ion-content::-webkit-scrollbar-thumb:hover {
+  background: var(--lics-corporate-accent);
 }

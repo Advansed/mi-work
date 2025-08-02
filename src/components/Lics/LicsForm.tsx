@@ -1,7 +1,7 @@
-// Оптимизированный LicsForm.tsx
+// Оптимизированный LicsForm.tsx с корпоративными CSS классами
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { IonModal, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonButtons, IonIcon, IonLoading } from '@ionic/react';
-import { close } from 'ionicons/icons';
+import { close, save } from 'ionicons/icons';
 import { useLics } from './useLics';
 import './LicsForm.css';
 import DropdownFilter from './components/DropDownFilter';
@@ -55,7 +55,7 @@ const LicsForm: React.FC<LicsFormProps> = ({
 
     // Мемоизированная конфигурация уровней - один useEffect вместо множественных
     const levelConfig = useMemo(() => {
-        const config:any = [];
+        const config: any = [];
 
         // Улусы всегда показываем первыми
         if (uluses.length > 0) {
@@ -128,12 +128,27 @@ const LicsForm: React.FC<LicsFormProps> = ({
     return (
         <>
             <IonLoading isOpen={loading} />
-            <IonModal isOpen={isOpen} onDidDismiss={handleClose}>
-                <IonHeader>
+            <IonModal 
+                isOpen={isOpen} 
+                onDidDismiss={handleClose}
+                className="lics-form-modal"
+            >
+                <IonHeader className="page-header">
                     <IonToolbar>
                         <IonTitle>Поиск лицевого счета</IonTitle>
                         <IonButtons slot="end">
-                            <IonButton fill="clear" onClick={handleClose}>
+                            <IonButton 
+                                fill="clear" 
+                                onClick={handleSave}
+                                className="close-button"
+                            >
+                                <IonIcon icon = { save } />
+                            </IonButton>
+                            <IonButton 
+                                fill="clear" 
+                                onClick={handleClose}
+                                className="close-button"
+                            >
                                 <IonIcon icon={close} />
                             </IonButton>
                         </IonButtons>
@@ -141,23 +156,26 @@ const LicsForm: React.FC<LicsFormProps> = ({
                 </IonHeader>
                 
                 <IonContent className="ion-padding">
+                    <div className="flex fl-space">
+                        <div></div>
+                        <div className='flex'>
+
+                        </div>
+                    </div>
                     <div className="space-y-4">
                         {levelConfig.map((config, index) => (
-                            <div key={`${config.type}-${index}`} className="mt-1">
-                                <div className="fs-09">{config.label}</div>
+                            <div 
+                                key={`${config.type}-${index}`} 
+                                className="lics-level-container"
+                            >
+                                <label className="lics-level-label">
+                                    {config.label}
+                                </label>
                                 {config.render()}
                             </div>
                         ))}
                     </div>
                     
-                    <div className="flex justify-end gap-2 mt-4">
-                        <IonButton fill="outline" onClick={handleClose}>
-                            Отмена
-                        </IonButton>
-                        <IonButton onClick={handleSave}>
-                            Сохранить
-                        </IonButton>
-                    </div>
                 </IonContent>
             </IonModal>
         </>
