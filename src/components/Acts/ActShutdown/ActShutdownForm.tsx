@@ -3,6 +3,8 @@ import { useShutdownAct } from './useActShutdown';
 import './ActShutdownForm.css';
 import { IonModal } from '@ionic/react';
 import ActShutdown from './ActShutdown';
+import { FormField, FormRow, FormSection, ReadOnlyField, TextAreaField } from '../Forms/Forms';
+
 
 // === ТИПЫ И ИНТЕРФЕЙСЫ ===
 interface ShutdownOrderFormProps {
@@ -11,114 +13,6 @@ interface ShutdownOrderFormProps {
   onCancel?: () => void;
 }
 
-interface FormFieldProps {
-  label: string;
-  name: string;
-  type?: string;
-  required?: boolean;
-  placeholder?: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  error?: string;
-  className?: string;
-  readOnly?: boolean;
-  hint?: string;
-}
-
-interface TextAreaFieldProps {
-  label: string;
-  name: string;
-  required?: boolean;
-  placeholder?: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  error?: string;
-  rows?: number;
-}
-
-// === ПЕРЕИСПОЛЬЗУЕМЫЕ UI КОМПОНЕНТЫ ===
-const FormField: React.FC<FormFieldProps> = ({ 
-  label, 
-  name, 
-  type = 'text', 
-  required = false, 
-  placeholder, 
-  value, 
-  onChange, 
-  error, 
-  className = '', 
-  readOnly = false,
-  hint 
-}) => (
-  <div className="form-group">
-    <label>{label}{required && '*'}</label>
-    <input
-      type={type}
-      name={name}
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      className={`${error ? 'error' : ''} ${readOnly ? 'readonly' : ''} ${className}`}
-      required={required}
-      readOnly={readOnly}
-    />
-    {hint && <small className="field-hint">{hint}</small>}
-    {error && <span className="error-message">{error}</span>}
-  </div>
-);
-
-const TextAreaField: React.FC<TextAreaFieldProps> = ({ 
-  label, 
-  name, 
-  required = false, 
-  placeholder, 
-  value, 
-  onChange, 
-  error, 
-  rows = 3 
-}) => (
-  <div className="form-group">
-    <label>{label}{required && '*'}</label>
-    <textarea
-      name={name}
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      className={error ? 'error' : ''}
-      required={required}
-      rows={rows}
-    />
-    {error && <span className="error-message">{error}</span>}
-  </div>
-);
-
-const ReadOnlyField: React.FC<{ label: string; value: string; hint?: string }> = ({ 
-  label, 
-  value, 
-  hint 
-}) => (
-  <div className="form-group">
-    <label>{label}</label>
-    <input
-      type="text"
-      value={value}
-      readOnly
-      className="readonly"
-    />
-    {hint && <small className="field-hint">{hint}</small>}
-  </div>
-);
-
-const FormSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
-  <div className="form-section">
-    <h3>{title}</h3>
-    {children}
-  </div>
-);
-
-const FormRow: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="form-row">{children}</div>
-);
 
 // === ГЛАВНЫЙ КОМПОНЕНТ ===
 const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
