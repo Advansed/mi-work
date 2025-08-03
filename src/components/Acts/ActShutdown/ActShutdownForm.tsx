@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useShutdownAct } from './useActShutdown';
 import './ActShutdownForm.css';
 import { IonLoading, IonModal } from '@ionic/react';
@@ -65,8 +65,7 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
   };
 
   // === ОРИГИНАЛЬНАЯ ФУНКЦИЯ МАППИНГА ДЛЯ ПЕЧАТИ ===
-  const mapDataForPrint = () => {
-    return {
+  const mapDataForPrint = useMemo(() => ({
       id: data.id,
       actNumber: data.act_number || '',
       actDate: data.act_date,
@@ -99,15 +98,15 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
       reconnectionHouse: data.reconnection_house || '',
       reconnectionStreet: data.reconnection_street || '',
       reconnectionSubscriber: data.reconnection_subscriber || ''
-    };
-  };
+   }), [data]);
 
-  // === УТИЛИТЫ ДЛЯ ЧИТАЕМОСТИ ===
-  const getValue = (field: string): string => data[field] || '';
-  const getError = (field: string): string => errors[field] || '';
+// === МЕМОИЗИРОВАННЫЕ УТИЛИТЫ ===
+  const getValue = useCallback((field: string): string => data[field] || '', [data] );
+  
+  const getError = useCallback((field: string): string => errors[field] || '', [errors] );
 
-  // === СЕКЦИИ КАК ФУНКЦИИ РЕНДЕРА ===
-  const renderBasicInfo = () => (
+  // === МЕМОИЗИРОВАННЫЕ СЕКЦИИ ===
+  const BasicInfoSection        = useMemo(() => (
     <FormSection title="Основная информация">
       <FormRow>
         <ReadOnlyField
@@ -133,9 +132,18 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
         )}
       </FormRow>
     </FormSection>
-  );
+  ), [
+    data.act_number, 
+    data.id, 
+    data.act_date, 
+    data.invoice_id,
+    errors.act_date,
+    getValue,
+    getError,
+    handleFieldChange
+  ]);
 
-  const renderRepresentative = () => (
+  const RepresentativeSection   = useMemo(() => (
     <FormSection title="Представитель и причина отключения">
       <FormRow>
         <FormField
@@ -159,9 +167,17 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
         />
       </FormRow>
     </FormSection>
-  );
+  ), [
+    data.representative_name,
+    data.reason,
+    errors.representative_name,
+    errors.reason,
+    getValue,
+    getError,
+    handleFieldChange
+  ]);
 
-  const renderEquipment = () => (
+  const EquipmentSection        = useMemo(() => (
     <FormSection title="Объект отключения">
       <FormRow>
         <FormField
@@ -176,9 +192,15 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
         />
       </FormRow>
     </FormSection>
-  );
+  ), [
+    data.equipment,
+    errors.equipment,
+    getValue,
+    getError,
+    handleFieldChange
+  ]);
 
-  const renderAddress = () => (
+  const AddressSection          = useMemo(() => (
     <FormSection title="Адресная информация">
       <FormRow>
         <FormField
@@ -210,9 +232,19 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
         />
       </FormRow>
     </FormSection>
-  );
+  ), [
+    data.apartment,
+    data.house,
+    data.street,
+    errors.apartment,
+    errors.house,
+    errors.street,
+    getValue,
+    getError,
+    handleFieldChange
+  ]);
 
-  const renderSubscriber = () => (
+  const SubscriberSection       = useMemo(() => (
     <FormSection title="Данные абонента">
       <FormRow>
         <FormField
@@ -226,9 +258,15 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
         />
       </FormRow>
     </FormSection>
-  );
+  ), [
+    data.subscriber_name,
+    errors.subscriber_name,
+    getValue,
+    getError,
+    handleFieldChange
+  ]);
 
-  const renderAdmin = () => (
+  const AdminSection            = useMemo(() => (
     <FormSection title="Административные данные">
       <FormRow>
         <FormField
@@ -247,9 +285,15 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
         />
       </FormRow>
     </FormSection>
-  );
+  ), [
+    data.order_issued_by,
+    data.order_received_by,
+    getValue,
+    getError,
+    handleFieldChange
+  ]);
 
-  const renderExecution = () => (
+  const ExecutionSection        = useMemo(() => (
     <FormSection title="Выполнение работ">
       <FormRow>
         <FormField
@@ -269,9 +313,16 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
         />
       </FormRow>
     </FormSection>
-  );
+  ), [
+    data.executor_name,
+    data.execution_date,
+    errors.execution_date,
+    getValue,
+    getError,
+    handleFieldChange
+  ]);
 
-  const renderReconnection = () => (
+  const ReconnectionSection     = useMemo(() => (
     <FormSection title="Подключение">
       <FormRow>
         <FormField
@@ -333,13 +384,25 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
         />
       </FormRow>
     </FormSection>
-  );
+  ), [
+    data.reconnection_date,
+    data.reconnection_representative,
+    data.reconnection_supervisor,
+    data.reconnection_apartment,
+    data.reconnection_house,
+    data.reconnection_street,
+    data.reconnection_subscriber,
+    errors.reconnection_date,
+    getValue,
+    getError,
+    handleFieldChange
+  ]);
 
   return (
     <div className="shutdown-order-form">
 
       <IonLoading isOpen = { loading } message={ "Подождите..." }/>
-      
+
       <div className="form-header">
         <h2>
           {data.id ? 'Редактирование' : 'Создание'} акта-наряда на отключение
@@ -356,14 +419,14 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
       </div>
 
       <form onSubmit={handleSubmit} className="shutdown-form">
-        {renderBasicInfo()}
-        {renderRepresentative()}
-        {renderEquipment()}
-        {renderAddress()}
-        {renderSubscriber()}
-        {renderAdmin()}
-        {renderExecution()}
-        {renderReconnection()}
+        { BasicInfoSection }
+        { RepresentativeSection }
+        { EquipmentSection }
+        { AddressSection }
+        { SubscriberSection }
+        { AdminSection }
+        { ExecutionSection }
+        { ReconnectionSection }
 
         {/* Кнопки управления */}
         <div className="form-footer">
@@ -390,7 +453,7 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
       <IonModal isOpen={showPrintModal} onDidDismiss={handleClosePrintModal}>
         <ActShutdown 
           mode="print"
-          data={mapDataForPrint()}
+          data={ mapDataForPrint }
           onClose={handleClosePrintModal}
         />
       </IonModal>
