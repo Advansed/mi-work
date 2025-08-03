@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useShutdownAct } from './useActShutdown';
 import './ActShutdownForm.css';
-import { IonModal } from '@ionic/react';
+import { IonLoading, IonModal } from '@ionic/react';
 import ActShutdown from './ActShutdown';
 import { FormField, FormRow, FormSection, ReadOnlyField, TextAreaField } from '../Forms/Forms';
 
@@ -27,7 +27,6 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
     loading,
     saving,
     handleFieldChange,
-    copyAddressData,
     saveAct,
     loadActByInvoice
   } = useShutdownAct();
@@ -338,6 +337,9 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
 
   return (
     <div className="shutdown-order-form">
+
+      <IonLoading isOpen = { loading } message={ "Подождите..." }/>
+      
       <div className="form-header">
         <h2>
           {data.id ? 'Редактирование' : 'Создание'} акта-наряда на отключение
