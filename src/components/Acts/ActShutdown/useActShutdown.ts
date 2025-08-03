@@ -1,12 +1,13 @@
 import { useState, useCallback } from 'react';
+import { produce } from 'immer';
 import { getData, Store } from '../../Store';
 import { useToast } from '../../Toast/useToast';
 
-// Типы
+// Типы остаются те же
 export interface ActShutdownData {
   id?: string;
-  invoice_id?: string; // Связь с заявкой
-  act_number?: string; // Опциональное поле - автогенерируется в SQL
+  invoice_id?: string;
+  act_number?: string;
   act_date: string;
   
   // Представитель и причина
@@ -44,10 +45,9 @@ export interface ActShutdownData {
 }
 
 export type ShutdownFormErrors = Partial<Record<keyof ActShutdownData, string>>;
-
 export type AddressCopyDirection = 'to_execution' | 'to_reconnection';
 
-// Начальные данные (без act_number - будет автогенерирован в SQL)
+// Начальные данные
 const initialData: ActShutdownData = {
   id:                           '',
   act_date:                     new Date().toISOString().split('T')[0],
@@ -83,48 +83,83 @@ export const useShutdownAct = (actId?: string) => {
   const [saving, setSaving] = useState(false);
   const { showSuccess, showError } = useToast();
 
-  // Обработчик изменения полей
-  const handleFieldChange = useCallback((field: keyof ActShutdownData, value: string) => {
-    setData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-    
-    // Очистка ошибки для поля
-    if (errors[field]) {
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[field];
-        return newErrors;
-      });
-    }
-  }, [errors]);
+  // ============================================
+  // ОПТИМИЗИРОВАННЫЕ ОБРАБОТЧИКИ С IMMER
+  // ============================================
 
-  // Копирование адресных данных
-  const copyAddressData = useCallback((direction: AddressCopyDirection) => {
-    if (direction === 'to_execution') {
-      setData(prev => ({
-        ...prev,
-        execution_apartment: prev.apartment,
-        execution_house: prev.house,
-        execution_street: prev.street
-      }));
-    } else if (direction === 'to_reconnection') {
-      setData(prev => ({
-        ...prev,
-        reconnection_apartment: prev.apartment,
-        reconnection_house: prev.house,
-        reconnection_street: prev.street,
-        reconnection_subscriber: prev.subscriber_name
-      }));
-    }
+  // Главный обработчик изменения полей - БЕЗ ЗАВИСИМОСТЕЙ!
+  const handleFieldChange = useCallback((field: keyof ActShutdownData, value: string) => {
+    setData(produce(draft => {
+      // Immer автоматически проверит изменения и создаст новый объект только при необходимости
+      draft[field] = value;
+    }));
+  }, []); // Пустой массив зависимостей - функция стабильна!
+
+  // Отдельная функция для очистки ошибок - тоже оптимизирована
+  const clearFieldError = useCallback((field: keyof ActShutdownData) => {
+    setErrors(produce(draft => {
+      // Удаляем ошибку только если она существует
+      if (draft[field]) {
+        delete draft[field];
+      }
+    }));
   }, []);
 
-  // Валидация формы
+  // Комбинированная функция - изменение поля + очистка ошибки
+  const updateField = useCallback((field: keyof ActShutdownData, value: string) => {
+    // Обновляем данные
+    setData(produce(draft => {
+      draft[field] = value;
+    }));
+    
+    // Очищаем ошибку если она была
+    setErrors(produce(draft => {
+      if (draft[field]) {
+        delete draft[field];
+      }
+    }));
+  }, []);
+
+  // ============================================
+  // КОПИРОВАНИЕ АДРЕСНЫХ ДАННЫХ С IMMER
+  // ============================================
+
+  const copyAddressData = useCallback((direction: AddressCopyDirection) => {
+    setData(produce(draft => {
+      if (direction === 'to_execution') {
+        // Копируем адресные данные в секцию выполнения
+        draft.execution_apartment = draft.apartment;
+        draft.execution_house = draft.house;
+        draft.execution_street = draft.street;
+      } else if (direction === 'to_reconnection') {
+        // Копируем адресные данные в секцию подключения
+        draft.reconnection_apartment = draft.apartment;
+        draft.reconnection_house = draft.house;
+        draft.reconnection_street = draft.street;
+        draft.reconnection_subscriber = draft.subscriber_name;
+      }
+    }));
+  }, []);
+
+  // ============================================
+  // МАССОВОЕ ОБНОВЛЕНИЕ ПОЛЕЙ
+  // ============================================
+
+  const updateMultipleFields = useCallback((updates: Partial<ActShutdownData>) => {
+    setData(produce(draft => {
+      // Immer эффективно применит только реальные изменения
+      Object.assign(draft, updates);
+    }));
+  }, []);
+
+  // ============================================
+  // ВАЛИДАЦИЯ (БЕЗ ИЗМЕНЕНИЙ)
+  // ============================================
+
   const validateForm = useCallback((): boolean => {
     const newErrors: ShutdownFormErrors = {};
     
-    // Обязательные поля (act_number не проверяем, т.к. автогенерируется)
+    // Обязательные поля
     const requiredFields: (keyof ActShutdownData)[] = [
       'act_date',
       'representative_name',
@@ -147,54 +182,55 @@ export const useShutdownAct = (actId?: string) => {
       newErrors.execution_date = 'Дата выполнения не может быть в будущем';
     }
 
-    // if (data.reconnection_date && new Date(data.reconnection_date) < new Date(data.execution_date)) {
-    //   newErrors.reconnection_date = 'Дата подключения не может быть раньше даты отключения';
-    // }
-    console.log(data)
-    console.log( newErrors )
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [data]);
+  }, [data]); // Единственная зависимость - data
 
+  // ============================================
+  // ЗАГРУЗКА ДАННЫХ С IMMER
+  // ============================================
 
-  // Загрузка акта по invoice_id
   const loadActByInvoice = useCallback(async (invoiceId: string) => {
     setLoading(true);
     try {
-      const params = { invoice_id: invoiceId, user_id: Store.getState().login.userId }
-      console.log( "shutdown_order_get" )
-      console.log( params )
-      const result = await getData('SHUTDOWN_ORDER_GET', params );
-      console.log( result)
+      const params = { invoice_id: invoiceId, user_id: Store.getState().login.userId };
+      console.log("shutdown_order_get", params);
       
-      if(result.success){
-        // Если акт найден - режим редактирования, если нет - создание нового с invoice_id
-        const actData = result.data
+      const result = await getData('SHUTDOWN_ORDER_GET', params);
+      console.log(result);
+      
+      if (result.success) {
+        const actData = result.data;
+        console.log(actData);
 
-        console.log( actData )
-
-        setData(actData);
-
-      } 
-
+        // Используем Immer для установки загруженных данных
+        setData(produce(draft => {
+          // Сбрасываем к начальным данным и применяем загруженные
+          Object.assign(draft, initialData, actData);
+        }));
+      }
     } catch (error) {
       console.error('Ошибка загрузки акта по заявке:', error);
       // При ошибке создаем новый акт с invoice_id
-      setData({ ...initialData, invoice_id: invoiceId });
+      setData(produce(draft => {
+        Object.assign(draft, initialData, { invoice_id: invoiceId });
+      }));
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Сохранение акта
+  // ============================================
+  // СОХРАНЕНИЕ (БЕЗ ИЗМЕНЕНИЙ)
+  // ============================================
+
   const saveAct = useCallback(async (): Promise<ActShutdownData | null> => {
     if (!validateForm()) {
-      console.log( "no validate" )
+      console.log("no validate");
       return null;
     }
 
-    console.log( "saveAct" )
-
+    console.log("saveAct");
     setSaving(true);
 
     try {
@@ -203,22 +239,55 @@ export const useShutdownAct = (actId?: string) => {
       
       const result = await getData(method, params);
 
-      if( result.success ){
-        showSuccess("Данные сохранены")
-        console.log(result)
+      if (result.success) {
+        showSuccess("Данные сохранены");
+        console.log(result);
+        
+        // Обновляем данные результатом с сервера
+        setData(produce(draft => {
+          Object.assign(draft, result.data);
+        }));
       } else {
-        showError( "Ошибка сохранения данных" ) 
+        showError("Ошибка сохранения данных");
       }
 
       return result;
 
     } catch (error) {
       console.error('Ошибка сохранения акта:', error);
+      showError("Ошибка сохранения данных");
       throw error;
     } finally {
       setSaving(false);
     }
-  }, [data, actId, validateForm]);
+  }, [data, validateForm, showSuccess, showError]);
+
+  // ============================================
+  // ДОПОЛНИТЕЛЬНЫЕ УТИЛИТЫ С IMMER
+  // ============================================
+
+  // Сброс формы
+  const resetForm = useCallback((keepInvoiceId = false) => {
+    setData(produce(draft => {
+      const invoiceId = keepInvoiceId ? draft.invoice_id : undefined;
+      Object.assign(draft, initialData, invoiceId ? { invoice_id: invoiceId } : {});
+    }));
+    setErrors({});
+  }, []);
+
+  // Получение значения поля (мемоизированное)
+  const getFieldValue = useCallback((field: keyof ActShutdownData): string => {
+    return data[field] || '';
+  }, [data]);
+
+  // Получение ошибки поля (мемоизированное)  
+  const getFieldError = useCallback((field: keyof ActShutdownData): string => {
+    return errors[field] || '';
+  }, [errors]);
+
+  // ============================================
+  // ВОЗВРАТ ХУКА
+  // ============================================
 
   return {
     // Состояние
@@ -227,15 +296,25 @@ export const useShutdownAct = (actId?: string) => {
     loading,
     saving,
     
-    // Методы
-    handleFieldChange,
-    copyAddressData,
+    // Основные методы (оптимизированные)
+    handleFieldChange,    // Стабильная ссылка!
+    updateField,          // Изменение + очистка ошибки
+    clearFieldError,      // Отдельная очистка ошибок
+    
+    // Групповые операции
+    copyAddressData,      // Копирование адреса
+    updateMultipleFields, // Массовое обновление
+    
+    // API операции
     validateForm,
     loadActByInvoice,
     saveAct,
     
     // Утилиты
-    setData,
-    setErrors
+    resetForm,
+    getFieldValue,       // Вместо getValue
+    getFieldError,       // Вместо getError
+    setData,             // Для прямого доступа если нужно
+    setErrors            // Для прямого доступа если нужно
   };
 };

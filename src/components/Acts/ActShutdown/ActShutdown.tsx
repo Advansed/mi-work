@@ -98,13 +98,7 @@ const ActShutdown: React.FC<ActShutdownProps> = ({
             {/* Заголовок с логотипом */}
             <div className="document-header">
               <div className="logo-section">
-                <div className="logo-circle">
-                  <span className="logo-text">СТНГ</span>
-                </div>
-                <div className="company-info">
-                  <div className="company-name">САХАТРАНСНЕФТЕГАЗ</div>
-                  <div className="department">УСД</div>
-                </div>
+                <img src="USD.png" alt="USD" className='h-4'/>
               </div>
             </div>
 
