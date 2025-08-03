@@ -258,3 +258,18 @@
 .lics-form-modal ion-content::-webkit-scrollbar-thumb:hover {
   background: var(--lics-corporate-accent);
 }
+
+/* CSS стили */
+.corporate-info-section {
+    background-color: #f8fafc;
+    border-left: 4px solid #2563eb;
+    padding: 8px 16px;
+    border-radius: 0 6px 6px 0;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.corporate-info-section:hover {
+    background-color: #f1f5f9;
+    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.15);
+}

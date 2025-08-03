@@ -38,23 +38,23 @@ const LicsForm: React.FC<LicsFormProps> = ({
             case "settle":
                 console.log( info )
                 console.log( item.name )
-                setInfo( info + ' > ' + item.name )
+                setInfo( info + ' → ' + item.name )
                 loadStreets(item.id);
                 break;
             case "street":
-                setInfo( info + ' > ' + item.name )
+                setInfo( info + ' → ' + item.name )
                 loadHouses(item.id);
                 break;
             case "house":
-                setInfo( info + ' > ' + item.name )
+                setInfo( info + ' → ' + item.name )
                 loadLics(item.items);
                 break;
             case "build":
-                setInfo( info + ' > ' + item.name )
+                setInfo( info + ' → ' + item.name )
                 loadKv(item.items);
                 break;
             case "kv":
-                setInfo( info + ' > ' + item.name )
+                setInfo( info + ' → ' + item.name )
                 loadLics(item.items);
                 break;
             case "lics":
@@ -172,7 +172,7 @@ const LicsForm: React.FC<LicsFormProps> = ({
                 </IonHeader>
                 
                 <IonContent className="ion-padding">
-                    <div className="flex fl-space pb-1">
+                    <div className="flex fl-space pb-1 corporate-info-section">
                         { info }
                     </div>
                     <div className="space-y-4">

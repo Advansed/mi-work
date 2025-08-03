@@ -162,8 +162,10 @@ export const useShutdownAct = (actId?: string) => {
     setLoading(true);
     try {
       const params = { invoice_id: invoiceId, user_id: Store.getState().login.userId }
+      console.log( "shutdown_order_get" )
       console.log( params )
       const result = await getData('SHUTDOWN_ORDER_GET', params );
+      console.log( result)
       
       if(result.success){
         // Если акт найден - режим редактирования, если нет - создание нового с invoice_id
