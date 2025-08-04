@@ -1,5 +1,6 @@
 import React from 'react';
 import './ActShutdown.css';
+import { PrintRow } from '../Forms/Forms';
 
 // Интерфейс данных для печатной формы
 interface ActShutdownData {
@@ -80,10 +81,11 @@ const ActShutdown: React.FC<ActShutdownProps> = ({
     window.print();
   };
 
+
   // Режим печати - возвращаем только печатную форму
   if (mode === 'print') {
     return (
-      <div className="print-form-container scroll">
+      <div className="print-form-container fs-10">
         <div className="print-actions no-print">
           <button className="btn btn-primary" onClick={handlePrint}>
             Печать PDF
@@ -104,10 +106,10 @@ const ActShutdown: React.FC<ActShutdownProps> = ({
 
             {/* Заголовок документа */}
             <div className="document-title">
-              <div className='fs-12'>
+              <div className='fs-10'>
                 <b>АКТ-НАРЯД №<span className="field-value">{data.actNumber || '_______'}</span></b>
               </div>
-              <div className='fs-11'><b>НА ОТКЛЮЧЕНИЕ ГАЗОИСПОЛЬЗУЮЩЕГО<br />ОБОРУДОВАНИЯ ЖИЛЫХ ЗДАНИЙ</b></div>
+              <div className='fs-9'><b>НА ОТКЛЮЧЕНИЕ ГАЗОИСПОЛЬЗУЮЩЕГО<br />ОБОРУДОВАНИЯ ЖИЛЫХ ЗДАНИЙ</b></div>
               
 
               <div className='flex fl-space'>
@@ -124,132 +126,58 @@ const ActShutdown: React.FC<ActShutdownProps> = ({
 
             {/* Основное содержимое */}
             <div className="document-content">
-              <div className="content-line t-underline">
+
+              {/* <div className="content-line t-underline">
                 Представителю эксплуатационной организации 
                 <span className="ml-1">{ data.representativeName || '_'.repeat(42)}</span>
-              </div>
+              </div> */}
+
+              <PrintRow prefix = { 'Представителю эксплуатационной организации' } data = { '' } />
+              <PrintRow prefix = { '' } data = { data.representativeName } />
               <div className="field-description">ф.и.о., должность</div>
 
-              <div className="content-line">
-                ввиду 
-                <span className="field-value underline">{data.reason || '_'.repeat(78)}</span>
-              </div>
+              <PrintRow prefix = { 'ввиду'} data = { data.reason } />
               <div className="field-description">указать причину</div>
 
-              <div className="content-line">
-                поручается отключить 
-                <span className="field-value underline">{data.equipment || '_'.repeat(63)}</span>
-              </div>
+              <PrintRow prefix = { 'поручается отключить'} data = { data.equipment || '_'.repeat(63) } />
               <div className="field-description">наименование приборов</div>
 
-              <div className="content-line">
-                в квартире №<span className="field-value">{data.apartment || '________'}</span>
-                дома<span className="field-value">{data.house || '________'}</span>
-                по ул.<span className="field-value underline">{data.street || '_'.repeat(42)}</span>
-              </div>
+              <PrintRow prefix = { 'квартире' } data = { (data.apartment || '___') + ' дома ' + (data.house || '_____') + ' по ул. ' + (data.street || '______________') } />
 
-              <div className="content-line">
-                у абонента <span className="field-value underline">{data.subscriberName || '_'.repeat(70)}</span>
-              </div>
+              <PrintRow prefix = { 'у абонента'} data = { data.subscriberName || '' } />
               <div className="field-description">ф.и.о.</div>
 
-              <div className="administrative-section">
-                <div className="content-line">
-                  Наряд выдал <span className="field-value underline">{data.orderIssuedBy || '_'.repeat(50)}</span>
-                </div>
-                <div className="field-description">должность, ф.и.о., подпись</div>
+              <PrintRow prefix = { 'Наряд выдал'} data = { data.orderIssuedBy || '' } />
+              <div className="field-description">должность, ф.и.о., подпись</div>
+              
+              <PrintRow prefix = { 'Наряд получил'} data = { data.orderReceivedBy || '' } />
+              <div className="field-description">должность, ф.и.о., подпись</div>
 
-                <div className="content-line">
-                  Наряд получил <span className="field-value underline">{data.orderReceivedBy || '_'.repeat(47)}</span>
-                </div>
-                <div className="field-description">должность, ф.и.о., подпись</div>
-              </div>
-
-              <div className="execution-section">
-                <div className="content-line">
-                  Мною <span className="field-value underline">{data.executorName || '_'.repeat(75)}</span>
-                </div>
-                <div className="field-description">должность, ф.и.о.</div>
-
-                <div className="content-line">
-                  «<span className="field-value">{executionDateFormatted.day}</span>»
-                  <span className="field-value">{executionDateFormatted.month}</span>
-                  20<span className="field-value">{executionDateFormatted.year}</span>г. в 
-                  <span className="field-value">{executionTimeFormatted.hours}</span> ч. 
-                  <span className="field-value">{executionTimeFormatted.minutes}</span> мин.
-                </div>
-
-                <div className="content-line">
-                  произведено отключение газоиспользующего оборудования 
-                  <span className="field-value underline">{data.disconnectedEquipment || '_'.repeat(35)}</span>
-                </div>
+              <PrintRow prefix = { 'мною'} data = { (data.executorName || '')
+                  + ' "' + (executionDateFormatted.day || '__') + '"'
+                  + ' ' + (executionDateFormatted.month || '__') + ''
+                  + ' 20' + (executionDateFormatted.year || '__') + ''
+                  + ' в ' + (executionTimeFormatted.hours || '__') + ''
+                  + ':' + (executionTimeFormatted.minutes || '__') + ''
+                  + ' произведено отключение газоиспользующего оборудования ' + (data.disconnectedEquipment || '_____')
+                  + ' квартире №' + (data.apartment || '__') + ' дома ' + (data.house || '__') 
+                  + ' по ул ' + (data.street || '____________')
+                  
+               } />
                 <div className="field-description">указать наименование, количество приборов, способ отключения</div>
 
-                <div className="content-line">
-                  в квартире №<span className="field-value">{data.executionApartment || '______'}</span>
-                  дома <span className="field-value">{data.executionHouse || '_______'}</span>
-                  по ул. <span className="field-value underline">{data.executionStreet || '_'.repeat(42)}</span>
-                </div>
-
-                <div className="signatures-section">
+              <div className="execution-section">
                   <div className="signatures-title">Подписи:</div>
-                  <div className="signature-line">
-                    Представитель эксплуатационной организации 
-                    <span className="field-value">________________________</span>
-                  </div>
-                  <div className="signature-line">
-                    Ответственный квартиросъёмщик (абонент) 
-                    <span className="field-value">___________________________</span>
-                  </div>
-                </div>
+
+                  <PrintRow prefix = { 'Представитель эксплуатационной организации'} data = { '' } />
+                  <PrintRow prefix = { ''} data = { ' ' } />
+                  <div className="field-description">ф.и.о., подпись</div>
+
+                  <PrintRow prefix = { 'Ответственный квартиросъёмщик (абонент)'} data = { '' } />
+                  <PrintRow prefix = { ''} data = { ' ' } />
+                  <div className="field-description">ф.и.о., подпись</div>
+
               </div>
-
-              {/* Секция подключения (если есть данные) */}
-              {(data.reconnectionDate || data.reconnectionRepresentative || data.reconnectionSupervisor) && (
-                <div className="reconnection-section">
-                  <div className="content-line">
-                    Газоиспользующее оборудование подключено 
-                    «<span className="field-value">{reconnectionDateFormatted.day}</span>»
-                    <span className="field-value">{reconnectionDateFormatted.month}</span>
-                    20<span className="field-value">{reconnectionDateFormatted.year}</span>г.
-                  </div>
-
-                  <div className="content-line">
-                    представителем эксплуатационной организации 
-                    <span className="field-value underline">{data.reconnectionRepresentative || '_'.repeat(42)}</span>
-                  </div>
-                  <div className="field-description">должность, ф.и.о.</div>
-
-                  <div className="content-line">
-                    по указанию 
-                    <span className="field-value underline">{data.reconnectionSupervisor || '_'.repeat(73)}</span>
-                  </div>
-                  <div className="field-description">должность, ф.и.о.</div>
-
-                  <div className="content-line">
-                    в квартире №<span className="field-value">{data.reconnectionApartment || '________'}</span>
-                    дома<span className="field-value">{data.reconnectionHouse || '________'}</span>
-                    по ул.<span className="field-value underline">{data.reconnectionStreet || '_'.repeat(42)}</span>
-                  </div>
-
-                  <div className="content-line">
-                    у абонента <span className="field-value underline">{data.reconnectionSubscriber || '_'.repeat(70)}</span>
-                  </div>
-                  <div className="field-description">ф.и.о.</div>
-
-                  <div className="signatures-section">
-                    <div className="signatures-title">Подписи:</div>
-                    <div className="signature-line">
-                      Представитель эксплуатационной организации 
-                      <span className="field-value">________________________</span>
-                    </div>
-                    <div className="signature-line">
-                      Ответственный квартиросъёмщик (абонент) 
-                      <span className="field-value">___________________________</span>
-                    </div>
-                  </div>
-                </div>
-              )}
 
               <div className="note-section">
                 <strong>Примечание:</strong> Акт-наряд составляется в двух экземплярах, 

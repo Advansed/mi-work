@@ -307,3 +307,10 @@
     overflow-x: scroll;
 }
 
+.fs-italic{
+  font-style: italic;
+}
+
+.flex-grow {
+    flex-grow: 1;
+}
