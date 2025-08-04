@@ -104,23 +104,29 @@ const ActShutdown: React.FC<ActShutdownProps> = ({
 
             {/* Заголовок документа */}
             <div className="document-title">
-              <h1>
-                АКТ-НАРЯД №<span className="field-value">{data.actNumber || '_______'}</span>
-              </h1>
-              <h2>НА ОТКЛЮЧЕНИЕ ГАЗОИСПОЛЬЗУЮЩЕГО<br />ОБОРУДОВАНИЯ ЖИЛЫХ ЗДАНИЙ</h2>
+              <div className='fs-12'>
+                <b>АКТ-НАРЯД №<span className="field-value">{data.actNumber || '_______'}</span></b>
+              </div>
+              <div className='fs-11'><b>НА ОТКЛЮЧЕНИЕ ГАЗОИСПОЛЬЗУЮЩЕГО<br />ОБОРУДОВАНИЯ ЖИЛЫХ ЗДАНИЙ</b></div>
               
-              <div className="date-line">
-                «<span className="field-value">{actDateFormatted.day}</span>»
-                <span className="field-value">{actDateFormatted.month}</span>
-                20<span className="field-value">{actDateFormatted.year}</span>г.
+
+              <div className='flex fl-space'>
+                <div></div>
+
+                <div className="date-line field-value">
+                  «<span className="">{actDateFormatted.day}</span>» 
+                  <span className="">{ ' ' + actDateFormatted.month}</span>
+                  <span className="">{' 20' + actDateFormatted.year}</span>г.
+                </div>
+
               </div>
             </div>
 
             {/* Основное содержимое */}
             <div className="document-content">
-              <div className="content-line">
+              <div className="content-line t-underline">
                 Представителю эксплуатационной организации 
-                <span className="field-value underline">{data.representativeName || '_'.repeat(42)}</span>
+                <span className="ml-1">{ data.representativeName || '_'.repeat(42)}</span>
               </div>
               <div className="field-description">ф.и.о., должность</div>
 
