@@ -2,11 +2,13 @@
    ОСНОВНЫЕ СТИЛИ КОМПОНЕНТА
    ============================================ */
 
-.act-print-form-container {
+.act-form-container {
   background: #f5f5f5;
-  min-height: 100vh;
+  min-height: 30vh;
   padding: 20px;
   font-family: 'Times New Roman', serif;
+
+  overflow-y: scroll;
 }
 
 .act-scroll {

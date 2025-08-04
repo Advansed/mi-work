@@ -1,5 +1,5 @@
 import React from 'react';
-import './ActShutdown.css';
+import './ActShutdownPrint.css';
 import { PrintRow } from '../Forms/Forms';
 
 // Интерфейс данных для печатной формы
@@ -85,8 +85,8 @@ const ActShutdown: React.FC<ActShutdownProps> = ({
   // Режим печати - возвращаем только печатную форму
   if (mode === 'print') {
     return (
-      <div className="print-form-container sroll">
-        <div className="print-actions no-print">
+      <div className="act-form-container sroll">
+        <div className="act-print-actions no-print">
           <button className="btn btn-primary" onClick={handlePrint}>
             Печать PDF
           </button>
@@ -111,8 +111,11 @@ const ActShutdown: React.FC<ActShutdownProps> = ({
               <div className='fs-bold fs-12'> на отключение газоиспользующего оборудования </div>
             </div>
 
-            <div className="act-date-line">
-              от «{actDateFormatted.day}» {actDateFormatted.month} 20{actDateFormatted.year}г.
+            <div className='flex fl-space'>
+              <div></div>
+              <div className="act-date-line">
+                от «{actDateFormatted.day}» {actDateFormatted.month} 20{actDateFormatted.year}г.
+              </div>
             </div>
 
             {/* Содержание документа */}

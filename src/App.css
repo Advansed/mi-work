@@ -314,3 +314,7 @@
 .flex-grow {
     flex-grow: 1;
 }
+
+.scroll {
+    overflow-y: scroll;
+}

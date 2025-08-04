@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useShutdownAct } from './useActShutdown';
 import './ActShutdownForm.css';
 import { IonLoading, IonModal } from '@ionic/react';
-import ActShutdown from './ActShutdown';
+import ActShutdown from './ActShutdownPrint';
 import { FormField, FormRow, FormSection, ReadOnlyField, TextAreaField } from '../Forms/Forms';
 
 // === ТИПЫ И ИНТЕРФЕЙСЫ ===
