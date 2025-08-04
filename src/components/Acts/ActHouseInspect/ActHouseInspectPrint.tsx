@@ -5,13 +5,11 @@ import { HouseInspectData } from './useActHouseInspects';
 
 // Интерфейс props компонента
 interface ActHouseInspectPrintProps {
-  mode: 'print';
   data: HouseInspectData;
   onClose: () => void;
 }
 
 const ActHouseInspectPrint: React.FC<ActHouseInspectPrintProps> = ({
-  mode,
   data,
   onClose
 }) => {

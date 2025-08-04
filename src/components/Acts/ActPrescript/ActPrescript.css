@@ -1,6 +1,8 @@
+/* ActPrescript.css - исправленные стили для Forms системы */
+
 /* Основной контейнер */
 .act-prescript-container {
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 20px;
   background: #f8f9fa;
@@ -17,25 +19,28 @@
 /* Заголовок документа */
 .act-header {
   background: white;
-  padding: 20px;
+  padding: 24px;
   border-radius: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   text-align: center;
+  border: 1px solid #e5e7eb;
 }
 
 .company-info {
   font-size: 14px;
   color: #6b7280;
-  margin-bottom: 15px;
-  line-height: 1.4;
+  margin-bottom: 16px;
+  line-height: 1.5;
+  font-weight: 500;
 }
 
 .act-title {
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 18px;
+  font-weight: 700;
   color: #1f2937;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+  line-height: 1.4;
 }
 
 /* Форма */
@@ -43,115 +48,29 @@
   background: white;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
   overflow: hidden;
-}
-
-/* Секции формы */
-.form-section {
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.form-section:last-child {
-  border-bottom: none;
-}
-
-.section-title {
-  background: #f3f4f6;
-  padding: 12px 20px;
-  font-weight: 600;
-  color: #374151;
-  font-size: 16px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-/* Поля формы */
-.form-row {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 16px;
-  padding: 0 20px;
-}
-
-.form-row:last-child {
-  margin-bottom: 20px;
-}
-
-.form-group {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group.half {
-  flex: 0 0 calc(50% - 8px);
-}
-
-.form-group.full {
-  flex: 1;
-}
-
-.form-label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #374151;
-  margin-bottom: 6px;
-}
-
-.form-input {
-  padding: 10px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 14px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  background: white;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.form-input[readonly] {
-  background: #f9fafb;
-  color: #6b7280;
-  cursor: not-allowed;
-}
-
-.form-input.error {
-  border-color: #ef4444;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
-}
-
-textarea.form-input {
-  resize: vertical;
-  min-height: 120px;
-  font-family: inherit;
-}
-
-.error-message {
-  color: #ef4444;
-  font-size: 12px;
-  margin-top: 4px;
 }
 
 /* Кнопки действий */
 .action-buttons {
   display: flex;
   gap: 12px;
-  padding: 20px;
+  padding: 24px;
   background: #f9fafb;
   border-top: 1px solid #e5e7eb;
+  justify-content: flex-end;
 }
 
 .btn {
-  padding: 10px 20px;
+  padding: 12px 24px;
   border: none;
   border-radius: 6px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  min-width: 120px;
 }
 
 .btn:disabled {
@@ -166,6 +85,8 @@ textarea.form-input {
 
 .btn-primary:hover:not(:disabled) {
   background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
 }
 
 .btn-secondary {
@@ -175,6 +96,8 @@ textarea.form-input {
 
 .btn-secondary:hover:not(:disabled) {
   background: #4b5563;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(107, 114, 128, 0.4);
 }
 
 .btn-success {
@@ -184,26 +107,85 @@ textarea.form-input {
 
 .btn-success:hover:not(:disabled) {
   background: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+/* Переопределения для Forms компонентов */
+.act-prescript-container .form-section {
+  margin-bottom: 0;
+  border: none;
+  border-bottom: 1px solid #e5e7eb;
+  border-radius: 0;
+  background: white;
+}
+
+.act-prescript-container .form-section:last-of-type {
+  border-bottom: none;
+}
+
+.act-prescript-container .form-section h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+  background: #f9fafb;
+  margin: 0 -16px 16px -16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Специальные поля */
+.act-prescript-container textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.act-prescript-container input[type="date"] {
+  max-width: 200px;
 }
 
 /* Адаптивность */
 @media (max-width: 768px) {
   .act-prescript-container {
-    padding: 10px;
+    padding: 15px;
+    max-width: 100%;
   }
 
-  .form-row {
-    flex-direction: column;
-    gap: 12px;
-    padding: 0 15px;
+  .act-header {
+    padding: 20px;
+    margin-bottom: 20px;
   }
 
-  .form-group.half {
-    flex: 1;
+  .company-info {
+    font-size: 13px;
+  }
+
+  .act-title {
+    font-size: 16px;
   }
 
   .action-buttons {
     flex-direction: column;
+    padding: 20px;
+    gap: 10px;
+  }
+
+  .btn {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .act-prescript-container {
+    padding: 10px;
+  }
+
+  .act-header {
+    padding: 15px;
+  }
+
+  .action-buttons {
     padding: 15px;
   }
 }

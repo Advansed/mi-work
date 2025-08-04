@@ -1,15 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { useActPrescript, PrescriptionData } from './useActPrescript';
-import './ActPrescript.css'
-import { IonModal } from '@ionic/react';
-import ActPrescriptPrint from './ActPrescriptPrint';
+// src/components/Acts/ActPrescript/ActPrescript.tsx
 
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import { useActPrescript } from './useActPrescript';
+import { IPrescriptionForm } from './types';
+import './ActPrescript.css';
+import { IonModal, IonLoading } from '@ionic/react';
+import ActPrescriptPrint from './ActPrescriptPrint';
+import { FormField, FormRow, FormSection, ReadOnlyField, TextAreaField } from '../Forms/Forms';
+
+// === ТИПЫ И ИНТЕРФЕЙСЫ ===
 interface ActPrescriptProps {
   invoiceId?: string;
-  onSave?: (data: PrescriptionData) => void;
+  onSave?: (data: IPrescriptionForm) => void;
   onCancel?: () => void;
 }
 
+// === ГЛАВНЫЙ КОМПОНЕНТ ===
 const ActPrescript: React.FC<ActPrescriptProps> = ({ 
   invoiceId, 
   onSave, 
@@ -20,26 +26,24 @@ const ActPrescript: React.FC<ActPrescriptProps> = ({
     errors,
     loading,
     saving,
-    handleFieldChange,
+    getFieldValue,
+    getFieldError,
+    updateField,
     loadActByInvoice,
     saveAct
   } = useActPrescript();
 
   const [showPrintModal, setShowPrintModal] = useState(false);
 
-  const handleClosePrintModal = () => {
-    setShowPrintModal(false);
-  };
-
-  // Загрузка данных при монтировании
+  // === ЭФФЕКТЫ ===
   useEffect(() => {
     if (invoiceId) {
       loadActByInvoice(invoiceId);
     }
   }, [invoiceId, loadActByInvoice]);
 
-  // Обработчик сохранения
-  const handleSave = async () => {
+  // === ОБРАБОТЧИКИ СОБЫТИЙ ===
+  const handleSave = useCallback(async () => {
     try {
       const savedData = await saveAct();
       if (savedData && onSave) {
@@ -48,239 +52,225 @@ const ActPrescript: React.FC<ActPrescriptProps> = ({
     } catch (error) {
       console.error('Ошибка сохранения:', error);
     }
-  };
+  }, [saveAct, onSave]);
 
-  // Обработчик печати
-  const handlePrint = () => {
+  const handlePrint = useCallback(() => {
     setShowPrintModal(true);
-  };
+  }, []);
 
-  if (loading) {
-    return (
-      <div className="act-prescript-container">
-        <div className="loading">Загрузка данных...</div>
-      </div>
-    );
-  }
+  const handleClosePrintModal = useCallback(() => {
+    setShowPrintModal(false);
+  }, []);
 
+  // === СЕКЦИИ ФОРМЫ ===
+  const BasicInfoSection = useMemo(() => (
+    <FormSection title="">
+
+      <FormRow>
+        <ReadOnlyField
+          label="Номер предписания"
+          value={data.prescription_number || (loading ? 'Загрузка...' : 'Будет присвоен при сохранении')}
+          // hint={data.id ? 'Номер присвоен системой' : 'Номер будет сгенерирован автоматически при сохранении'}
+        />
+        <FormField
+          label="Дата предписания"
+          name="prescription_date"
+          type="date"
+          required
+          value={getFieldValue('prescription_date')}
+          onChange={(e) => updateField('prescription_date', e.target.value)}
+          error={getFieldError('prescription_date')}
+        />
+      </FormRow>
+
+      <FormRow>
+        <FormField
+          label="Срок устранения"
+          name="deadline_date"
+          type="date"
+          required
+          value={getFieldValue('deadline_date')}
+          onChange={(e) => updateField('deadline_date', e.target.value)}
+          error={getFieldError('deadline_date')}
+        />
+        {data.invoice_id && (
+          <ReadOnlyField
+            label="Связанная заявка"
+            value={`Заявка №${data.invoice_id}`}
+            // hint="Предписание создано для данной заявки"
+          />
+        )}
+      </FormRow>
+    </FormSection>
+  ), [
+    getFieldValue,
+    getFieldError,
+    updateField,
+    data.prescription_number,
+    data.id,
+    data.invoice_id,
+    loading,
+    handlePrint
+  ]);
+
+  const AddressSection = useMemo(() => (
+    <FormSection title="Адрес и абонент">
+      <FormRow>
+        <FormField
+          label="Адрес проверки"
+          name="check_address"
+          required
+          value={getFieldValue('check_address')}
+          onChange={(e) => updateField('check_address', e.target.value)}
+          error={getFieldError('check_address')}
+          placeholder="Полный адрес объекта проверки"
+        />
+        <FormField
+          label="Лицевой счет"
+          name="account_number"
+          value={getFieldValue('account_number')}
+          onChange={(e) => updateField('account_number', e.target.value)}
+          error={getFieldError('account_number')}
+          placeholder="Номер лицевого счета"
+        />
+      </FormRow>
+
+      <FormRow>
+        <FormField
+          label="ФИО абонента"
+          name="subscriber_name"
+          required
+          value={getFieldValue('subscriber_name')}
+          onChange={(e) => updateField('subscriber_name', e.target.value)}
+          error={getFieldError('subscriber_name')}
+          placeholder="Полное имя абонента"
+        />
+        <FormField
+          label="Телефон абонента"
+          name="subscriber_phone"
+          value={getFieldValue('subscriber_phone')}
+          onChange={(e) => updateField('subscriber_phone', e.target.value)}
+          error={getFieldError('subscriber_phone')}
+          placeholder="+7 (xxx) xxx-xx-xx"
+        />
+      </FormRow>
+    </FormSection>
+  ), [getFieldValue, getFieldError, updateField]);
+
+  const ViolationsSection = useMemo(() => (
+    <FormSection title="Нарушения">
+      <FormRow>
+        <TextAreaField
+          label="Описание нарушений"
+          name="violations_text"
+          required
+          value={getFieldValue('violations_text')}
+          onChange={(e) => updateField('violations_text', e.target.value)}
+          error={getFieldError('violations_text')}
+          placeholder="Подробное описание выявленных нарушений"
+          rows={6}
+        />
+      </FormRow>
+
+      <FormRow>
+        <FormField
+          label="Тип нарушения"
+          name="violation_type"
+          value={getFieldValue('violation_type')}
+          onChange={(e) => updateField('violation_type', e.target.value)}
+          error={getFieldError('violation_type')}
+          placeholder="Категория нарушения"
+        />
+      </FormRow>
+    </FormSection>
+  ), [getFieldValue, getFieldError, updateField]);
+
+  const SignaturesSection = useMemo(() => (
+    <FormSection title="Представители и подписи">
+      <FormRow>
+        <FormField
+          label="Представитель организации"
+          name="organization_representative"
+          value={getFieldValue('organization_representative')}
+          onChange={(e) => updateField('organization_representative', e.target.value)}
+          error={getFieldError('organization_representative')}
+          placeholder="ФИО представителя организации"
+        />
+      </FormRow>
+
+      <FormRow>
+        <FormField
+          label="Подпись абонента"
+          name="subscriber_signature"
+          value={getFieldValue('subscriber_signature')}
+          onChange={(e) => updateField('subscriber_signature', e.target.value)}
+          error={getFieldError('subscriber_signature')}
+          placeholder="Подпись абонента"
+        />
+        <FormField
+          label="Представитель абонента"
+          name="subscriber_representative"
+          value={getFieldValue('subscriber_representative')}
+          onChange={(e) => updateField('subscriber_representative', e.target.value)}
+          error={getFieldError('subscriber_representative')}
+          placeholder="ФИО представителя абонента"
+        />
+      </FormRow>
+
+      <FormRow>
+        <FormField
+          label="Путь к документу"
+          name="document_scan_path"
+          value={getFieldValue('document_scan_path')}
+          onChange={(e) => updateField('document_scan_path', e.target.value)}
+          error={getFieldError('document_scan_path')}
+          placeholder="Путь к скану документа"
+        />
+      </FormRow>
+    </FormSection>
+  ), [getFieldValue, getFieldError, updateField]);
+
+  // === РЕНДЕР ===
   return (
     <>
+      <IonLoading isOpen={loading} message="Загрузка данных..." />
+    
       <div className="act-prescript-container">
-        <div className="act-header">
-          <div className="company-info">
-            Структурное подразделение Управление по сбытовой деятельности «Сахатранснефтегаз»
-          </div>
-          <div className="act-title">
-            Предписание за нарушение правил пользования газом в быту
-          </div>
-          {data.prescription_number && (
-            <div>№ {data.prescription_number}</div>
-          )}
-        </div>
 
-        <div className="act-form">
-          {/* Основная информация */}
-          <div className="form-section">
-            <div className="section-title">Основная информация</div>
-            
-            <div className="form-row">
-              <div className="form-group half">
-                <label className="form-label">Дата предписания *</label>
-                <input
-                  type="date"
-                  className={`form-input ${errors.prescription_date ? 'error' : ''}`}
-                  value={data.prescription_date}
-                  onChange={(e) => handleFieldChange('prescription_date', e.target.value)}
-                />
-                {errors.prescription_date && <div className="error-message">{errors.prescription_date}</div>}
-              </div>
-
-              <div className="form-group half">
-                <label className="form-label">Срок устранения *</label>
-                <input
-                  type="date"
-                  className={`form-input ${errors.deadline_date ? 'error' : ''}`}
-                  value={data.deadline_date}
-                  onChange={(e) => handleFieldChange('deadline_date', e.target.value)}
-                />
-                {errors.deadline_date && <div className="error-message">{errors.deadline_date}</div>}
-              </div>
-            </div>
-          </div>
-
-          {/* Адрес и абонент */}
-          <div className="form-section">
-            <div className="section-title">Адрес и абонент</div>
-            
-            <div className="form-row">
-              <div className="form-group full">
-                <label className="form-label">Адрес проверки *</label>
-                <input
-                  type="text"
-                  className={`form-input ${errors.check_address ? 'error' : ''}`}
-                  value={data.check_address}
-                  onChange={(e) => handleFieldChange('check_address', e.target.value)}
-                />
-                {errors.check_address && <div className="error-message">{errors.check_address}</div>}
-              </div>
-            </div>
-
-            <div className="form-row">
-              <div className="form-group half">
-                <label className="form-label">Лицевой счет</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={data.account_number}
-                  onChange={(e) => handleFieldChange('account_number', e.target.value)}
-                />
-              </div>
-
-              <div className="form-group half">
-                <label className="form-label">Номер телефона</label>
-                <input
-                  type="tel"
-                  className="form-input"
-                  value={data.subscriber_phone}
-                  onChange={(e) => handleFieldChange('subscriber_phone', e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="form-row">
-              <div className="form-group full">
-                <label className="form-label">ФИО абонента *</label>
-                <input
-                  type="text"
-                  className={`form-input ${errors.subscriber_name ? 'error' : ''}`}
-                  value={data.subscriber_name}
-                  onChange={(e) => handleFieldChange('subscriber_name', e.target.value)}
-                />
-                {errors.subscriber_name && <div className="error-message">{errors.subscriber_name}</div>}
-              </div>
-            </div>
-          </div>
-
-          {/* Нарушения */}
-          <div className="form-section">
-            <div className="section-title">Нарушения</div>
-            
-            <div className="form-row">
-              <div className="form-group half">
-                <label className="form-label">Тип нарушения</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={data.violation_type}
-                  onChange={(e) => handleFieldChange('violation_type', e.target.value)}
-                />
-              </div>
-
-              <div className="form-group half">
-                <label className="form-label">Статус</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={data.status}
-                  onChange={(e) => handleFieldChange('status', e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="form-row">
-              <div className="form-group full">
-                <label className="form-label">Описание нарушений *</label>
-                <textarea
-                  className={`form-input ${errors.violations_text ? 'error' : ''}`}
-                  value={data.violations_text}
-                  onChange={(e) => handleFieldChange('violations_text', e.target.value)}
-                  rows={6}
-                />
-                {errors.violations_text && <div className="error-message">{errors.violations_text}</div>}
-              </div>
-            </div>
-          </div>
-
-          {/* Представители */}
-          <div className="form-section">
-            <div className="section-title">Представители</div>
-            
-            <div className="form-row">
-              <div className="form-group full">
-                <label className="form-label">Представитель организации</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={data.organization_representative}
-                  onChange={(e) => handleFieldChange('organization_representative', e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="form-row">
-              <div className="form-group half">
-                <label className="form-label">Подпись абонента</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={data.subscriber_signature}
-                  onChange={(e) => handleFieldChange('subscriber_signature', e.target.value)}
-                />
-              </div>
-
-              <div className="form-group half">
-                <label className="form-label">Представитель абонента</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={data.subscriber_representative}
-                  onChange={(e) => handleFieldChange('subscriber_representative', e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="form-row">
-              <div className="form-group full">
-                <label className="form-label">Путь к документу</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={data.document_scan_path}
-                  onChange={(e) => handleFieldChange('document_scan_path', e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Кнопки действий */}
-          <div className="action-buttons">
+        <div className="form-header">
+          <h2>
+            {data.id ? 'Редактирование' : 'Создание'} предписание за нарушение правил пользования газом в быту
+            {data.account_number && ` (л/с №${data.account_number})`}
+          </h2>
+          <div className="form-actions">
+            <button type="button" onClick={handlePrint} className="btn btn-secondary">
+              Печать
+            </button>
             {onCancel && (
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={onCancel}
-              >
+              <button type="button" onClick={onCancel} className="btn btn-outline">
                 Отмена
               </button>
             )}
-            
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handlePrint}
-            >
-              Печать
-            </button>
-            
-            <button
-              type="button"
-              className="btn btn-success"
-              onClick={handleSave}
-              disabled={saving}
-            >
-              {saving ? 'Сохранение...' : 'Сохранить'}
-            </button>
           </div>
+        </div>
+
+        <div className="act-form">
+          {BasicInfoSection}
+          {AddressSection}
+          {ViolationsSection}
+          {SignaturesSection}
+        </div>
+
+        {/* Кнопка сохранить внизу */}
+        <div className="bottom-actions">
+          <button
+            type="button"
+            className="btn btn-success btn-save"
+            onClick={handleSave}
+            disabled={saving}
+          >
+            {saving ? 'Сохранение...' : 'Сохранить'}
+          </button>
         </div>
       </div>
       
