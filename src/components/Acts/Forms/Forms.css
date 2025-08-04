@@ -166,3 +166,30 @@
     padding: 5px 6px;
   }
 }
+
+  .form-group .required {
+    color: #ef4444;
+    margin-left: 2px;
+  }
+
+  .form-group input.readonly,
+  .form-group textarea.readonly {
+    background-color: #f9fafb;
+    color: #6b7280;
+    cursor: not-allowed;
+    border-color: #e5e7eb;
+  }
+
+  .form-group input.error,
+  .form-group textarea.error {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 1px #ef4444;
+  }
+
+  .error-text {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    color: #ef4444;
+    line-height: 1.3;
+  }

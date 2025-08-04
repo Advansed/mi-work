@@ -1,703 +1,500 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  useActHouseInspects, 
-  HouseInspectData, 
-  HouseMeterData 
-} from './useActHouseInspects';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useActHouseInspects } from './useActHouseInspects';
 import './ActHouseInspect.css';
-import { IonModal } from '@ionic/react';
+import { IonLoading, IonModal } from '@ionic/react';
 import ActHouseInspectPrint from './ActHouseInspectPrint';
+import { FormField, FormRow, FormSection, TextAreaField } from '../Forms/Forms';
 
-// ============================================
-// ИНТЕРФЕЙСЫ КОМПОНЕНТА
-// ============================================
-
-interface ActHouseInspectsProps {
+// === ТИПЫ И ИНТЕРФЕЙСЫ ===
+interface ActHouseInspectProps {
   invoiceId?: string;
-  onSave?: (data: HouseInspectData) => void;
+  onSave?: (data: any) => void;
   onCancel?: () => void;
   readonly?: boolean;
 }
 
-interface AccordionState {
-  main: boolean;
-  participants: boolean;
-  results: boolean;
-  meters: boolean;
-}
-
-// ============================================
-// ОСНОВНОЙ КОМПОНЕНТ
-// ============================================
-
-const ActHouseInspects: React.FC<ActHouseInspectsProps> = ({
+// === ГЛАВНЫЙ КОМПОНЕНТ ===
+const ActHouseInspect: React.FC<ActHouseInspectProps> = ({
   invoiceId,
   onSave,
   onCancel,
   readonly = false
 }) => {
+  // === ХУК ДАННЫХ ===
   const {
     data,
     errors,
     loading,
     saving,
+    updateField,
     handleFieldChange,
-    handleMeterChange,
     addMeter,
     removeMeter,
     loadActByInvoice,
     saveAct
   } = useActHouseInspects();
 
-  // Состояние аккордеонов
-  const [accordions, setAccordions] = useState<AccordionState>({
-    main: true,
-    participants: false,
-    results: false,
-    meters: false
-  });
-
   const [showPrintModal, setShowPrintModal] = useState(false);
 
-  const handleClosePrintModal = () => {
-    setShowPrintModal(false);
-  };
-
-  const handlePrint = ()=>{
-    setShowPrintModal( true )
-  }
-  // ============================================
-  // ЭФФЕКТЫ
-  // ============================================
-
+  // === ЭФФЕКТЫ ===
   useEffect(() => {
     if (invoiceId) {
       loadActByInvoice(invoiceId);
     }
   }, [invoiceId, loadActByInvoice]);
 
-  // ============================================
-  // ОБРАБОТЧИКИ СОБЫТИЙ
-  // ============================================
-
-  const handleSave = async () => {
+  // === ОБРАБОТЧИКИ ===
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
     const savedData = await saveAct();
     if (savedData && onSave) {
       onSave(savedData);
     }
-  };
+  }, [saveAct, onSave]);
 
-  const toggleAccordion = (section: keyof AccordionState) => {
-    setAccordions(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
-  };
+  const handlePrint = useCallback(() => {
+    setShowPrintModal(true);
+  }, []);
 
-  // ============================================
-  // РЕНДЕР ФУНКЦИИ
-  // ============================================
+  const handleClosePrintModal = useCallback(() => {
+    setShowPrintModal(false);
+  }, []);
 
-  const renderHeader = () => (
-    <div className="house-inspect-header">
-      <div className="header-content">
-        <h2 className="header-title">
-          {data.id ? 'Редактирование акта проверки' : 'Создание акта проверки'}
-        </h2>
-        {invoiceId && (
-          <p className="header-subtitle">Заявка #{invoiceId}</p>
-        )}
-      </div>
-      <div className="header-actions">
-        {!readonly && (
-          <>
-            <button
-              type="button"
-              className="btn btn-outline"
-              onClick={onCancel}
-              disabled={saving}
-            >
-              Отмена
-            </button>
-            <button
-              type="button"
-              className="btn btn-outline"
-              onClick={ handlePrint }
-            >
-              Печать
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleSave}
-              disabled={saving}
-            >
-              {saving ? 'Сохранение...' : 'Сохранить'}
-            </button>
-          </>
-        )}
-      </div>
-    </div>
-  );
+  // === ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ===
+  const getFieldValue = useCallback((fieldName: string) => {
+    return (data as any)[fieldName] || '';
+  }, [data]);
 
-  const renderMainSection = () => (
-    <div className="form-section">
-      <div 
-        className="section-header"
-        onClick={() => toggleAccordion('main')}
-      >
-        <h3>Основная информация</h3>
-        <span className={`accordion-icon ${accordions.main ? 'open' : ''}`}>▼</span>
-      </div>
-      
-      {accordions.main && (
-        <div className="section-content">
-          <div className="form-row">
-            <div className="form-group half">
-              <label className="form-label required">Номер акта</label>
-              <input
-                type="text"
-                className={`form-input ${errors.act_number ? 'error' : ''}`}
-                value={data.act_number || ''}
-                onChange={(e) => !readonly && handleFieldChange('act_number', e.target.value)}
-                placeholder="Номер акта"
-                readOnly={readonly}
-              />
-              {errors.act_number && (
-                <span className="error-text">{errors.act_number}</span>
-              )}
-            </div>
-            
-            <div className="form-group quarter">
-              <label className="form-label required">Дата</label>
-              <input
-                type="date"
-                className={`form-input ${errors.act_date ? 'error' : ''}`}
-                value={data.act_date}
-                onChange={(e) => !readonly && handleFieldChange('act_date', e.target.value)}
-                readOnly={readonly}
-              />
-              {errors.act_date && (
-                <span className="error-text">{errors.act_date}</span>
-              )}
-            </div>
-            
-            <div className="form-group quarter">
-              <label className="form-label">Время</label>
-              <input
-                type="time"
-                className={`form-input ${errors.act_time ? 'error' : ''}`}
-                value={data.act_time || ''}
-                onChange={(e) => !readonly && handleFieldChange('act_time', e.target.value)}
-                readOnly={readonly}
-              />
-              {errors.act_time && (
-                <span className="error-text">{errors.act_time}</span>
-              )}
-            </div>
-          </div>
+  const getFieldError = useCallback((fieldName: string) => {
+    return errors[fieldName];
+  }, [errors]);
 
-          <div className="form-row">
-            <div className="form-group half">
-              <label className="form-label">Номер лицевого счета</label>
-              <input
-                type="text"
-                className="form-input"
-                value={data.account_number || ''}
-                onChange={(e) => !readonly && handleFieldChange('account_number', e.target.value)}
-                placeholder="Лицевой счет"
-                readOnly={readonly}
-              />
-            </div>
-          </div>
+  // === МЕМОИЗИРОВАННЫЕ СЕКЦИИ ===
+  
+  // Основная информация
+  const BasicInfoSection = useMemo(() => (
+    <FormSection title="Основная информация">
+      <FormRow>
+        <FormField
+          label="Номер акта"
+          name="act_number"
+          value={getFieldValue('act_number')}
+          onChange={(e) => updateField('act_number', e.target.value)}
+          error={getFieldError('act_number')}
+          placeholder="№ акта"
+          readonly={readonly}
+        />
+        <FormField
+          label="Дата акта"
+          name="act_date"
+          type="date"
+          value={getFieldValue('act_date')}
+          onChange={(e) => updateField('act_date', e.target.value)}
+          error={getFieldError('act_date')}
+          readonly={readonly}
+        />
+        <FormField
+          label="Время акта"
+          name="act_time"
+          type="time"
+          value={getFieldValue('act_time')}
+          onChange={(e) => updateField('act_time', e.target.value)}
+          error={getFieldError('act_time')}
+          readonly={readonly}
+        />
+      </FormRow>
 
-          <div className="form-row">
-            <div className="form-group w-100">
-              <label className="form-label">Адрес проверки</label>
-              <input
-                type="text"
-                className="form-input"
-                value={data.address || ''}
-                onChange={(e) => !readonly && handleFieldChange('address', e.target.value)}
-                placeholder="Полный адрес"
-                readOnly={readonly}
-              />
-            </div>
-          </div>
+      <FormRow>
+        <FormField
+          label="Лицевой счет"
+          name="account_number"
+          value={getFieldValue('account_number')}
+          onChange={(e) => updateField('account_number', e.target.value)}
+          error={getFieldError('account_number')}
+          placeholder="Номер лицевого счета"
+          readonly={readonly}
+        />
+      </FormRow>
+    </FormSection>
+  ), [getFieldValue, getFieldError, updateField, readonly]);
 
-          <div className="form-row">
-            <div className="form-group half">
-              <label className="form-label">Улица</label>
-              <input
-                type="text"
-                className="form-input"
-                value={data.street || ''}
-                onChange={(e) => !readonly && handleFieldChange('street', e.target.value)}
-                placeholder="Название улицы"
-                readOnly={readonly}
-              />
-            </div>
-            <div className="form-group quarter">
-              <label className="form-label">Дом</label>
-              <input
-                type="text"
-                className="form-input"
-                value={data.house || ''}
-                onChange={(e) => !readonly && handleFieldChange('house', e.target.value)}
-                placeholder="№ дома"
-                readOnly={readonly}
-              />
-            </div>
-            <div className="form-group quarter">
-              <label className="form-label">Квартира</label>
-              <input
-                type="text"
-                className="form-input"
-                value={data.apartment || ''}
-                onChange={(e) => !readonly && handleFieldChange('apartment', e.target.value)}
-                placeholder="№ кв."
-                readOnly={readonly}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+  // Адрес
+  const AddressSection = useMemo(() => (
+    <FormSection title="Адрес проверки">
+      <FormRow>
+        <FormField
+          label="Улица"
+          name="street"
+          value={getFieldValue('street')}
+          onChange={(e) => updateField('street', e.target.value)}
+          error={getFieldError('street')}
+          placeholder="Название улицы"
+          readonly={readonly}
+        />
+        <FormField
+          label="Дом"
+          name="house"
+          value={getFieldValue('house')}
+          onChange={(e) => updateField('house', e.target.value)}
+          error={getFieldError('house')}
+          placeholder="№ дома"
+          readonly={readonly}
+        />
+        <FormField
+          label="Квартира"
+          name="apartment"
+          value={getFieldValue('apartment')}
+          onChange={(e) => updateField('apartment', e.target.value)}
+          error={getFieldError('apartment')}
+          placeholder="№ квартиры"
+          readonly={readonly}
+        />
+      </FormRow>
 
-  const renderParticipantsSection = () => (
-    <div className="form-section">
-      <div 
-        className="section-header"
-        onClick={() => toggleAccordion('participants')}
-      >
-        <h3>Участники проверки</h3>
-        <span className={`accordion-icon ${accordions.participants ? 'open' : ''}`}>▼</span>
-      </div>
-      
-      {accordions.participants && (
-        <div className="section-content">
-          <div className="form-row">
-            <div className="form-group w-100">
-              <label className="form-label required">Представитель организации</label>
-              <input
-                type="text"
-                className={`form-input ${errors.organization_representative ? 'error' : ''}`}
-                value={data.organization_representative}
-                onChange={(e) => !readonly && handleFieldChange('organization_representative', e.target.value)}
-                placeholder="ФИО представителя организации"
-                readOnly={readonly}
-              />
-              {errors.organization_representative && (
-                <span className="error-text">{errors.organization_representative}</span>
-              )}
-            </div>
-          </div>
+      <FormRow>
+        <FormField
+          label="Полный адрес"
+          name="address"
+          value={getFieldValue('address')}
+          onChange={(e) => updateField('address', e.target.value)}
+          error={getFieldError('address')}
+          placeholder="Полный адрес объекта"
+          readonly={readonly}
+        />
+      </FormRow>
+    </FormSection>
+  ), [getFieldValue, getFieldError, updateField, readonly]);
 
-          <div className="form-row">
-            <div className="form-group half">
-              <label className="form-label required">ФИО абонента</label>
-              <input
-                type="text"
-                className={`form-input ${errors.subscriber_name ? 'error' : ''}`}
-                value={data.subscriber_name}
-                onChange={(e) => !readonly && handleFieldChange('subscriber_name', e.target.value)}
-                placeholder="Полное ФИО абонента"
-                readOnly={readonly}
-              />
-              {errors.subscriber_name && (
-                <span className="error-text">{errors.subscriber_name}</span>
-              )}
-            </div>
-            <div className="form-group half">
-              <label className="form-label">Документ абонента</label>
-              <input
-                type="text"
-                className="form-input"
-                value={data.subscriber_document || ''}
-                onChange={(e) => !readonly && handleFieldChange('subscriber_document', e.target.value)}
-                placeholder="Реквизиты документа"
-                readOnly={readonly}
-              />
-            </div>
-          </div>
+  // Участники проверки
+  const ParticipantsSection = useMemo(() => (
+    <FormSection title="Участники проверки">
+      <FormRow>
+        <FormField
+          label="Представитель организации"
+          name="organization_representative"
+          value={getFieldValue('organization_representative')}
+          onChange={(e) => updateField('organization_representative', e.target.value)}
+          error={getFieldError('organization_representative')}
+          placeholder="ФИО представителя организации"
+          readonly={readonly}
+        />
+      </FormRow>
 
-          <div className="form-row">
-            <div className="form-group half">
-              <label className="form-label">ФИО представителя абонента</label>
-              <input
-                type="text"
-                className="form-input"
-                value={data.subscriber_representative_name || ''}
-                onChange={(e) => !readonly && handleFieldChange('subscriber_representative_name', e.target.value)}
-                placeholder="ФИО представителя"
-                readOnly={readonly}
-              />
-            </div>
-            <div className="form-group half">
-              <label className="form-label">Документ представителя</label>
-              <input
-                type="text"
-                className="form-input"
-                value={data.subscriber_representative_document || ''}
-                onChange={(e) => !readonly && handleFieldChange('subscriber_representative_document', e.target.value)}
-                placeholder="Реквизиты документа"
-                readOnly={readonly}
-              />
-            </div>
-          </div>
+      <FormRow>
+        <FormField
+          label="Абонент"
+          name="subscriber_name"
+          value={getFieldValue('subscriber_name')}
+          onChange={(e) => updateField('subscriber_name', e.target.value)}
+          error={getFieldError('subscriber_name')}
+          placeholder="ФИО абонента"
+          readonly={readonly}
+        />
+        <FormField
+          label="Документ абонента"
+          name="subscriber_document"
+          value={getFieldValue('subscriber_document')}
+          onChange={(e) => updateField('subscriber_document', e.target.value)}
+          error={getFieldError('subscriber_document')}
+          placeholder="Паспорт, серия, номер"
+          readonly={readonly}
+        />
+      </FormRow>
 
-          <div className="form-row">
-            <div className="form-group half">
-              <label className="form-label">ФИО понятого</label>
-              <input
-                type="text"
-                className="form-input"
-                value={data.witness_name || ''}
-                onChange={(e) => !readonly && handleFieldChange('witness_name', e.target.value)}
-                placeholder="ФИО понятого"
-                readOnly={readonly}
-              />
-            </div>
-            <div className="form-group half">
-              <label className="form-label">Документ понятого</label>
-              <input
-                type="text"
-                className="form-input"
-                value={data.witness_document || ''}
-                onChange={(e) => !readonly && handleFieldChange('witness_document', e.target.value)}
-                placeholder="Реквизиты документа"
-                readOnly={readonly}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+      <FormRow>
+        <FormField
+          label="Представитель абонента"
+          name="subscriber_representative_name"
+          value={getFieldValue('subscriber_representative_name')}
+          onChange={(e) => updateField('subscriber_representative_name', e.target.value)}
+          error={getFieldError('subscriber_representative_name')}
+          placeholder="ФИО представителя абонента"
+          readonly={readonly}
+        />
+        <FormField
+          label="Документ представителя"
+          name="subscriber_representative_document"
+          value={getFieldValue('subscriber_representative_document')}
+          onChange={(e) => updateField('subscriber_representative_document', e.target.value)}
+          error={getFieldError('subscriber_representative_document')}
+          placeholder="Документ представителя"
+          readonly={readonly}
+        />
+      </FormRow>
 
-  const renderResultsSection = () => (
-    <div className="form-section">
-      <div 
-        className="section-header"
-        onClick={() => toggleAccordion('results')}
-      >
-        <h3>Результаты проверки</h3>
-        <span className={`accordion-icon ${accordions.results ? 'open' : ''}`}>▼</span>
-      </div>
-      
-      {accordions.results && (
-        <div className="section-content">
-          <div className="form-row">
-            <div className="form-group w-100">
-              <label className="form-label">Выявленные нарушения</label>
-              <textarea
-                className="form-textarea"
-                rows={6}
-                value={data.violations_found || ''}
-                onChange={(e) => !readonly && handleFieldChange('violations_found', e.target.value)}
-                placeholder="Подробное описание выявленных нарушений..."
-                readOnly={readonly}
-              />
-            </div>
-          </div>
+      <FormRow>
+        <FormField
+          label="Свидетель"
+          name="witness_name"
+          value={getFieldValue('witness_name')}
+          onChange={(e) => updateField('witness_name', e.target.value)}
+          error={getFieldError('witness_name')}
+          placeholder="ФИО свидетеля"
+          readonly={readonly}
+        />
+        <FormField
+          label="Документ свидетеля"
+          name="witness_document"
+          value={getFieldValue('witness_document')}
+          onChange={(e) => updateField('witness_document', e.target.value)}
+          error={getFieldError('witness_document')}
+          placeholder="Документ свидетеля"
+          readonly={readonly}
+        />
+      </FormRow>
+    </FormSection>
+  ), [getFieldValue, getFieldError, updateField, readonly]);
 
-          <div className="form-row">
-            <div className="form-group third">
-              <label className="form-label">Жилая площадь (м²)</label>
-              <input
-                type="number"
-                step="0.01"
-                className="form-input"
-                value={data.living_area || ''}
-                onChange={(e) => !readonly && handleFieldChange('living_area', parseFloat(e.target.value) || '')}
-                placeholder="0.00"
-                readOnly={readonly}
-              />
-            </div>
-            <div className="form-group third">
-              <label className="form-label">Нежилая площадь (м²)</label>
-              <input
-                type="number"
-                step="0.01"
-                className="form-input"
-                value={data.non_living_area || ''}
-                onChange={(e) => !readonly && handleFieldChange('non_living_area', parseFloat(e.target.value) || '')}
-                placeholder="0.00"
-                readOnly={readonly}
-              />
-            </div>
-            <div className="form-group third">
-              <label className="form-label">Количество жильцов</label>
-              <input
-                type="number"
-                className="form-input"
-                value={data.residents_count || ''}
-                onChange={(e) => !readonly && handleFieldChange('residents_count', parseInt(e.target.value) || '')}
-                placeholder="0"
-                readOnly={readonly}
-              />
-            </div>
-          </div>
+  // Результаты проверки
+  const ResultsSection = useMemo(() => (
+    <FormSection title="Результаты проверки">
+      <FormRow>
+        <FormField
+          label="Жилая площадь (м²)"
+          name="living_area"
+          type="number"
+          value={getFieldValue('living_area')}
+          onChange={(e) => updateField('living_area', e.target.value ? parseFloat(e.target.value) : undefined)}
+          error={getFieldError('living_area')}
+          placeholder="0.00"
+          readonly={readonly}
+        />
+        <FormField
+          label="Нежилая площадь (м²)"
+          name="non_living_area"
+          type="number"
+          value={getFieldValue('non_living_area')}
+          onChange={(e) => updateField('non_living_area', e.target.value ? parseFloat(e.target.value) : undefined)}
+          error={getFieldError('non_living_area')}
+          placeholder="0.00"
+          readonly={readonly}
+        />
+        <FormField
+          label="Количество проживающих"
+          name="residents_count"
+          type="number"
+          value={getFieldValue('residents_count')}
+          onChange={(e) => updateField('residents_count', e.target.value ? parseInt(e.target.value) : undefined)}
+          error={getFieldError('residents_count')}
+          placeholder="0"
+          readonly={readonly}
+        />
+      </FormRow>
 
-          <div className="form-row">
-            <div className="form-group w-100">
-              <label className="form-label">Мнение абонента</label>
-              <textarea
-                className="form-textarea"
-                rows={3}
-                value={data.subscriber_opinion || ''}
-                onChange={(e) => !readonly && handleFieldChange('subscriber_opinion', e.target.value)}
-                placeholder="Мнение абонента по результатам проверки..."
-                readOnly={readonly}
-              />
-            </div>
-          </div>
+      <FormRow>
+        <TextAreaField
+          label="Выявленные нарушения"
+          name="violations_found"
+          value={getFieldValue('violations_found')}
+          onChange={(e) => updateField('violations_found', e.target.value)}
+          error={getFieldError('violations_found')}
+          placeholder="Описание выявленных нарушений"
+          rows={4}
+          readonly={readonly}
+        />
+      </FormRow>
 
-          <div className="form-row">
-            <div className="form-group w-100">
-              <label className="form-label">Примечания</label>
-              <textarea
-                className="form-textarea"
-                rows={3}
-                value={data.notes || ''}
-                onChange={(e) => !readonly && handleFieldChange('notes', e.target.value)}
-                placeholder="Дополнительные примечания..."
-                readOnly={readonly}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+      <FormRow>
+        <TextAreaField
+          label="Мнение абонента"
+          name="subscriber_opinion"
+          value={getFieldValue('subscriber_opinion')}
+          onChange={(e) => updateField('subscriber_opinion', e.target.value)}
+          error={getFieldError('subscriber_opinion')}
+          placeholder="Мнение абонента по результатам проверки"
+          rows={3}
+          readonly={readonly}
+        />
+      </FormRow>
 
-  const renderMeter = (meter: HouseMeterData, index: number) => (
-    <div key={index} className="meter-item">
-      <div className="meter-header">
-        <h4>Счетчик #{index + 1}</h4>
-        {!readonly && data.meters.length > 1 && (
-          <button
-            type="button"
-            className="btn btn-outline btn-small"
-            onClick={() => removeMeter(index)}
-          >
-            Удалить
-          </button>
-        )}
-      </div>
+      <FormRow>
+        <TextAreaField
+          label="Примечания"
+          name="notes"
+          value={getFieldValue('notes')}
+          onChange={(e) => updateField('notes', e.target.value)}
+          error={getFieldError('notes')}
+          placeholder="Дополнительные примечания"
+          rows={2}
+          readonly={readonly}
+        />
+      </FormRow>
+    </FormSection>
+  ), [getFieldValue, getFieldError, updateField, readonly]);
 
-      <div className="form-row">
-        <div className="form-group third">
-          <label className="form-label">Тип (G)</label>
-          <input
-            type="text"
-            className="form-input"
-            value={meter.meter_type || ''}
-            onChange={(e) => !readonly && handleMeterChange(index, 'meter_type', e.target.value)}
-            placeholder="G4"
-            readOnly={readonly}
-          />
-        </div>
-        <div className="form-group third">
-          <label className="form-label required">Номер счетчика</label>
-          <input
-            type="text"
-            className={`form-input ${errors.meters?.[index]?.meter_number ? 'error' : ''}`}
-            value={meter.meter_number}
-            onChange={(e) => !readonly && handleMeterChange(index, 'meter_number', e.target.value)}
-            placeholder="Заводской номер"
-            readOnly={readonly}
-          />
-          {errors.meters?.[index]?.meter_number && (
-            <span className="error-text">{errors.meters[index]?.meter_number}</span>
-          )}
-        </div>
-        <div className="form-group third">
-          <label className="form-label">Показания (м³)</label>
-          <input
-            type="number"
-            step="0.001"
-            className="form-input"
-            value={meter.current_reading || ''}
-            onChange={(e) => !readonly && handleMeterChange(index, 'current_reading', parseFloat(e.target.value) || '')}
-            placeholder="0.000"
-            readOnly={readonly}
-          />
-        </div>
-      </div>
-
-      <div className="form-row">
-        <div className="form-group half">
-          <label className="form-label">Номер пломбы</label>
-          <input
-            type="text"
-            className="form-input"
-            value={meter.seal_number || ''}
-            onChange={(e) => !readonly && handleMeterChange(index, 'seal_number', e.target.value)}
-            placeholder="Номер пломбы"
-            readOnly={readonly}
-          />
-        </div>
-        <div className="form-group half">
-          <label className="form-label">Цвет пломбы</label>
-          <input
-            type="text"
-            className="form-input"
-            value={meter.seal_color || ''}
-            onChange={(e) => !readonly && handleMeterChange(index, 'seal_color', e.target.value)}
-            placeholder="Цвет"
-            readOnly={readonly}
-          />
-        </div>
-      </div>
-
-      <div className="form-row">
-        <div className="form-group w-100">
-          <label className="form-label">Газовое оборудование</label>
-          <textarea
-            className="form-textarea"
-            rows={2}
-            value={meter.gas_equipment || ''}
-            onChange={(e) => !readonly && handleMeterChange(index, 'gas_equipment', e.target.value)}
-            placeholder="Описание газового оборудования..."
-            readOnly={readonly}
-          />
-        </div>
-      </div>
-
-      <div className="form-row">
-        <div className="form-group third">
-          <label className="form-label">Жилая площадь (м²)</label>
-          <input
-            type="number"
-            step="0.01"
-            className="form-input"
-            value={meter.living_area || ''}
-            onChange={(e) => !readonly && handleMeterChange(index, 'living_area', parseFloat(e.target.value) || '')}
-            placeholder="0.00"
-            readOnly={readonly}
-          />
-        </div>
-        <div className="form-group third">
-          <label className="form-label">Нежилая площадь (м²)</label>
-          <input
-            type="number"
-            step="0.01"
-            className="form-input"
-            value={meter.non_living_area || ''}
-            onChange={(e) => !readonly && handleMeterChange(index, 'non_living_area', parseFloat(e.target.value) || '')}
-            placeholder="0.00"
-            readOnly={readonly}
-          />
-        </div>
-        <div className="form-group third">
-          <label className="form-label">Количество жильцов</label>
-          <input
-            type="number"
-            className="form-input"
-            value={meter.residents_count || ''}
-            onChange={(e) => !readonly && handleMeterChange(index, 'residents_count', parseInt(e.target.value) || '')}
-            placeholder="0"
-            readOnly={readonly}
-          />
-        </div>
-      </div>
-
-      <div className="form-row">
-        <div className="form-group w-100">
-          <label className="form-label">Примечания</label>
-          <textarea
-            className="form-textarea"
-            rows={2}
-            value={meter.notes || ''}
-            onChange={(e) => !readonly && handleMeterChange(index, 'notes', e.target.value)}
-            placeholder="Примечания по счетчику..."
-            readOnly={readonly}
-          />
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderMetersSection = () => (
-    <div className="form-section">
-      <div 
-        className="section-header"
-        onClick={() => toggleAccordion('meters')}
-      >
-        <h3>Счетчики газа</h3>
-        <span className={`accordion-icon ${accordions.meters ? 'open' : ''}`}>▼</span>
-      </div>
-      
-      {accordions.meters && (
-        <div className="section-content">
-          <div className="meters-container">
-            {data.meters.map((meter, index) => renderMeter(meter, index))}
+  // Счетчики
+  const MetersSection = useMemo(() => (
+    <FormSection title="Показания приборов учета">
+      {data.meters?.map((meter, index) => (
+        <div key={index} className="meter-block">
+          <div className="meter-header">
+            <h4>Прибор учета #{index + 1}</h4>
+            {!readonly && (
+              <button 
+                type="button" 
+                onClick={() => removeMeter(index)}
+                className="btn btn-small btn-outline"
+              >
+                Удалить
+              </button>
+            )}
           </div>
           
-          {!readonly && data.meters.length < 3 && (
-            <button
-              type="button"
-              className="btn btn-outline add-meter-btn"
-              onClick={addMeter}
-            >
-              + Добавить счетчик
-            </button>
-          )}
+          <FormRow>
+            <FormField
+              label="Номер счетчика"
+              name={`meter_${index}_number`}
+              value={meter.meter_number || ''}
+              onChange={(e) => handleFieldChange(`meters.${index}.meter_number`, e.target.value)}
+              placeholder="Номер прибора учета"
+              readonly={readonly}
+            />
+            <FormField
+              label="Тип счетчика"
+              name={`meter_${index}_type`}
+              value={meter.meter_type || ''}
+              onChange={(e) => handleFieldChange(`meters.${index}.meter_type`, e.target.value)}
+              placeholder="Тип прибора"
+              readonly={readonly}
+            />
+            <FormField
+              label="Текущие показания"
+              name={`meter_${index}_reading`}
+              type="number"
+              value={meter.current_reading || ''}
+              onChange={(e) => handleFieldChange(`meters.${index}.current_reading`, e.target.value ? parseFloat(e.target.value) : undefined)}
+              placeholder="0.000"
+              readonly={readonly}
+            />
+          </FormRow>
 
-          {/* Ошибка если нет счетчиков */}
-          {errors.meters?.[0]?.meter_number && data.meters.length === 0 && (
-            <div className="error-text">{errors.meters[0].meter_number}</div>
+          <FormRow>
+            <FormField
+              label="Номер пломбы"
+              name={`meter_${index}_seal_number`}
+              value={meter.seal_number || ''}
+              onChange={(e) => handleFieldChange(`meters.${index}.seal_number`, e.target.value)}
+              placeholder="Номер пломбы"
+              readonly={readonly}
+            />
+            <FormField
+              label="Цвет пломбы"
+              name={`meter_${index}_seal_color`}
+              value={meter.seal_color || ''}
+              onChange={(e) => handleFieldChange(`meters.${index}.seal_color`, e.target.value)}
+              placeholder="Цвет пломбы"
+              readonly={readonly}
+            />
+            <FormField
+              label="Газовое оборудование"
+              name={`meter_${index}_gas_equipment`}
+              value={meter.gas_equipment || ''}
+              onChange={(e) => handleFieldChange(`meters.${index}.gas_equipment`, e.target.value)}
+              placeholder="Описание газового оборудования"
+              readonly={readonly}
+            />
+          </FormRow>
+
+          {meter.notes && (
+            <FormRow>
+              <TextAreaField
+                label="Примечания к прибору"
+                name={`meter_${index}_notes`}
+                value={meter.notes || ''}
+                onChange={(e) => handleFieldChange(`meters.${index}.notes`, e.target.value)}
+                placeholder="Примечания к прибору учета"
+                rows={2}
+                readonly={readonly}
+              />
+            </FormRow>
           )}
         </div>
+      ))}
+      
+      {!readonly && (
+        <button 
+          type="button" 
+          onClick={addMeter}
+          className="btn btn-outline add-meter-btn"
+        >
+          + Добавить прибор учета
+        </button>
       )}
-    </div>
-  );
+    </FormSection>
+  ), [data.meters, readonly, removeMeter, handleFieldChange, addMeter]);
 
-  // ============================================
-  // ОСНОВНОЙ РЕНДЕР
-  // ============================================
-
+  // === УСЛОВНЫЙ РЕНДЕР ===
   if (loading) {
     return (
-      <div className="house-inspect-loading">
-        <div className="loading-spinner"></div>
-        <p>Загрузка данных...</p>
+      <div className="house-inspect-form">
+        <div className="house-inspect-loading">
+          <IonLoading isOpen={loading} message="Загрузка данных..." />
+          Загрузка акта проверки...
+        </div>
       </div>
     );
   }
 
+  // === ОСНОВНОЙ РЕНДЕР ===
   return (
-    <>
-      <div className="house-inspect-form">
-        {renderHeader()}
-        
-        <div className="house-inspect-content">
-          {Object.keys(errors).length > 0 && (
-            <div className="error-banner">
-              Исправьте ошибки в форме перед сохранением
-            </div>
+    <div className="house-inspect-form">
+      <div className="form-header">
+        <h2>
+          {data.id ? 'Редактирование' : 'Создание'} акта проверки газифицированного объекта
+          {data.account_number && ` (л/с №${data.account_number})`}
+        </h2>
+        <div className="form-actions">
+          <button type="button" onClick={handlePrint} className="btn btn-secondary">
+            Печать
+          </button>
+          {onCancel && (
+            <button type="button" onClick={onCancel} className="btn btn-outline">
+              Отмена
+            </button>
           )}
-          
-          {renderMainSection()}
-          {renderParticipantsSection()}
-          {renderResultsSection()}
-          {renderMetersSection()}
         </div>
       </div>
 
+      <form onSubmit={handleSubmit} className="house-inspect-form-content">
+        {BasicInfoSection}
+        {AddressSection}
+        {ParticipantsSection}
+        {ResultsSection}
+        {MetersSection}
+
+        {/* Кнопки управления */}
+        {!readonly && (
+          <div className="form-footer">
+            <button
+              type="submit"
+              disabled={saving}
+              className="btn btn-primary"
+            >
+              {saving ? 'Сохранение...' : 'Сохранить'}
+            </button>
+            {onCancel && (
+              <button
+                type="button"
+                onClick={onCancel}
+                disabled={saving}
+                className="btn btn-outline"
+              >
+                Отмена
+              </button>
+            )}
+          </div>
+        )}
+      </form>
+
       {/* Модальное окно печати */}
       <IonModal isOpen={showPrintModal} onDidDismiss={handleClosePrintModal}>
-          <ActHouseInspectPrint
-              data = { data } 
-              mode="print" 
-              onClose={ handleClosePrintModal } 
-          />
+        <ActHouseInspectPrint
+          data={data}
+          onClose={handleClosePrintModal}
+        />
       </IonModal>
-
-    </>
+    </div>
   );
 };
 
-export default ActHouseInspects;
+export default ActHouseInspect;

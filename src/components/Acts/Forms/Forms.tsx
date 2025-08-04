@@ -1,77 +1,144 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { 
-  FormFieldProps, 
-  TextAreaFieldProps, 
-  ReadOnlyFieldProps, 
-  FormSectionProps, 
-  FormRowProps 
-} from './types';
-import './Forms.css';
 
+// ============================================
+// ТИПЫ И ИНТЕРФЕЙСЫ
+// ============================================
 
-// === ПЕРЕИСПОЛЬЗУЕМЫЕ UI КОМПОНЕНТЫ ===
+interface FormSectionProps {
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+}
 
-export const FormField: React.FC<FormFieldProps> = ({ 
-  label, 
-  name, 
-  type = 'text', 
-  required = false, 
-  placeholder, 
-  value, 
-  onChange, 
-  error, 
-  className = '', 
-  readOnly = false,
-  hint 
+interface FormRowProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+interface FormFieldProps {
+  label: string;
+  name: string;
+  type?: string;
+  value: any;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  error?: string;
+  placeholder?: string;
+  readonly?: boolean;
+  required?: boolean;
+  className?: string;
+}
+
+interface TextAreaFieldProps {
+  label: string;
+  name: string;
+  value: any;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  error?: string;
+  placeholder?: string;
+  readonly?: boolean;
+  required?: boolean;
+  rows?: number;
+  className?: string;
+}
+
+interface ReadOnlyFieldProps {
+  label: string;
+  value: string;
+  className?: string;
+}
+
+// ============================================
+// КОМПОНЕНТЫ
+// ============================================
+
+export const FormSection: React.FC<FormSectionProps> = ({ 
+  title, 
+  children, 
+  className = '' 
 }) => (
-  <div className="form-group">
-    <label>{label}{required && '*'}</label>
+  <div className={`form-section ${className}`}>
+    <h3>{title}</h3>
+    {children}
+  </div>
+);
+
+export const FormRow: React.FC<FormRowProps> = ({ 
+  children, 
+  className = '' 
+}) => (
+  <div className={`form-row ${className}`}>
+    {children}
+  </div>
+);
+
+export const FormField: React.FC<FormFieldProps> = ({
+  label,
+  name,
+  type = 'text',
+  value,
+  onChange,
+  error,
+  placeholder,
+  readonly = false,
+  required = false,
+  className = ''
+}) => (
+  <div className={`form-group ${className}`}>
+    <label htmlFor={name}>
+      {label}
+      {required && <span className="required">*</span>}
+    </label>
     <input
+      id={name}
+      name={name}
       type={type}
-      name={name}
-      value={value}
+      value={value || ''}
       onChange={onChange}
       placeholder={placeholder}
-      className={`${error ? 'error' : ''} ${readOnly ? 'readonly' : ''} ${className}`}
-      required={required}
-      readOnly={readOnly}
+      readOnly={readonly}
+      className={`${error ? 'error' : ''} ${readonly ? 'readonly' : ''}`}
     />
-    {hint && <small className="field-hint">{hint}</small>}
-    {error && <span className="error-message">{error}</span>}
+    {error && <span className="error-text">{error}</span>}
   </div>
 );
 
-export const TextAreaField: React.FC<TextAreaFieldProps> = ({ 
-  label, 
-  name, 
-  required = false, 
-  placeholder, 
-  value, 
-  onChange, 
-  error, 
-  rows = 3 
+export const TextAreaField: React.FC<TextAreaFieldProps> = ({
+  label,
+  name,
+  value,
+  onChange,
+  error,
+  placeholder,
+  readonly = false,
+  required = false,
+  rows = 3,
+  className = ''
 }) => (
-  <div className="form-group">
-    <label>{label}{required && '*'}</label>
+  <div className={`form-group ${className}`}>
+    <label htmlFor={name}>
+      {label}
+      {required && <span className="required">*</span>}
+    </label>
     <textarea
+      id={name}
       name={name}
-      value={value}
+      value={value || ''}
       onChange={onChange}
       placeholder={placeholder}
-      className={error ? 'error' : ''}
-      required={required}
+      readOnly={readonly}
       rows={rows}
+      className={`${error ? 'error' : ''} ${readonly ? 'readonly' : ''}`}
     />
-    {error && <span className="error-message">{error}</span>}
+    {error && <span className="error-text">{error}</span>}
   </div>
 );
 
-export const ReadOnlyField: React.FC<ReadOnlyFieldProps> = ({ 
-  label, 
-  value, 
-  hint 
+export const ReadOnlyField: React.FC<ReadOnlyFieldProps> = ({
+  label,
+  value,
+  className = ''
 }) => (
-  <div className="form-group">
+  <div className={`form-group ${className}`}>
     <label>{label}</label>
     <input
       type="text"
@@ -79,25 +146,6 @@ export const ReadOnlyField: React.FC<ReadOnlyFieldProps> = ({
       readOnly
       className="readonly"
     />
-    {hint && <small className="field-hint">{hint}</small>}
-  </div>
-);
-
-export const FormSection: React.FC<FormSectionProps> = ({ 
-  title, 
-  children 
-}) => (
-  <div className="form-section">
-    <h3>{title}</h3>
-    {children}
-  </div>
-);
-
-export const FormRow: React.FC<FormRowProps> = ({ 
-  children 
-}) => (
-  <div className="form-row">
-    {children}
   </div>
 );
 

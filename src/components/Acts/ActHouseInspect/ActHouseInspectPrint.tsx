@@ -1,68 +1,21 @@
 import React from 'react';
 import './ActHouseInspectPrint.css';
+import { PrintRow } from '../Forms/Forms';
 import { HouseInspectData } from './useActHouseInspects';
 
-// ============================================
-// ИНТЕРФЕЙСЫ
-// ============================================
-
-interface HouseMeterData {
-  id?: string;
-  meter_type: string;
-  meter_number: string;
-  reading_value: number;
-  seal_number: string;
-  seal_color: string;
-  gas_equipment: string;
-  sequence_order: number;
-}
-
-interface ActHouseInspectPrintData {
-  id?: string;
-  act_number: string;
-  act_date: string;
-  act_time: string;
-  account_number: string;
-  address: string;
-  street: string;
-  house: string;
-  apartment: string;
-  organization_representative: string;
-  subscriber_name: string;
-  subscriber_document: string;
-  subscriber_representative_name: string;
-  subscriber_representative_document: string;
-  witness_name: string;
-  witness_document: string;
-  violations_found: string;
-  living_area: number;
-  non_living_area: number;
-  residents_count: number;
-  subscriber_opinion: string;
-  notes: string;
-  meters: HouseMeterData[];
-}
-
+// Интерфейс props компонента
 interface ActHouseInspectPrintProps {
   mode: 'print';
   data: HouseInspectData;
   onClose: () => void;
 }
 
-// ============================================
-// ОСНОВНОЙ КОМПОНЕНТ
-// ============================================
-
 const ActHouseInspectPrint: React.FC<ActHouseInspectPrintProps> = ({
   mode,
   data,
   onClose
 }) => {
-  
-  // ============================================
-  // ФУНКЦИИ ФОРМАТИРОВАНИЯ
-  // ============================================
-
+  // Функции форматирования
   const formatDateForDisplay = (dateStr: string) => {
     if (!dateStr) return { day: '_____', month: '__________________', year: '___' };
     const date = new Date(dateStr);
@@ -73,12 +26,12 @@ const ActHouseInspectPrint: React.FC<ActHouseInspectPrintProps> = ({
     return {
       day: date.getDate().toString(),
       month: months[date.getMonth()],
-      year: date.getFullYear().toString()
+      year: date.getFullYear().toString().slice(-2)
     };
   };
 
   const formatTimeForDisplay = (timeStr: string) => {
-    if (!timeStr) return { hours: '____', minutes: '___' };
+    if (!timeStr) return { hours: '_____', minutes: '______' };
     const [hours, minutes] = timeStr.split(':');
     return { hours, minutes };
   };
@@ -91,212 +44,164 @@ const ActHouseInspectPrint: React.FC<ActHouseInspectPrintProps> = ({
     return parts.join(', ') || data.address || '____________________________________';
   };
 
-  const formatMeterType = (type: string) => {
-    return type ? `G${type}` : 'G_____';
-  };
-
-  // ============================================
-  // ФОРМАТИРОВАННЫЕ ДАННЫЕ
-  // ============================================
-
-  const actDateFormatted = formatDateForDisplay(data.act_date );
+  // Форматированные данные
+  const actDateFormatted = formatDateForDisplay(data.act_date);
   const actTimeFormatted = formatTimeForDisplay(data.act_time || '');
-  const formattedAddress = formatAddress();
-
-  // ============================================
-  // ОБРАБОТЧИКИ
-  // ============================================
 
   const handlePrint = () => {
     window.print();
   };
 
-  // ============================================
-  // РЕНДЕР
-  // ============================================
-
-  if (mode === 'print') {
+  // Режим печати - возвращаем только печатную форму
     return (
-      <div className="house-inspect-print-container">
-        <div className="print-actions no-print">
-          <button className="btn btn-primary" onClick={handlePrint}>
+      <div className="act-form-container act-print-form-container">
+        <div className="act-print-actions act-no-print">
+          <button className="act-btn act-btn-primary" onClick={handlePrint}>
             Печать PDF
           </button>
-          <button className="btn btn-secondary" onClick={onClose}>
-            Закрыть
+          <button className="act-btn act-btn-secondary" onClick={onClose}>
+            Вернуться к редактированию
           </button>
         </div>
 
-        <div className="print-content-scrollable">
-          <div className="print-content">
-            {/* Шапка документа */}
-            <div className="document-header">
-              <div className="header-left">
-                <div className="logo-section">
-                  <div className="logo-placeholder">САХА ТРАНСНЕФТЕГАЗ УСД</div>
-                </div>
+        <div className="act-print-content-scrollable">
+          <div className="act-print-content">
+            {/* Заголовок с логотипом */}
+            <div className="act-document-header">
+              <div className="act-logo-section">
+                <img src="USD.png" alt="USD" className='h-4'/>
               </div>
-              <div className="header-right">
-                <div className="qr-code-placeholder">QR</div>
-              </div>
-            </div>
-
-            {/* Информация организации */}
-            <div className="organization-info">
-              <div className="org-title">Структурное подразделение</div>
-              <div className="org-subtitle">Управление по сбытовой деятельности</div>
-              <div className="org-address">677005, Республика Саха (Якутия), г.Якутск, ул.Алексеева, 64 Б</div>
             </div>
 
             {/* Заголовок акта */}
-            <div className="act-title-section">
-              <div className="act-title">АКТ</div>
-              <div className="act-number-line">
-                _______________________ д/с
-              </div>
-              <div className="act-subject">проверки газифицированного объекта по адресу:</div>
-              <div className="address-line">
-                <span className="field-value underline">{formattedAddress}</span>
+            <div className="act-document-title">
+              <div className='act-title-main'><b>{'АКТ №' + (data.act_number || '____')}</b></div>
+              <div className='act-title-subtitle'><b>проверки газифицированного объекта по адресу:</b></div>
+            </div>
+
+            <div className='flex fl-space'>
+              <div></div>
+              <div className="act-date-line">
+                от «{actDateFormatted.day}» {actDateFormatted.month} 20{actDateFormatted.year}г.
               </div>
             </div>
 
-            {/* Правовая основа */}
-            <div className="legal-basis">
-              Согласно Постановлению Правительства РФ от 21 июля 2008г. №549 «О порядке поставки газа для обеспечения коммунально-бытовых нужд граждан»
-            </div>
+            {/* Содержание документа */}
+            <div className="act-document-content">
+              <PrintRow prefix={'Мной, представителем организации УСД АО «Сахатранснефтегаз»'} data={data.organization_representative || ''} />
+              <div className="act-field-description">должность, ф.и.о.</div>
 
-            {/* Представители */}
-            <div className="representatives-section">
-              <div className="representative-line">
-                Мной, представителем организации УСД АО «Сахатранснефтегаз» 
-                <span className="field-value underline">{data.organization_representative || '________________________________________________'}</span>
-              </div>
+              <PrintRow prefix={'в присутствии абонента:'} data={data.subscriber_name || ''} />
+              <div className="act-field-description">ф.и.о.</div>
 
-              <div className="participant-block">
-                <div className="participant-line">
-                  в присутствии абонента: <span className="field-value underline">{data.subscriber_name || '________________________________________________________________________________'}</span>
-                </div>
-                <div className="document-line">
-                  реквизиты документа, удостоверяющего личность <span className="field-value underline">{data.subscriber_document || '________________________________________________________________'}</span>
-                </div>
-              </div>
+              {data.subscriber_document && (
+                <>
+                  <PrintRow prefix={'реквизиты документа, удостоверяющего личность:'} data={data.subscriber_document || ''} />
+                </>
+              )}
 
-              <div className="participant-block">
-                <div className="participant-line">
-                  представителя абонента: <span className="field-value underline">{data.subscriber_representative_name || '____________________________________________________________________'}</span>
-                </div>
-                <div className="document-line">
-                  реквизиты документа, удостоверяющего личность <span className="field-value underline">{data.subscriber_representative_document || '________________________________________________________________'}</span>
-                </div>
-              </div>
-            </div>
+              {data.subscriber_representative_name && (
+                <>
+                  <PrintRow prefix={'представителя абонента:'} data={data.subscriber_representative_name || ''} />
+                  <div className="act-field-description">ф.и.о.</div>
+                  <PrintRow prefix={'реквизиты документа, удостоверяющего личность:'} data={data.subscriber_representative_document || ''} />
+                </>
+              )}
 
-            {/* Время составления */}
-            <div className="time-section">
-              составлен настоящий акт о том, что «<span className="field-value underline">{actDateFormatted.day}</span>» 
-              <span className="field-value underline">{actDateFormatted.month}</span> 
-              202<span className="field-value underline">{actDateFormatted.year.slice(-1)}</span>г. 
-              «<span className="field-value underline">{actTimeFormatted.hours}</span>» час. 
-              «<span className="field-value underline">{actTimeFormatted.minutes}</span>» мин.
-            </div>
+              {data.witness_name && (
+                <>
+                  <PrintRow prefix={'при свидетеле:'} data={data.witness_name || ''} />
+                  <div className="act-field-description">ф.и.о.</div>
+                  <PrintRow prefix={'реквизиты документа, удостоверяющего личность:'} data={data.witness_document || ''} />
+                </>
+              )}
 
-            {/* Выявленные нарушения */}
-            <div className="violations-section">
-              <div className="violations-title">выявлено:</div>
-              <div className="violations-content">
-                {data.violations_found || '___________________________________________________________________________________________________'}
-              </div>
-            </div>
+              <PrintRow prefix={'составлен настоящий акт о том, что «'} data={actDateFormatted.day + '» ' + actDateFormatted.month + ' 20' + actDateFormatted.year + 'г. в ' + (actTimeFormatted.hours || '__') + ':' + (actTimeFormatted.minutes || '__') + ' час. « » мин.'} />
 
-            {/* Показания счетчиков */}
-            <div className="meters-section">
-              <div className="meters-title">показания счетчиков:</div>
-              
-              {[0, 1].map((index) => {
-                const meter = data.meters && data.meters[index];
-                return (
-                  <div key={index} className="meter-block">
-                    <div className="meter-info">
-                      {index + 1}. тип: <span className="field-value underline">{meter ? formatMeterType(meter.meter_type || '') : 'G_____'}</span> 
-                      № <span className="field-value underline">{meter?.meter_number || '______________________'}</span> 
-                      составляют: <span className="field-value underline">{meter?.current_reading || '__________________'}</span>м³ 
-                      пломба <span className="field-value underline">{meter?.seal_number || '_________________'}</span> 
-                      цвет <span className="field-value underline">{meter?.seal_color || '__________'}</span>
+              <PrintRow prefix={'по адресу:'} data={formatAddress()} />
+
+              <PrintRow prefix={'выявлено:'} data={ data.violations_found || '_____'} />
+                  <div className="act-field-description">описание выявленных проблем</div>
+
+
+              {/* Секция счетчиков */}
+              <div className="act-meters-section">
+                <div className="act-section-title"></div>
+                <PrintRow prefix={'Показания счетчиков:'} data={""} />
+                
+                {data.meters && data.meters.length > 0 ? (
+                  data.meters.map((meter, index) => (
+                    <div key={index} className="act-meter-item">
+                      <div className='ml-4'>
+                          <PrintRow prefix = { "" }  data = {`${meter.meter_type || 'G_____'} № 
+                              ${meter.meter_number || '____________________'} составляют: ${meter.current_reading || '___'} м³ пломба 
+                              ${meter.seal_number || '_______________'} цвет ${meter.seal_color || '__________'} `
+                            }/>
+                          <PrintRow prefix={ "" } data={'газовое оборудование: ' + meter.gas_equipment || ''} />
+                          <PrintRow prefix={'Произведен контрольный замер отапливаемых площадей:'} data = { "" } />
+                          <PrintRow prefix = {""} data={`жилая площадь ${meter.living_area || '____________'} м² нежилая площадь ${meter.non_living_area || '________________'} м² количество ${meter.residents_count || '______'} чел.`} />
+                      </div>
+                      
                     </div>
-                    <div className="gas-equipment">
-                      газовое оборудование: <span className="field-value underline">{meter?.gas_equipment || '_______________________________________________________________________________________'}</span>
-                    </div>
-                    <div className="area-measurement">
-                      Произведен контрольный замер отапливаемых площадей:
-                    </div>
-                    <div className="area-details">
-                      жилая площадь <span className="field-value underline">{data.living_area || '_______________'}</span>м² 
-                      нежилая площадь <span className="field-value underline">{data.non_living_area || '________________'}</span>м² 
-                      количество <span className="field-value underline">{data.residents_count || '_______'}</span> чел.
-                    </div>
+                  ))
+                ) : (
+                  <div>
+                    <PrintRow prefix={'1. тип: G_____ №'} data={'____________________ составляют: ___ м³ пломба _______________ цвет __________'} />
+                    <PrintRow prefix={'газовое оборудование:'} data={''} />
+                    <PrintRow prefix={'Произведен контрольный замер отапливаемых площадей:'} data={'жилая площадь ____________ м² нежилая площадь ________________ м² количество ______ чел.'} />
                   </div>
-                );
-              })}
-            </div>
+                )}
+              </div>
 
-            {/* Особое мнение абонента */}
-            <div className="subscriber-opinion">
-              <div className="opinion-title">Особое мнение абонента:</div>
-              <div className="opinion-content">
-                <span className="field-value underline">{data.subscriber_opinion || '____________________________________________________________________________________'}</span>
-              </div>
-            </div>
+              {data.subscriber_opinion && (
+                <>
+                  <PrintRow prefix={'Особое мнение абонента:'} data={data.subscriber_opinion || ''} />
+                </>
+              )}
 
-            {/* Примечание */}
-            <div className="notes-section">
-              <div className="notes-title">Примечание:</div>
-              <div className="notes-content">
-                <span className="field-value underline">{data.notes || '______________________________________________________________________________________________'}</span>
-              </div>
-            </div>
+              {data.notes && (
+                <>
+                  <PrintRow prefix={'Примечание:'} data={data.notes || ''} />
+                </>
+              )}
 
-            {/* Подписи */}
-            <div className="signatures-section">
-              <div className="signatures-title">Подписи сторон:</div>
-              
-              <div className="signature-line">
-                представитель организации <span className="field-value underline">__________________</span>/
-                <span className="field-value underline">____________________________</span>/
-              </div>
-              
-              <div className="signature-line">
-                абонент <span className="field-value underline">____________________</span> /
-                <span className="field-value underline">____________________________</span>/
-              </div>
-              
-              <div className="signature-line">
-                представитель абонента <span className="field-value underline">____________________</span> /
-                <span className="field-value underline">____________________________</span>/
-              </div>
-            </div>
+              {/* Секция подписей */}
+              <div className="act-signatures-section">
+                <div className="act-signatures-title">Подписи сторон:</div>
 
-            {/* Понятой */}
-            <div className="witness-section">
-              <div className="witness-title">При проведении проверки и составлении акта присутствовал:</div>
-              <div className="witness-name">
-                Ф.И.О.: <span className="field-value underline">{data.witness_name || '______________________________________________'}</span>
-              </div>
-              <div className="witness-document">
-                реквизиты документа, удостоверяющего личность <span className="field-value underline">{data.witness_document || '______________________________________________________________'}</span>
-              </div>
-            </div>
+                <PrintRow prefix={'представитель организации'} data={''} />
+                <PrintRow prefix={''} data={' '} />
+                <div className="act-field-description">ф.и.о., подпись</div>
 
-            {/* Примечание внизу */}
-            <div className="footer-note">
-              <strong>Примечание:</strong> АКТ составляется в двух экземплярах, один из которых выдаётся на руки абонента, другой хранится у поставщика газа.
+                <PrintRow prefix={'абонент'} data={''} />
+                <PrintRow prefix={''} data={' '} />
+                <div className="act-field-description">ф.и.о., подпись</div>
+
+                {data.subscriber_representative_name && (
+                  <>
+                    <PrintRow prefix={'представитель абонента'} data={''} />
+                    <PrintRow prefix={''} data={' '} />
+                    <div className="act-field-description">ф.и.о., подпись</div>
+                  </>
+                )}
+
+                {data.witness_name && (
+                  <>
+                    <PrintRow prefix={'При проведении проверки и составлении акта присутствовал:'} data={''} />
+                    <PrintRow prefix={'реквизиты документа, удостоверяющего личность'} data={''} />
+                  </>
+                )}
+              </div>
+
+              <div className="act-note-section">
+                <strong>Примечание:</strong> АКТ составляется в двух экземплярах, один из которых выдается на руки абоненту, другой хранится у поставщика газа.
+              </div>
             </div>
           </div>
         </div>
       </div>
     );
-  }
 
-  return null;
 };
 
 export default ActHouseInspectPrint;

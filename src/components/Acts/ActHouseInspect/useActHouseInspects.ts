@@ -3,7 +3,7 @@ import { getData, Store } from '../../Store';
 import { useToast } from '../../Toast/useToast';
 
 // ============================================
-// ТИПЫ ДАННЫХ
+// ТИПЫ И ИНТЕРФЕЙСЫ
 // ============================================
 
 export interface HouseMeterData {
@@ -54,10 +54,9 @@ export type HouseInspectErrors = Partial<Record<Exclude<keyof HouseInspectData, 
 };
 
 // ============================================
-// УТИЛИТАРНЫЕ ФУНКЦИИ
+// УТИЛИТЫ
 // ============================================
 
-// Преобразование даты для input[type="date"]
 const formatDateForInput = (dateString?: string): string => {
   if (!dateString) return new Date().toISOString().split('T')[0];
   
@@ -73,7 +72,6 @@ const formatDateForInput = (dateString?: string): string => {
   return new Date().toISOString().split('T')[0];
 };
 
-// Преобразование времени для input[type="time"]
 const formatTimeForInput = (timeString?: string): string => {
   if (!timeString) return new Date().toTimeString().slice(0, 5);
   
@@ -132,165 +130,137 @@ const createNewMeter = (sequence: number): HouseMeterData => ({
 // ОСНОВНОЙ ХУК
 // ============================================
 
-export const useActHouseInspects = (actId?: string) => {
+export const useActHouseInspects = () => {
+  // === СОСТОЯНИЕ ===
   const [data, setData] = useState<HouseInspectData>(initialData);
-  const [errors, setErrors] = useState<HouseInspectErrors>({ meters: {} });
-  const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState<HouseInspectErrors>({});
+  const [loading, setLoading] = useState<boolean>(false);
+  const [saving, setSaving] = useState<boolean>(false);
+  
+  // === УТИЛИТЫ ===
   const { showSuccess, showError } = useToast();
 
   // ============================================
-  // ОБРАБОТЧИКИ ПОЛЕЙ
+  // МЕТОДЫ ОБНОВЛЕНИЯ ДАННЫХ
   // ============================================
 
-  // Обработчик изменения основных полей
-  const handleFieldChange = useCallback((field: keyof HouseInspectData, value: string | number) => {
-    if (field === 'meters') return; // Метры обрабатываются отдельно
-    
+  // Функция обновления простых полей с очисткой ошибки
+  const updateField = useCallback((fieldName: string, value: any) => {
     setData(prev => ({
       ...prev,
-      [field]: value
+      [fieldName]: value
     }));
     
-    // Очистка ошибки для поля
-    if (errors[field]) {
+    if (errors[fieldName as keyof HouseInspectErrors]) {
       setErrors(prev => {
         const newErrors = { ...prev };
-        delete newErrors[field];
+        delete newErrors[fieldName as keyof HouseInspectErrors];
         return newErrors;
       });
     }
   }, [errors]);
 
-  // Обработчик изменения данных счетчика
-  const handleMeterChange = useCallback((index: number, field: keyof HouseMeterData, value: string | number) => {
+  // Основная функция обновления полей (поддерживает вложенные пути)
+  const handleFieldChange = useCallback((fieldPath: string, value: any) => {
+    setData(prev => {
+      const newData = { ...prev };
+      const pathParts = fieldPath.split('.');
+      
+      if (pathParts.length === 1) {
+        (newData as any)[pathParts[0]] = value;
+      } else if (pathParts.length === 3 && pathParts[0] === 'meters') {
+        const meterIndex = parseInt(pathParts[1]);
+        const fieldName = pathParts[2];
+        
+        if (newData.meters[meterIndex]) {
+          (newData.meters[meterIndex] as any)[fieldName] = value;
+        }
+      }
+      
+      return newData;
+    });
+  }, []);
+
+  // Функция обновления полей счетчиков
+  const handleMeterChange = useCallback((index: number, field: keyof HouseMeterData, value: any) => {
     setData(prev => ({
       ...prev,
-      meters: prev.meters.map((meter, i) => 
+      meters: prev.meters.map((meter, i) =>
         i === index ? { ...meter, [field]: value } : meter
       )
     }));
-
-    // Очистка ошибки для поля счетчика
-    if (errors.meters?.[index]?.[field]) {
-      setErrors(prev => ({
-        ...prev,
-        meters: {
-          ...prev.meters || {},
-          [index]: {
-            ...prev.meters?.[index] || {},
-            [field]: undefined
-          }
-        }
-      }));
-    }
-  }, [errors]);
+  }, []);
 
   // ============================================
-  // УПРАВЛЕНИЕ СЧЕТЧИКАМИ
+  // МЕТОДЫ РАБОТЫ СО СЧЕТЧИКАМИ
   // ============================================
 
-  // Добавление счетчика
   const addMeter = useCallback(() => {
-    const nextSequence = Math.max(0, ...data.meters.map(m => m.sequence_order)) + 1;
-    if (nextSequence <= 3) {
-      setData(prev => ({
-        ...prev,
-        meters: [...prev.meters, createNewMeter(nextSequence)]
-      }));
-    } else {
-      showError('Максимальное количество счетчиков - 3');
-    }
-  }, [data.meters, showError]);
-
-  // Удаление счетчика
-  const removeMeter = useCallback((index: number) => {
-    if (data.meters.length <= 1) {
-      showError('Должен быть хотя бы один счетчик');
-      return;
-    }
-
     setData(prev => ({
       ...prev,
-      meters: prev.meters
-        .filter((_, i) => i !== index)
-        .map((meter, i) => ({ ...meter, sequence_order: i + 1 }))
+      meters: [...prev.meters, createNewMeter(prev.meters.length + 1)]
     }));
+  }, []);
 
-    // Очистка ошибок для удаленного счетчика
-    setErrors(prev => {
-      const newErrors = { ...prev };
-      if (newErrors.meters) {
-        delete newErrors.meters[index];
-        // Пересчитываем индексы ошибок
-        const updatedMeterErrors: { [index: number]: Partial<Record<keyof HouseMeterData, string>> } = {};
-        Object.entries(newErrors.meters).forEach(([idx, err]) => {
-          const numIdx = parseInt(idx);
-          if (numIdx < index) {
-            updatedMeterErrors[numIdx] = err;
-          } else if (numIdx > index) {
-            updatedMeterErrors[numIdx - 1] = err;
-          }
-        });
-        newErrors.meters = updatedMeterErrors;
-      }
-      return newErrors;
-    });
-  }, [data.meters.length, showError]);
+  const removeMeter = useCallback((index: number) => {
+    setData(prev => ({
+      ...prev,
+      meters: prev.meters.filter((_, i) => i !== index)
+    }));
+  }, []);
 
   // ============================================
   // ВАЛИДАЦИЯ
   // ============================================
 
-  // Валидация формы
   const validateForm = useCallback((): boolean => {
     const newErrors: HouseInspectErrors = {};
-    
-    // Обязательные основные поля
-    const requiredFields: (keyof HouseInspectData)[] = [
-      'act_date',
-      'organization_representative',
-      'subscriber_name'
-    ];
 
-    requiredFields.forEach(field => {
-      const value = data[field];
-      if (!value || value.toString().trim() === '') {
-        newErrors[field] = 'Поле обязательно для заполнения';
-      }
-    });
-
-    // Валидация формата даты
-    if (data.act_date && !/^\d{4}-\d{2}-\d{2}$/.test(data.act_date)) {
-      newErrors.act_date = 'Дата должна быть в формате ГГГГ-ММ-ДД';
+    // Основные поля
+    if (!data.act_number?.trim()) {
+      newErrors.act_number = 'Номер акта обязателен';
     }
 
-    // Валидация времени
-    if (data.act_time && !/^\d{2}:\d{2}$/.test(data.act_time)) {
-      newErrors.act_time = 'Время должно быть в формате ЧЧ:ММ';
+    if (!data.act_date) {
+      newErrors.act_date = 'Дата акта обязательна';
+    }
+
+    if (!data.account_number?.trim()) {
+      newErrors.account_number = 'Лицевой счет обязателен';
+    }
+
+    if (!data.address?.trim()) {
+      newErrors.address = 'Адрес обязателен';
+    }
+
+    if (!data.organization_representative?.trim()) {
+      newErrors.organization_representative = 'Представитель организации обязателен';
+    }
+
+    if (!data.subscriber_name?.trim()) {
+      newErrors.subscriber_name = 'Имя абонента обязательно';
     }
 
     // Валидация счетчиков
-    if (data.meters.length === 0) {
-      newErrors.meters = { 0: { meter_number: 'Необходимо добавить хотя бы один счетчик' } };
-    } else {
-      const meterErrors: { [index: number]: Partial<Record<keyof HouseMeterData, string>> } = {};
+    const meterErrors: { [index: number]: Partial<Record<keyof HouseMeterData, string>> } = {};
+    
+    data.meters.forEach((meter, index) => {
+      const meterError: Partial<Record<keyof HouseMeterData, string>> = {};
       
-      data.meters.forEach((meter, index) => {
-        const errors: Partial<Record<keyof HouseMeterData, string>> = {};
-        
-        if (!meter.meter_number.trim()) {
-          errors.meter_number = 'Номер счетчика обязателен';
-        }
-
-        if (Object.keys(errors).length > 0) {
-          meterErrors[index] = errors;
-        }
-      });
-
-      if (Object.keys(meterErrors).length > 0) {
-        newErrors.meters = meterErrors;
+      if (meter.meter_number && !meter.meter_type) {
+        meterError.meter_type = 'Тип счетчика обязателен';
       }
+      if (meter.meter_type && !meter.meter_number) {
+        meterError.meter_number = 'Номер счетчика обязателен';
+      }
+      
+      if (Object.keys(meterError).length > 0) {
+        meterErrors[index] = meterError;
+      }
+    });
+
+    if (Object.keys(meterErrors).length > 0) {
+      newErrors.meters = meterErrors;
     }
 
     setErrors(newErrors);
@@ -301,7 +271,6 @@ export const useActHouseInspects = (actId?: string) => {
   // API МЕТОДЫ
   // ============================================
 
-  // Загрузка акта по invoice_id
   const loadActByInvoice = useCallback(async (invoiceId: string) => {
     setLoading(true);
     try {
@@ -318,7 +287,7 @@ export const useActHouseInspects = (actId?: string) => {
           ...actData,
           act_date: formatDateForInput(actData.act_date),
           act_time: formatTimeForInput(actData.act_time),
-          meters: actData.meters || [createNewMeter(1)]
+          meters: actData.meters || []
         });
         showSuccess('Данные акта загружены');
       } else {
@@ -328,19 +297,18 @@ export const useActHouseInspects = (actId?: string) => {
           ...initialData, 
           invoice_id: invoiceId,
           organization_representative: loginData?.full_name || '',
-          meters: [createNewMeter(1)]
+          meters: []
         });
       }
     } catch (error) {
       console.error('Ошибка загрузки акта по заявке:', error);
       showError('Ошибка загрузки данных акта');
-      setData({ ...initialData, invoice_id: invoiceId, meters: [createNewMeter(1)] });
+      setData({ ...initialData, invoice_id: invoiceId, meters: [] });
     } finally {
       setLoading(false);
     }
   }, [showSuccess, showError]);
 
-  // Сохранение акта
   const saveAct = useCallback(async (): Promise<HouseInspectData | null> => {
     if (!validateForm()) {
       showError('Исправьте ошибки в форме');
@@ -378,11 +346,6 @@ export const useActHouseInspects = (actId?: string) => {
   }, [data, validateForm, showSuccess, showError]);
 
   // ============================================
-  // ДОПОЛНИТЕЛЬНЫЕ МЕТОДЫ
-  // ============================================
-
-
-  // ============================================
   // ВОЗВРАТ ХУКА
   // ============================================
 
@@ -394,6 +357,7 @@ export const useActHouseInspects = (actId?: string) => {
     saving,
     
     // Методы
+    updateField,
     handleFieldChange,
     handleMeterChange,
     addMeter,
