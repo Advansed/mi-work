@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { ActPlombData } from './useActPlomb';
 import './ActPlombPrint.css';
+import { PrintRow } from '../Forms/Forms';
 
 interface ActPlombPrintProps {
   data: ActPlombData;
@@ -69,15 +70,9 @@ const ActPlombPrint: React.FC<ActPlombPrintProps> = ({
         <div className="print-content-scrollable">
           <div className="print-content">
             {/* Заголовок с логотипом */}
-            <div className="document-header">
+            <div className="document-header flex">
               <div className="logo-section">
-                <div className="logo-circle">
-                  <span className="logo-text">СТНГ</span>
-                </div>
-                <div className="company-info">
-                  <div className="company-name">САХАТРАНСНЕФТЕГАЗ</div>
-                  <div className="department">УСД</div>
-                </div>
+                <img src="USD.png" alt="USD" className='h-4'/>
               </div>
               <div className="qr-code">
                 {/* QR код будет добавлен позже */}
@@ -88,7 +83,7 @@ const ActPlombPrint: React.FC<ActPlombPrintProps> = ({
             {/* Реквизиты организации */}
             <div className="company-details">
               <div className="divider-line"></div>
-              <div className="details-text">
+              <div className="details-text fs-07">
                 Структурное подразделение Управление по сбытовой деятельности «Сахатранснефтегаз»
               </div>
               <div className="details-text">
@@ -104,28 +99,26 @@ const ActPlombPrint: React.FC<ActPlombPrintProps> = ({
 
             {/* Заголовок документа */}
             <div className="document-title">
-              <h1>АКТ ПЛОМБИРОВАНИЯ ПРИБОРА УЧЕТА ГАЗА</h1>
+              <div><b>АКТ ПЛОМБИРОВАНИЯ ПРИБОРА УЧЕТА ГАЗА</b></div>
               
-              <div className="date-line">
-                от «<span className="field-value">{actDateFormatted.day}</span>»
-                <span className="field-value">{actDateFormatted.month}</span>
-                20<span className="field-value">{actDateFormatted.year}</span>г.
+              <div className='flex fl-space'>
+                <div></div>
+                <div className="date-line">
+                  от «<span className="field-value">{actDateFormatted.day}</span>»
+                  <span className="field-value">{actDateFormatted.month}</span>
+                  20<span className="field-value">{actDateFormatted.year}</span>г.
+                </div>
               </div>
             </div>
 
             {/* Основная информация */}
             <div className="document-content">
-              <div className="content-line">
-                Дан(а) ФИО: <span className="field-value underline">{data.subscriber_name || '_'.repeat(79)}</span>
-              </div>
 
-              <div className="content-line">
-                По адресу <span className="field-value underline">{ data.address || '_'.repeat(79)}</span>
-              </div>
+              <PrintRow  prefix = { "Дан(а) ФИО:" } data = { data.subscriber_name } />
 
-              <div className="content-line section-title">
-                Прибор учета расхода газа опломбирован:
-              </div>
+              <PrintRow  prefix = { "По адресу" } data = { data.address } />
+
+              <PrintRow  prefix = { "Прибор учета расхода газа опломбирован:" } data = { '' } />
 
               {/* Список приборов учета */}
               <div className="meters-section">
@@ -133,46 +126,30 @@ const ActPlombPrint: React.FC<ActPlombPrintProps> = ({
                   data.meters.map((meter, index) => (
                     <div key={index} className="meter-block">
                       <div className="content-line">
-                        {index + 1}.G- № сч<span className="field-value underline">{meter.meter_number || '______________'}</span>
-                        {' '}пломба №<span className="field-value underline">{meter.seal_number || '___________________'}</span>
-                        {' '}примечания <span className="field-value underline">{meter.notes || '____________________'}</span>
-                      </div>
-                      <div className="content-line meter-reading">
-                        текущие показания прибора учета газа<span className="field-value underline">{meter.current_reading || '________________'}</span>м³
+                        <PrintRow prefix = { "" } data = { (index + 1) + ".G- № сч " + (meter.meter_number || '____') + ' пломба ' + (meter.seal_number || '_________') + ' примечания ' + (meter.notes || '________') 
+                          + ' текущие показания прибора учета газа:' + (meter.current_reading || '__') 
+                        } />
                       </div>
                     </div>
                   ))
                 ) : (
-                  // Пустые строки если нет данных
-                  [...Array(3)].map((_, index) => (
-                    <div key={index} className="meter-block">
+                    <div key={ 1 } className="meter-block">
                       <div className="content-line">
-                        {index + 1}.G- № сч<span className="field-value underline">______________</span>
-                        {' '}пломба №<span className="field-value underline">___________________</span>
-                        {' '}примечания <span className="field-value underline">____________________</span>
+                        <PrintRow prefix = { "" } data = { (1) + ".G- № сч " + ( '____') + ' пломба ' + ( '_________') + ' примечания ' + ( '________') 
+                          + ' текущие показания прибора учета газа:' + ( '__') 
+                        } />
                       </div>
-                      <div className="content-line meter-reading">
-                        текущие показания прибора учета газа<span className="field-value underline">________________</span>м³
-                      </div>
-                    </div>
-                  ))
+                    </div>                  
                 )}
               </div>
 
               {/* Подписи */}
               <div className="signatures-section">
-                <div className="signature-line company-signature">
-                  УСД АО «Сахатранснефтегаз» 
-                  <span className="field-value">__________________________________</span>/
-                  <span className="field-value">____________________</span>/
-                </div>
+
+                <PrintRow prefix = { 'УСД АО «Сахатранснефтегаз» ' } data = { '______________/_______/' } />
+
+                <PrintRow prefix = { 'Акт получил(а): ' } data = { '______________/_______/' } />
                 
-                <div className="signature-line recipient-signature">
-                  АКТ ПОЛУЧИЛ(А): 
-                  <span className="field-value">___________________</span>/
-                  <span className="field-value">____________________________</span>/ 
-                  Дата <span className="field-value">_____________</span>
-                </div>
               </div>
             </div>
           </div>

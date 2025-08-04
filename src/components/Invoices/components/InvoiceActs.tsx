@@ -26,7 +26,7 @@ import {
 } from 'ionicons/icons';
 import { Invoice } from '../types';
 import ActShutdownForm from '../../Acts/ActShutdown/ActShutdownForm';
-import ActPlomb from '../../Acts/ActPlomb/Actplomb';
+import ActPlomb from '../../Acts/ActPlomb/ActplombForm';
 import { useToast } from '../../Toast/useToast';
 import './InvoiceActs.css';
 import ActHouseInspects from '../../Acts/ActHouseInspect/ActHouseInspect';

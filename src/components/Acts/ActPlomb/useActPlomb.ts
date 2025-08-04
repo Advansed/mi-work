@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { getData, Store } from '../../Store';
+import { getData } from '../../Store';
 import { useToast } from '../../Toast/useToast';
 
 // Типы данных
@@ -20,7 +20,7 @@ export interface ActPlombData {
   act_date: string;
   
   // Адрес
-  address:  string;
+  address: string;
   apartment: string;
   house: string;
   street: string;
@@ -53,17 +53,19 @@ const initialData: ActPlombData = {
   usd_representative: '',
   representative_position: '',
   received_date: '',
-  meters: []
+  meters: [createNewMeter(1)]
 };
 
-const createNewMeter = (sequence: number): PlombMeter => ({
-  meter_number: '',
-  seal_number: '',
-  current_reading: undefined,
-  meter_type: '',
-  notes: '',
-  sequence_order: sequence
-});
+function createNewMeter(sequence: number): PlombMeter {
+  return {
+    meter_number: '',
+    seal_number: '',
+    current_reading: undefined,
+    meter_type: '',
+    notes: '',
+    sequence_order: sequence
+  };
+}
 
 export const useActPlomb = (actId?: string) => {
   const [data, setData] = useState<ActPlombData>(initialData);
@@ -71,6 +73,33 @@ export const useActPlomb = (actId?: string) => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const { showSuccess, showError } = useToast();
+
+  // === НОВЫЕ HELPER ФУНКЦИИ ===
+  const updateField = useCallback((field: keyof ActPlombData, value: string) => {
+    if (field === 'meters') return; // Метры обрабатываются отдельно
+    
+    setData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+    
+    // Очистка ошибки для поля
+    if (errors[field]) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
+    }
+  }, [errors]);
+
+  const getFieldValue = useCallback((field: keyof ActPlombData) => {
+    return (data as any)[field] || '';
+  }, [data]);
+
+  const getFieldError = useCallback((field: keyof ActPlombData) => {
+    return (errors as any)[field] || '';
+  }, [errors]);
 
   // Обработчик изменения основных полей
   const handleFieldChange = useCallback((field: keyof ActPlombData, value: string) => {
@@ -113,170 +142,177 @@ export const useActPlomb = (actId?: string) => {
         }
       }));
     }
-  }, [errors]);
+  }, [errors.meters]);
 
-  // Добавление счетчика
+  // Добавление нового счетчика
   const addMeter = useCallback(() => {
-    const nextSequence = Math.max(0, ...data.meters.map(m => m.sequence_order)) + 1;
-    if (nextSequence <= 10) {
-      setData(prev => ({
-        ...prev,
-        meters: [...prev.meters, createNewMeter(nextSequence)]
-      }));
-    }
-  }, [data.meters]);
+    setData(prev => ({
+      ...prev,
+      meters: [...prev.meters, createNewMeter(prev.meters.length + 1)]
+    }));
+  }, []);
 
   // Удаление счетчика
   const removeMeter = useCallback((index: number) => {
+    if (data.meters.length <= 1) return; // Минимум один счетчик должен остаться
+
     setData(prev => ({
       ...prev,
-      meters: prev.meters
-        .filter((_, i) => i !== index)
-        .map((meter, i) => ({ ...meter, sequence_order: i + 1 }))
+      meters: prev.meters.filter((_, i) => i !== index).map((meter, i) => ({
+        ...meter,
+        sequence_order: i + 1
+      }))
     }));
 
-    // Очистка ошибок для удаленного счетчика
+    // Удаление ошибок для удаленного счетчика
     setErrors(prev => {
       const newErrors = { ...prev };
       if (newErrors.meters) {
         delete newErrors.meters[index];
-        // Пересчитываем индексы ошибок
-        const updatedMeterErrors: { [index: number]: Partial<Record<keyof PlombMeter, string>> } = {};
-        Object.entries(newErrors.meters).forEach(([idx, err]) => {
-          const numIdx = parseInt(idx);
-          if (numIdx < index) {
-            updatedMeterErrors[numIdx] = err;
-          } else if (numIdx > index) {
-            updatedMeterErrors[numIdx - 1] = err;
+        // Переиндексация ошибок
+        const reindexedErrors: typeof newErrors.meters = {};
+        Object.entries(newErrors.meters).forEach(([key, value]) => {
+          const oldIndex = parseInt(key);
+          if (oldIndex < index) {
+            reindexedErrors[oldIndex] = value;
+          } else if (oldIndex > index) {
+            reindexedErrors[oldIndex - 1] = value;
           }
         });
-        newErrors.meters = updatedMeterErrors;
+        newErrors.meters = reindexedErrors;
       }
       return newErrors;
     });
-  }, []);
+  }, [data.meters.length]);
 
-  // Валидация формы
-  const validateForm = useCallback((): boolean => {
-    const newErrors: PlombFormErrors = {};
-    
-    // Обязательные основные поля
-    const requiredFields: (keyof ActPlombData)[] = [
-      'act_date',
-      'house', 
-      'street',
-      'subscriber_name',
-      'usd_representative',
-    ];
-
-    requiredFields.forEach(field => {
-      if (!data[field] || data[field]!.toString().trim() === '') {
-        newErrors[field] = 'Поле обязательно для заполнения';
-      }
-    });
-
-    // Валидация счетчиков
-    if (data.meters.length === 0) {
-      newErrors.meters = { 0: { meter_number: 'Необходимо добавить хотя бы один счетчик' } };
-    } else {
-      const meterErrors: { [index: number]: Partial<Record<keyof PlombMeter, string>> } = {};
-      
-      data.meters.forEach((meter, index) => {
-        const errors: Partial<Record<keyof PlombMeter, string>> = {};
-        
-        if (!meter.meter_number.trim()) {
-          errors.meter_number = 'Номер счетчика обязателен';
-        }
-        
-        if (!meter.seal_number.trim()) {
-          errors.seal_number = 'Номер пломбы обязателен';
-        }
-
-        if (Object.keys(errors).length > 0) {
-          meterErrors[index] = errors;
-        }
-      });
-
-      if (Object.keys(meterErrors).length > 0) {
-        newErrors.meters = meterErrors;
-      }
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  }, [data]);
-
-  // Загрузка акта по invoice_id
+  // Загрузка акта по заявке
   const loadActByInvoice = useCallback(async (invoiceId: string) => {
-    setLoading(true);
     try {
-      const params = { 
-        invoice_id: invoiceId, 
-        user_id: Store.getState().login.userId 
-      };
+      setLoading(true);
+      setErrors({ meters: {} });
+
+      const response = await getData('PLOMB_ACT_GET', { invoice_id: invoiceId });
       
-      const result = await getData('PLOMB_ACT_GET', params);
-      
-      if (result.success && result.data) {
-        const actData = result.data;
+      if (response.success && response.data) {
         setData({
-          ...actData,
-          meters: actData.meters || []
+          ...response.data,
+          meters: response.data.meters?.length > 0 ? response.data.meters : [createNewMeter(1)]
         });
-      } else {
-        // Создаем новый акт с invoice_id
-        setData({ ...initialData, invoice_id: invoiceId });
       }
     } catch (error) {
-      console.error('Ошибка загрузки акта по заявке:', error);
-      setData({ ...initialData, invoice_id: invoiceId });
+      console.error('Ошибка загрузки акта:', error);
+      showError('Ошибка загрузки данных акта');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [showError]);
+
+  // Валидация данных
+  const validateData = useCallback((): boolean => {
+    const newErrors: PlombFormErrors = { meters: {} };
+    let hasErrors = false;
+
+    // Проверка основных полей
+    if (!data.act_date) {
+      newErrors.act_date = 'Дата акта обязательна';
+      hasErrors = true;
+    }
+
+    if (!data.street.trim()) {
+      newErrors.street = 'Улица обязательна';
+      hasErrors = true;
+    }
+
+    if (!data.house.trim()) {
+      newErrors.house = 'Номер дома обязателен';
+      hasErrors = true;
+    }
+
+    if (!data.apartment.trim()) {
+      newErrors.apartment = 'Номер квартиры обязателен';
+      hasErrors = true;
+    }
+
+    if (!data.subscriber_name.trim()) {
+      newErrors.subscriber_name = 'ФИО абонента обязательно';
+      hasErrors = true;
+    }
+
+    if (!data.usd_representative.trim()) {
+      newErrors.usd_representative = 'ФИО представителя обязательно';
+      hasErrors = true;
+    }
+
+    // Проверка счетчиков
+    data.meters.forEach((meter, index) => {
+      const meterErrors: Partial<Record<keyof PlombMeter, string>> = {};
+      
+      if (!meter.meter_number.trim()) {
+        meterErrors.meter_number = 'Номер счетчика обязателен';
+        hasErrors = true;
+      }
+
+      if (!meter.seal_number.trim()) {
+        meterErrors.seal_number = 'Номер пломбы обязателен';
+        hasErrors = true;
+      }
+
+      if (Object.keys(meterErrors).length > 0) {
+        newErrors.meters![index] = meterErrors;
+      }
+    });
+
+    setErrors(newErrors);
+    return !hasErrors;
+  }, [data]);
 
   // Сохранение акта
   const saveAct = useCallback(async (): Promise<ActPlombData | null> => {
-    if (!validateForm()) {
+    if (!validateData()) {
+      showError('Пожалуйста, исправьте ошибки в форме');
       return null;
     }
 
-    setSaving(true);
     try {
-      const result = await getData('PLOMB_ACT_CREATE', data);
+      setSaving(true);
 
-      if (result.success) {
-          showSuccess("Акт сохранен")
+      const saveData = {
+        ...data,
+        address: `${data.street}, ${data.house}, кв. ${data.apartment}`.trim()
+      };
+
+      const response = await getData('PLOMB_ACT_CREATE', saveData);
+
+      if (response.success) {
+        const savedData = response.data;
+        setData(savedData);
+        showSuccess(`Акт пломбирования ${data.id ? 'обновлен' : 'создан'} успешно`);
+        return savedData;
       } else {
-          showError("Не получилось сохранить")
+        throw new Error(response.message || 'Ошибка сохранения');
       }
-      return result
-    } catch (error) {
-      console.error('Ошибка сохранения акта:', error);
-      throw error;
+    } catch (error: any) {
+      console.error('Ошибка сохранения:', error);
+      showError(error.message || 'Ошибка сохранения акта');
+      return null;
     } finally {
       setSaving(false);
     }
-  }, [data, validateForm]);
+  }, [data, validateData, showSuccess, showError]);
 
   return {
-    // Состояние
     data,
     errors,
     loading,
     saving,
-    
-    // Методы
+    updateField,           // Новая функция
+    getFieldValue,         // Новая функция  
+    getFieldError,         // Новая функция
     handleFieldChange,
     handleMeterChange,
     addMeter,
     removeMeter,
-    validateForm,
     loadActByInvoice,
-    saveAct,
-    
-    // Утилиты
-    setData,
-    setErrors
+    saveAct
   };
 };
