@@ -172,8 +172,8 @@
 
 @media (max-width: 768px) {
   .lics-form-modal ion-modal {
-    --max-width: 95vw;
-    --max-height: 95vh;
+    /* --max-width: 95vw; */
+    /* --max-height: 95vh; */
   }
   
   .lics-level-container {

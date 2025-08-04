@@ -85,7 +85,7 @@ const ActShutdown: React.FC<ActShutdownProps> = ({
   // Режим печати - возвращаем только печатную форму
   if (mode === 'print') {
     return (
-      <div className="print-form-container fs-10">
+      <div className="print-form-container sroll">
         <div className="print-actions no-print">
           <button className="btn btn-primary" onClick={handlePrint}>
             Печать PDF
