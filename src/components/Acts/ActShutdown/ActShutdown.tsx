@@ -104,56 +104,39 @@ const ActShutdown: React.FC<ActShutdownProps> = ({
               </div>
             </div>
 
-            {/* Заголовок документа */}
-            <div className="document-title">
-              <div className='fs-10'>
-                <b>АКТ-НАРЯД №<span className="field-value">{data.actNumber || '_______'}</span></b>
-              </div>
-              <div className='fs-9'><b>НА ОТКЛЮЧЕНИЕ ГАЗОИСПОЛЬЗУЮЩЕГО<br />ОБОРУДОВАНИЯ ЖИЛЫХ ЗДАНИЙ</b></div>
-              
 
-              <div className='flex fl-space'>
-                <div></div>
-
-                <div className="date-line field-value">
-                  «<span className="">{actDateFormatted.day}</span>» 
-                  <span className="">{ ' ' + actDateFormatted.month}</span>
-                  <span className="">{' 20' + actDateFormatted.year}</span>г.
-                </div>
-
-              </div>
+            {/* Заголовок акта */}
+            <div className="act-document-title">
+              <div className='fs-bold fs-12'> {'АКТ-НАРЯД №' + ( data.actNumber || '____') }</div>
+              <div className='fs-bold fs-12'> на отключение газоиспользующего оборудования </div>
             </div>
 
-            {/* Основное содержимое */}
-            <div className="document-content">
+            <div className="act-date-line">
+              от «{actDateFormatted.day}» {actDateFormatted.month} 20{actDateFormatted.year}г.
+            </div>
 
-              {/* <div className="content-line t-underline">
-                Представителю эксплуатационной организации 
-                <span className="ml-1">{ data.representativeName || '_'.repeat(42)}</span>
-              </div> */}
+            {/* Содержание документа */}
+            <div className="act-document-content">
+              <PrintRow prefix={'Мною, представителем организации УСД АО «Сахатранснефтегаз»'} data={data.representativeName || ''} />
+              <div className="act-field-description">должность, ф.и.о.</div>
 
-              <PrintRow prefix = { 'Представителю эксплуатационной организации' } data = { '' } />
-              <PrintRow prefix = { '' } data = { data.representativeName } />
-              <div className="field-description">ф.и.о., должность</div>
+              <PrintRow prefix={'в присутствии абонента:'} data={data.subscriberName || ''} />
+              <div className="act-field-description">ф.и.о.</div>
 
-              <PrintRow prefix = { 'ввиду'} data = { data.reason } />
-              <div className="field-description">указать причину</div>
+              <PrintRow prefix={'по причине'} data={data.reason || ''} />
 
-              <PrintRow prefix = { 'поручается отключить'} data = { data.equipment || '_'.repeat(63) } />
-              <div className="field-description">наименование приборов</div>
+              <PrintRow prefix={'по адресу: кв.№'} data={(data.apartment || '__') + ' дома ' + (data.house || '__') + ' по ул.' + (data.street || '______________')} />
 
-              <PrintRow prefix = { 'квартире' } data = { (data.apartment || '___') + ' дома ' + (data.house || '_____') + ' по ул. ' + (data.street || '______________') } />
+              <PrintRow prefix={'у абонента'} data={data.subscriberName || ''} />
+              <div className="act-field-description">ф.и.о.</div>
 
-              <PrintRow prefix = { 'у абонента'} data = { data.subscriberName || '' } />
-              <div className="field-description">ф.и.о.</div>
-
-              <PrintRow prefix = { 'Наряд выдал'} data = { data.orderIssuedBy || '' } />
-              <div className="field-description">должность, ф.и.о., подпись</div>
+              <PrintRow prefix={'Наряд выдал'} data={data.orderIssuedBy || ''} />
+              <div className="act-field-description">должность, ф.и.о., подпись</div>
               
-              <PrintRow prefix = { 'Наряд получил'} data = { data.orderReceivedBy || '' } />
-              <div className="field-description">должность, ф.и.о., подпись</div>
+              <PrintRow prefix={'Наряд получил'} data={data.orderReceivedBy || ''} />
+              <div className="act-field-description">должность, ф.и.о., подпись</div>
 
-              <PrintRow prefix = { 'мною'} data = { (data.executorName || '')
+              <PrintRow prefix={'мною'} data={(data.executorName || '')
                   + ' "' + (executionDateFormatted.day || '__') + '"'
                   + ' ' + (executionDateFormatted.month || '__') + ''
                   + ' 20' + (executionDateFormatted.year || '__') + ''
@@ -162,24 +145,23 @@ const ActShutdown: React.FC<ActShutdownProps> = ({
                   + ' произведено отключение газоиспользующего оборудования ' + (data.disconnectedEquipment || '_____')
                   + ' квартире №' + (data.apartment || '__') + ' дома ' + (data.house || '__') 
                   + ' по ул ' + (data.street || '____________')
-                  
                } />
-                <div className="field-description">указать наименование, количество приборов, способ отключения</div>
+                <div className="act-field-description">указать наименование, количество приборов, способ отключения</div>
 
-              <div className="execution-section">
-                  <div className="signatures-title">Подписи:</div>
+              <div className="act-execution-section">
+                  <div className="act-signatures-title">Подписи:</div>
 
-                  <PrintRow prefix = { 'Представитель эксплуатационной организации'} data = { '' } />
-                  <PrintRow prefix = { ''} data = { ' ' } />
-                  <div className="field-description">ф.и.о., подпись</div>
+                  <PrintRow prefix={'Представитель эксплуатационной организации'} data={''} />
+                  <PrintRow prefix={''} data={' '} />
+                  <div className="act-field-description">ф.и.о., подпись</div>
 
-                  <PrintRow prefix = { 'Ответственный квартиросъёмщик (абонент)'} data = { '' } />
-                  <PrintRow prefix = { ''} data = { ' ' } />
-                  <div className="field-description">ф.и.о., подпись</div>
+                  <PrintRow prefix={'Ответственный квартиросъёмщик (абонент)'} data={''} />
+                  <PrintRow prefix={''} data={' '} />
+                  <div className="act-field-description">ф.и.о., подпись</div>
 
               </div>
 
-              <div className="note-section">
+              <div className="act-note-section">
                 <strong>Примечание:</strong> Акт-наряд составляется в двух экземплярах, 
                 один из которых выдаётся на руки абоненту, другой хранится в эксплуатационной организации.
               </div>
