@@ -1,0 +1,158 @@
+.container {
+  padding: 20px;
+  max-width: 100%;
+}
+
+.title {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.loading, .error, .empty {
+  text-align: center;
+  padding: 40px;
+  font-size: 16px;
+}
+
+.loading {
+  color: #3498db;
+}
+
+.error {
+  color: #e74c3c;
+  background-color: #fdf2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+}
+
+.empty {
+  color: #6b7280;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  font-size: 14px;
+}
+
+.table th {
+  background-color: #f8fafc;
+  color: #374151;
+  font-weight: 600;
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.row:hover {
+  background-color: #f9fafb;
+}
+
+.row:last-child td {
+  border-bottom: none;
+}
+
+/* Цветовые индикаторы долгов */
+.debtPositive {
+  border-left: 4px solid #ef4444;
+}
+
+.debtNegative {
+  border-left: 4px solid #22c55e;
+}
+
+.debtNone {
+  border-left: 4px solid #e5e7eb;
+}
+
+.code {
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.name {
+  font-weight: 500;
+  color: #111827;
+}
+
+.address {
+  color: #6b7280;
+  font-size: 13px;
+  max-width: 300px;
+}
+
+.plot {
+  color: #374151;
+  font-weight: 500;
+}
+
+.debt {
+  text-align: right;
+  position: relative;
+}
+
+.debtSum {
+  font-weight: 600;
+}
+
+.debtPositive .debtSum {
+  color: #dc2626;
+}
+
+.debtNegative .debtSum {
+  color: #16a34a;
+}
+
+.debtNone .debtSum {
+  color: #6b7280;
+}
+
+.debtIndicator {
+  color: #ef4444;
+  font-size: 18px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+  
+  .table {
+    font-size: 12px;
+  }
+  
+  .table th,
+  .table td {
+    padding: 8px 12px;
+  }
+  
+  .address {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

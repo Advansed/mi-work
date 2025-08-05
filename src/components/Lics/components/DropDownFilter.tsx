@@ -1,6 +1,6 @@
 // Оптимизированный DropdownFilter.tsx с корпоративными CSS классами
 import React, { useState, useCallback, useMemo } from 'react';
-import { DropdownFilterProps, DropdownOption } from '../useLics';
+import { DropdownFilterProps, DropdownOption } from './useFindLics';
 import './DropDownFilter.css'
 
 const DropdownFilter: React.FC<DropdownFilterProps> = ({ 

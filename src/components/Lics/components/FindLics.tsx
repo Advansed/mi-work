@@ -2,9 +2,9 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { IonModal, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonButtons, IonIcon, IonLoading } from '@ionic/react';
 import { close, save } from 'ionicons/icons';
-import { useLics } from './useLics';
+import { useLics } from './useFindLics';
 import './LicsForm.css';
-import DropdownFilter from './components/DropDownFilter';
+import DropdownFilter from './DropDownFilter';
 
 interface LicsFormProps {
     address: string;

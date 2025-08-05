@@ -4,8 +4,8 @@ import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonChi
 import { callOutline, locationOutline, timeOutline, documentOutline, printOutline, codeWorkingOutline, warningOutline, checkmarkCircleOutline, searchOutline, ellipsisHorizontalOutline, ribbonOutline, alertCircleOutline, personCircleOutline, calendarOutline } from 'ionicons/icons';
 import { Invoice, InvoiceStatus } from '../types';
 import './InvoiceView.css';
-import { AddressForm } from '../../Lics/AddressForm';
-import LicsForm from '../../Lics/LicsForm';
+import { AddressForm } from '../../Lics/components/FindAddress';
+import LicsForm from '../../Lics/components/FindLics';
 
 interface InvoiceViewProps {
     invoice: Invoice;

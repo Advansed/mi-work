@@ -31,6 +31,7 @@ import { useToast } from '../../Toast/useToast';
 import './InvoiceActs.css';
 import ActHouseInspects from '../../Acts/ActHouseInspect/ActHouseInspect';
 import ActPrescript from '../../Acts/ActPrescript/ActPrescript';
+import CompletedForm from '../../Acts/ActCompleted/CompletedForm';
 
 type ActType = 'list' | 'work_completed' | 'shutdown_order' | 'sealing' | 'mkd_inspection' | 'private_inspection' | 'prescription';
 
@@ -278,7 +279,13 @@ export const InvoiceActs: React.FC<InvoiceActsProps> = ({ invoice }) => {
     const renderCurrentView = () => {
         switch (currentView) {
             case 'work_completed':
-                return <WorkCompletedForm />;
+
+                return <CompletedForm 
+                    invoiceId   = { invoice.id }  // 🎯 Передача ID заявки
+                    onSave      = { handleSaveShutdownAct }
+                    onCancel    = { handleCancelShutdownAct }
+                />
+                
             case 'shutdown_order':
 
                 return <ActShutdownForm 

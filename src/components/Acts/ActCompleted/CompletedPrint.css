@@ -1,0 +1,540 @@
+/* ============================================
+   ОСНОВНЫЕ СТИЛИ ПЕЧАТНОЙ ФОРМЫ АКТОВ РАБОТ
+   ============================================ */
+
+.completed-form-container {
+  background: #f5f5f5;
+  min-height: 100vh;
+  padding: 20px;
+  font-family: 'Times New Roman', serif;
+  overflow-y: scroll;
+}
+
+.completed-scroll {
+  overflow-y: auto;
+}
+
+.completed-print-content-scrollable {
+  max-height: 90vh;
+  overflow-y: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+}
+
+.completed-print-content {
+  padding: 40px 30px;
+  margin: 0 auto;
+  max-width: 210mm;
+  min-height: 297mm;
+  background: white;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #000;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* ============================================
+   КНОПКИ УПРАВЛЕНИЯ
+   ============================================ */
+
+.completed-print-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.completed-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.completed-btn-primary {
+  background: #2563eb;
+  color: white;
+}
+
+.completed-btn-primary:hover {
+  background: #1d4ed8;
+}
+
+.completed-btn-secondary {
+  background: #6b7280;
+  color: white;
+}
+
+.completed-btn-secondary:hover {
+  background: #4b5563;
+}
+
+.completed-btn-outline {
+  background: transparent;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+}
+
+.completed-btn-outline:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+/* ============================================
+   ЗАГОЛОВОК ДОКУМЕНТА
+   ============================================ */
+
+.completed-document-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #000;
+  padding-bottom: 10px;
+}
+
+.completed-logo-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.completed-logo-circle {
+  width: 60px;
+  height: 60px;
+  background: #1e40af;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.completed-logo-text {
+  color: white;
+  font-weight: bold;
+  font-size: 10px;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.completed-company-info {
+  flex: 1;
+}
+
+.completed-company-name {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.completed-department {
+  font-size: 14px;
+  color: #666;
+}
+
+.completed-qr-code {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.completed-qr-placeholder {
+  width: 50px;
+  height: 50px;
+  border: 2px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+/* ============================================
+   РЕКВИЗИТЫ ОРГАНИЗАЦИИ
+   ============================================ */
+
+.completed-company-details {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.completed-divider-line {
+  height: 2px;
+  background: #000;
+  margin: 10px 0;
+}
+
+.completed-details-text {
+  font-size: 11px;
+  line-height: 1.3;
+  margin-bottom: 2px;
+}
+
+/* ============================================
+   ЗАГОЛОВОК АКТА
+   ============================================ */
+
+.completed-document-title {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.completed-document-title h1 {
+  font-size: 18pt;
+  font-weight: bold;
+  margin: 0 0 15px 0;
+  color: #000;
+  text-transform: uppercase;
+}
+
+.completed-date-line {
+  font-size: 12pt;
+  margin-bottom: 20px;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.completed-act-number {
+  font-weight: bold;
+}
+
+/* ============================================
+   СОДЕРЖАНИЕ ДОКУМЕНТА
+   ============================================ */
+
+.completed-document-content {
+  text-align: left;
+  line-height: 1.6;
+}
+
+.completed-content-section {
+  margin-bottom: 20px;
+}
+
+.completed-section-title {
+  font-weight: bold;
+  font-size: 13px;
+  margin-bottom: 8px;
+  color: #000;
+}
+
+.completed-field-value {
+  border-bottom: 1px solid #000;
+  min-width: 20px;
+  display: inline-block;
+  padding: 0 2px;
+  margin: 0 2px;
+}
+
+.completed-field-value.completed-underline {
+  border-bottom: 1px solid #000;
+}
+
+.completed-field-description {
+  font-size: 10pt;
+  color: #666;
+  font-style: italic;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+/* ============================================
+   СЕКЦИИ ОПИСАНИЯ РАБОТ
+   ============================================ */
+
+.completed-work-description,
+.completed-equipment-used,
+.completed-quality-assessment {
+  margin-bottom: 10px;
+  min-height: 40px;
+}
+
+.completed-work-text,
+.completed-equipment-text,
+.completed-quality-text {
+  padding: 8px;
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+  min-height: 60px;
+  line-height: 1.5;
+}
+
+.completed-work-placeholder,
+.completed-equipment-placeholder,
+.completed-quality-placeholder {
+  line-height: 2;
+  color: #000;
+}
+
+.completed-defects-text,
+.completed-recommendations-text,
+.completed-notes-text {
+  padding: 8px;
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+  min-height: 40px;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+/* ============================================
+   СЕКЦИИ ПОДПИСЕЙ
+   ============================================ */
+
+.completed-signatures-section {
+  margin: 30px 0;
+  border-top: 1px solid #ddd;
+  padding-top: 20px;
+}
+
+.completed-signatures-title {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.completed-signature-block {
+  margin-bottom: 25px;
+}
+
+.completed-signature-line {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 8px 0;
+}
+
+.completed-signature-placeholder {
+  border-bottom: 1px solid #000;
+  min-width: 200px;
+  display: inline-block;
+  padding: 2px 0;
+}
+
+.completed-signature-name {
+  font-size: 11px;
+  color: #333;
+}
+
+/* ============================================
+   ПРИМЕЧАНИЕ
+   ============================================ */
+
+.completed-note-section {
+  margin-top: 30px;
+  padding-top: 15px;
+  border-top: 1px solid #ddd;
+  font-size: 11px;
+  line-height: 1.4;
+  text-align: justify;
+  color: #666;
+}
+
+/* ============================================
+   СТИЛИ ПЕЧАТИ
+   ============================================ */
+
+@media print {
+  .completed-form-container {
+    background: white;
+    padding: 0;
+    box-shadow: none;
+  }
+
+  .completed-print-actions {
+    display: none;
+  }
+
+  .completed-print-content-scrollable {
+    box-shadow: none;
+    border: none;
+    background: white;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .completed-print-content {
+    padding: 20mm;
+    margin: 0;
+    box-shadow: none;
+    max-width: none;
+    min-height: auto;
+  }
+
+  .completed-document-title h1 {
+    font-size: 16pt;
+  }
+
+  .completed-section-title {
+    font-size: 12px;
+  }
+
+  .completed-signatures-section {
+    page-break-inside: avoid;
+  }
+
+  .completed-content-section {
+    page-break-inside: avoid;
+  }
+
+  /* Разрешаем разрыв страницы перед подписями если нужно */
+  .completed-signatures-section {
+    page-break-before: auto;
+  }
+}
+
+/* ============================================
+   АДАПТИВНОСТЬ ДЛЯ ПРОСМОТРА
+   ============================================ */
+
+@media screen and (max-width: 768px) {
+  .completed-form-container {
+    padding: 10px;
+  }
+
+  .completed-print-content {
+    padding: 20px 15px;
+    font-size: 11px;
+  }
+
+  .completed-document-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+
+  .completed-logo-section {
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+
+  .completed-date-line {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .completed-signature-line {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .completed-signature-placeholder {
+    min-width: 150px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .completed-print-content {
+    padding: 15px 10px;
+    font-size: 10px;
+  }
+
+  .completed-document-title h1 {
+    font-size: 14pt;
+  }
+
+  .completed-logo-circle {
+    width: 45px;
+    height: 45px;
+  }
+
+  .completed-company-name {
+    font-size: 14px;
+  }
+
+  .completed-department {
+    font-size: 12px;
+  }
+
+  .completed-qr-placeholder {
+    width: 40px;
+    height: 40px;
+    font-size: 8px;
+  }
+
+  .completed-work-text,
+  .completed-equipment-text,
+  .completed-quality-text {
+    padding: 5px;
+    min-height: 40px;
+  }
+}
+
+/* ============================================
+   СПЕЦИАЛЬНЫЕ СТИЛИ ДЛЯ ФОРМАТИРОВАНИЯ
+   ============================================ */
+
+.completed-content-line {
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.completed-inline-field {
+  display: inline-block;
+  margin: 0 5px;
+}
+
+.completed-date-fields {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.completed-work-description .completed-work-text {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.completed-equipment-used .completed-equipment-text {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* ============================================
+   ЦВЕТОВАЯ СХЕМА ДЛЯ СЕКЦИЙ
+   ============================================ */
+
+.completed-content-section:nth-child(1) {
+  border-left: 3px solid #3b82f6;
+  padding-left: 10px;
+}
+
+.completed-content-section:nth-child(2) {
+  border-left: 3px solid #10b981;
+  padding-left: 10px;
+}
+
+.completed-content-section:nth-child(3) {
+  border-left: 3px solid #f59e0b;
+  padding-left: 10px;
+}
+
+.completed-content-section:nth-child(4) {
+  border-left: 3px solid #ef4444;
+  padding-left: 10px;
+}
+
+/* При печати убираем цветные границы */
+@media print {
+  .completed-content-section {
+    border-left: none;
+    padding-left: 0;
+  }
+}
