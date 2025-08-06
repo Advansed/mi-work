@@ -100,7 +100,8 @@ export const useLics = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const loadLics = async () => {
+
+  const loadLics    = async () => {
     setLoading(true);
     setError(null);
     
@@ -124,7 +125,8 @@ export const useLics = () => {
 
   };
 
-  const addLics = async (lc) => {
+  
+  const addLics     = async (lc) => {
 
     console.log("addLics")
     console.log( lc )
@@ -150,14 +152,15 @@ export const useLics = () => {
 
   }
 
-  const deleteLics = async (lc) => {
+
+  const deleteLics  = async (lc) => {
 
     console.log("deleteLic")
     console.log( lc )
 
     try {
       // Здесь будет вызов API метода get_lics
-      const response = await getData('deleteLic',{ token: Store.getState().login.token, lc: lc })
+      const response = await getData( 'deleteLic', { token: Store.getState().login.token, lc: lc } )
 
       const result: ILicsResponse = response;
       console.log( result )
@@ -176,16 +179,19 @@ export const useLics = () => {
 
   }
 
+  
   const handleLicClick = (licAccount: ILicAccount) => {
     // Навигация к детальной карточке
     console.log('Navigate to lic details:', licAccount.id);
     // Здесь будет роутинг: navigate(`/lic/${licAccount.id}`)
   };
 
+  
   const refreshData = () => {
     loadLics();
   };
 
+  
   useEffect(() => {
     loadLics();
   }, []);

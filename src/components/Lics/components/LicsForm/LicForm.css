@@ -1,0 +1,310 @@
+/* ============================================
+   СТИЛИ ДЛЯ ИНФОРМАЦИОННОЙ ФОРМЫ ЛИЦЕВОГО СЧЕТА
+   ============================================ */
+
+/* Поля информации */
+.lic-info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lic-info-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--lics-corporate-border);
+}
+
+.lic-info-field.full-width {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.lic-info-field label {
+  font-weight: 600;
+  color: var(--lics-corporate-text);
+  font-size: 14px;
+  min-width: 120px;
+}
+
+.lic-info-value {
+  color: var(--lics-corporate-primary);
+  font-weight: 500;
+  text-align: right;
+  word-wrap: break-word;
+  max-width: 60%;
+}
+
+.lic-info-field.full-width .lic-info-value {
+  text-align: left;
+  max-width: 100%;
+}
+
+/* ============================================
+   ЗАДОЛЖЕННОСТИ
+   ============================================ */
+
+.debts-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.debt-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--lics-corporate-secondary);
+  border-radius: 6px;
+  border-left: 3px solid var(--lics-corporate-border);
+}
+
+.debt-service {
+  font-size: 13px;
+  color: var(--lics-corporate-text);
+  flex: 1;
+}
+
+.debt-sum {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.debt-positive {
+  color: var(--lics-corporate-error);
+}
+
+.debt-negative {
+  color: var(--lics-corporate-success);
+}
+
+.debt-none {
+  color: var(--lics-corporate-text);
+}
+
+/* ============================================
+   СЧЕТЧИКИ
+   ============================================ */
+
+.counters-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.counter-item {
+  padding: 12px;
+  background: rgba(30, 58, 138, 0.02);
+  border: 1px solid var(--lics-corporate-border);
+  border-radius: 8px;
+  border-left: 4px solid var(--lics-corporate-blue);
+}
+
+.counter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.counter-code {
+  font-weight: 600;
+  color: var(--lics-corporate-primary);
+  font-size: 16px;
+}
+
+.counter-type {
+  background: var(--lics-corporate-accent);
+  color: var(--lics-corporate-white);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.counter-name {
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: var(--lics-corporate-text);
+}
+
+.counter-data {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.counter-data span {
+  background: var(--lics-corporate-white);
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb;
+}
+
+/* ============================================
+   ДОГОВОРЫ
+   ============================================ */
+
+.agrees-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.agree-item {
+  padding: 12px;
+  background: rgba(16, 185, 129, 0.02);
+  border: 1px solid var(--lics-corporate-border);
+  border-radius: 8px;
+  border-left: 4px solid var(--lics-corporate-success);
+}
+
+.agree-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.agree-name {
+  font-weight: 600;
+  color: var(--lics-corporate-primary);
+}
+
+.agree-status {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.agree-status.активен {
+  background: var(--lics-corporate-success);
+  color: var(--lics-corporate-white);
+}
+
+.agree-status.завершен {
+  background: var(--lics-corporate-warning);
+  color: var(--lics-corporate-white);
+}
+
+.agree-status.приостановлен {
+  background: var(--lics-corporate-error);
+  color: var(--lics-corporate-white);
+}
+
+.agree-details {
+  font-size: 13px;
+  color: #6b7280;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ============================================
+   ОБОРУДОВАНИЕ
+   ============================================ */
+
+.equips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.equip-item {
+  padding: 12px;
+  background: rgba(249, 115, 22, 0.02);
+  border: 1px solid var(--lics-corporate-border);
+  border-radius: 8px;
+  border-left: 4px solid var(--lics-corporate-accent);
+}
+
+.equip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.equip-type {
+  font-weight: 600;
+  color: var(--lics-corporate-primary);
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+.equip-status {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.equip-status.active {
+  background: var(--lics-corporate-success);
+  color: var(--lics-corporate-white);
+}
+
+.equip-status.inactive {
+  background: var(--lics-corporate-error);
+  color: var(--lics-corporate-white);
+}
+
+.equip-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.equip-name {
+  font-weight: 500;
+  color: var(--lics-corporate-text);
+  margin-bottom: 2px;
+}
+
+.equip-number {
+  font-size: 13px;
+  color: #6b7280;
+  font-family: monospace;
+}
+
+/* ============================================
+   АДАПТИВНОСТЬ
+   ============================================ */
+
+@media (max-width: 768px) {
+  .lic-info-field {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .lic-info-value {
+    text-align: left;
+    max-width: 100%;
+  }
+  
+  .counter-data {
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .agree-header,
+  .equip-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
