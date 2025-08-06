@@ -7,6 +7,7 @@ interface LicsListProps {
   loading: boolean;
   error: string | null;
   onLicClick: (licAccount: ILicAccount) => void;
+  onLicDel: (lic: string) => void;
   formatSum: (sum: number) => string;
   getTotalDebt: (debts: IDebt[]) => number;
   formatAddress: (address: string) => string;
@@ -18,11 +19,19 @@ const LicsList: React.FC<LicsListProps> = ({
   loading,
   error,
   onLicClick,
+  onLicDel,
   formatSum,
   getTotalDebt,
   formatAddress,
   getDebtStatus
 }) => {
+
+   const handleDelete = (licAccount: ILicAccount, event: React.MouseEvent) => {
+    event.stopPropagation(); // Предотвращаем клик по карточке
+    console.log('Удаление лицевого счета:', licAccount.code, licAccount.id);
+    onLicDel( licAccount.code )
+  };
+
   if (loading) {
     return <div className={styles.loading}>Загрузка...</div>;
   }
@@ -56,6 +65,13 @@ const LicsList: React.FC<LicsListProps> = ({
                     <span className={styles.debtIndicator}>●</span>
                   )}
                 </div>
+                 <button 
+                    className={styles.deleteButton}
+                    onClick={(e) => handleDelete( lic , e)}
+                    title="Удалить лицевой счет"
+                  >
+                    🗑️
+                  </button>
               </div>
               
               <div className={styles.itemBody}>

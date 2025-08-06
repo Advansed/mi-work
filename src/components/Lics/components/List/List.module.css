@@ -186,6 +186,44 @@
   background: rgba(255, 255, 255, 0.3);
   transform: scale(1.1);
 }
+
+/* Добавить в List.module.css */
+
+/* Контейнер для действий в заголовке */
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Кнопка удаления */
+.deleteButton {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 4px 6px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #dc2626;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+}
+
+.deleteButton:hover {
+  background: #fecaca;
+  border-color: #f87171;
+  transform: scale(1.05);
+}
+
+.deleteButton:active {
+  background: #dc2626;
+  color: white;
+  transform: scale(0.95);
+}
 /* Адаптивность */
 @media (max-width: 768px) {
   .container {

@@ -150,6 +150,32 @@ export const useLics = () => {
 
   }
 
+  const deleteLics = async (lc) => {
+
+    console.log("deleteLic")
+    console.log( lc )
+
+    try {
+      // Здесь будет вызов API метода get_lics
+      const response = await getData('deleteLic',{ token: Store.getState().login.token, lc: lc })
+
+      const result: ILicsResponse = response;
+      console.log( result )
+      
+      if (result.success) {
+        setData(result.data);
+      } else {
+        setError(result.message || 'Ошибка загрузки данных');
+      }
+    } catch (err) {
+      setError('Ошибка сети или сервера');
+      console.error('Error loading lics:', err);
+    } finally {
+      setLoading(false);
+    }
+
+  }
+
   const handleLicClick = (licAccount: ILicAccount) => {
     // Навигация к детальной карточке
     console.log('Navigate to lic details:', licAccount.id);
@@ -171,6 +197,7 @@ export const useLics = () => {
     refreshData,
     handleLicClick,
     addLics,
+    deleteLics,
     // Утилиты
     formatSum,
     getTotalDebt,

@@ -14,6 +14,7 @@ const Lics: React.FC = () => {
     refreshData,
     handleLicClick,
     addLics,
+    deleteLics,
     formatSum,
     getTotalDebt,
     formatAddress,
@@ -40,6 +41,10 @@ const Lics: React.FC = () => {
     addLics( lic )
     closeAddLicModal();
   };
+  const handleLicDel = (lic: string) => {
+    console.log('deleting lic:', lic);
+    deleteLics( lic )
+  };
 
   return (
     <div className={styles.container}>
@@ -65,6 +70,7 @@ const Lics: React.FC = () => {
           loading         = { loading }
           error           = { error }
           onLicClick      = { handleLicClick }
+          onLicDel        = { handleLicDel }
           formatSum       = { formatSum }
           getTotalDebt    = { getTotalDebt }
           formatAddress   = { formatAddress }
