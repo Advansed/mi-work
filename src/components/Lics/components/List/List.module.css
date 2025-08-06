@@ -1,158 +1,171 @@
 .container {
-  padding: 20px;
-  max-width: 100%;
+  padding: 16px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
 }
 
 .title {
-  color: #2c3e50;
-  margin-bottom: 20px;
   font-size: 24px;
   font-weight: 600;
-}
-
-.loading, .error, .empty {
-  text-align: center;
-  padding: 40px;
-  font-size: 16px;
+  margin-bottom: 20px;
+  color: #2c3e50;
 }
 
 .loading {
-  color: #3498db;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 16px;
+  color: #6c757d;
 }
 
 .error {
-  color: #e74c3c;
-  background-color: #fdf2f2;
-  border: 1px solid #fecaca;
+  padding: 16px;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
   border-radius: 8px;
+  color: #721c24;
+  text-align: center;
 }
 
-.empty {
-  color: #6b7280;
+.itemsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.tableWrapper {
-  overflow-x: auto;
+.item {
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: white;
-  font-size: 14px;
-}
-
-.table th {
-  background-color: #f8fafc;
-  color: #374151;
-  font-weight: 600;
-  padding: 12px 16px;
-  text-align: left;
-  border-bottom: 2px solid #e5e7eb;
-}
-
-.table td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #f3f4f6;
-}
-
-.row {
+  padding: 16px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.row:hover {
-  background-color: #f9fafb;
+.item:hover {
+  border-color: #007bff;
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.1);
+  transform: translateY(-1px);
 }
 
-.row:last-child td {
-  border-bottom: none;
-}
-
-/* Цветовые индикаторы долгов */
-.debtPositive {
-  border-left: 4px solid #ef4444;
-}
-
-.debtNegative {
-  border-left: 4px solid #22c55e;
-}
-
-.debtNone {
-  border-left: 4px solid #e5e7eb;
+.itemHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e9ecef;
 }
 
 .code {
-  font-family: 'Courier New', monospace;
+  font-size: 18px;
   font-weight: 600;
-  color: #1f2937;
+  color: #495057;
 }
 
-.name {
-  font-weight: 500;
-  color: #111827;
-}
-
-.address {
-  color: #6b7280;
-  font-size: 13px;
-  max-width: 300px;
-}
-
-.plot {
-  color: #374151;
-  font-weight: 500;
-}
-
-.debt {
-  text-align: right;
-  position: relative;
+.debtContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .debtSum {
-  font-weight: 600;
-}
-
-.debtPositive .debtSum {
-  color: #dc2626;
-}
-
-.debtNegative .debtSum {
-  color: #16a34a;
-}
-
-.debtNone .debtSum {
-  color: #6b7280;
+  font-size: 16px;
+  font-weight: 500;
 }
 
 .debtIndicator {
-  color: #ef4444;
-  font-size: 18px;
-  margin-left: 8px;
-  vertical-align: middle;
+  color: #dc3545;
+  font-size: 12px;
+}
+
+.itemBody {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #343a40;
+}
+
+.address {
+  font-size: 14px;
+  color: #6c757d;
+  line-height: 1.4;
+}
+
+.plot {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.empty {
+  text-align: center;
+  padding: 40px;
+  color: #6c757d;
+  font-size: 16px;
+}
+
+/* Статусы долгов */
+.debtNone {
+  border-left: 4px solid #28a745;
+}
+
+.debtNone .debtSum {
+  color: #28a745;
+}
+
+.debtPositive {
+  border-left: 4px solid #dc3545;
+}
+
+.debtPositive .debtSum {
+  color: #dc3545;
+}
+
+.debtNegative {
+  border-left: 4px solid #6c757d;
+}
+
+.debtNegative .debtSum {
+  color: #6c757d;
 }
 
 /* Адаптивность */
 @media (max-width: 768px) {
   .container {
-    padding: 10px;
+    padding: 12px;
   }
   
-  .table {
-    font-size: 12px;
+  .title {
+    font-size: 20px;
+    margin-bottom: 16px;
   }
   
-  .table th,
-  .table td {
-    padding: 8px 12px;
+  .item {
+    padding: 12px;
   }
   
-  .address {
-    max-width: 200px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  .itemHeader {
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .debtContainer {
+    align-self: flex-end;
+  }
+  
+  .code {
+    font-size: 16px;
+  }
+  
+  .name {
+    font-size: 15px;
   }
 }
