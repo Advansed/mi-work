@@ -3,18 +3,21 @@ import LicsList from './components/List/LicsList';
 import FindLics from './components/FindLic/FindLics';
 import { useLics } from './useLics';
 import styles from './Lics.module.css';
+import { LicForm } from './components/LicsForm';
 
 const Lics: React.FC = () => {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
   
   const {
     data,
+    item,
     loading,
     error,
     refreshData,
     handleLicClick,
     addLics,
     deleteLics,
+    setItem,
     formatSum,
     getTotalDebt,
     formatAddress,
@@ -25,7 +28,7 @@ const Lics: React.FC = () => {
 
 
   // Заменить состояние
-  const [isAddLicModalOpen, setIsAddLicModalOpen] = useState<boolean>(false);
+  const [ isAddLicModalOpen, setIsAddLicModalOpen ] = useState<boolean>(false);
 
   // Заменить функции
   const openAddLicModal = () => {
@@ -80,12 +83,19 @@ const Lics: React.FC = () => {
 
       {isAddLicModalOpen && (
         <FindLics
-          isOpen    = { isAddLicModalOpen }
-          onClose   = { closeAddLicModal }
-          onSelect  = { handleLicAdd }
+          isOpen      = { isAddLicModalOpen }
+          onClose     = { closeAddLicModal }
+          onSelect    = { handleLicAdd }
         />
       )}
 
+      {item && (
+        <LicForm 
+          isOpen      = { item !== null }
+          licAccount  = { item }
+          onClose     = { ()=> setItem( undefined ) }
+        />  
+      )}
     </div>
   );
 };

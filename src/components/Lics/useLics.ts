@@ -96,9 +96,10 @@ export const getDebtStatus = (debts: IDebt[]): 'none' | 'positive' | 'negative' 
 
 // Хук
 export const useLics = () => {
-  const [data, setData] = useState<ILicAccount[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const [ data,     setData ]     = useState<ILicAccount[]>([]);
+  const [ item,     setItem ]     = useState<ILicAccount>()
+  const [ loading,  setLoading ]  = useState<boolean>(false);
+  const [ error,    setError ]    = useState<string | null>(null);
 
 
   const loadLics    = async () => {
@@ -183,7 +184,7 @@ export const useLics = () => {
   const handleLicClick = (licAccount: ILicAccount) => {
     // Навигация к детальной карточке
     console.log('Navigate to lic details:', licAccount.id);
-    // Здесь будет роутинг: navigate(`/lic/${licAccount.id}`)
+    setItem( licAccount )
   };
 
   
@@ -191,15 +192,17 @@ export const useLics = () => {
     loadLics();
   };
 
-  
+
   useEffect(() => {
     loadLics();
   }, []);
 
   return {
     data,
+    item,
     loading,
     error,
+    setItem,
     refreshData,
     handleLicClick,
     addLics,

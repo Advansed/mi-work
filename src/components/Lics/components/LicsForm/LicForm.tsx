@@ -17,7 +17,7 @@ import './LicForm.css';
 interface LicFormProps {
   isOpen: boolean;
   onClose: () => void;
-  licAccount: ILicAccount | null;
+  licAccount: ILicAccount | undefined;
   loading?: boolean;
 }
 
@@ -72,16 +72,9 @@ const LicForm: React.FC<LicFormProps> = ({
                 <label>Участок:</label>
                 <span className="lic-info-value">{licAccount.plot}</span>
               </div>
-            </div>
-          </div>
-
-          {/* Адресная информация */}
-          <div className="lics-level-container">
-            <span className="lics-level-label">Адрес</span>
-            <div className="lic-info-row">
-              <div className="lic-info-field full-width">
+              <div className="lic-info-field">
                 <label>Адрес:</label>
-                <span className="lic-info-value">{formatAddress(licAccount.address_go)}</span>
+                <span className="lic-info-value">{licAccount.address_go}</span>
               </div>
             </div>
           </div>
