@@ -18,7 +18,7 @@ import { locationOutline, ellipsisHorizontal, chevronDownOutline, saveOutline } 
 import { useDaData } from '../../dadata-component/useDaData';
 import { ConfidenceLevel, StandardizedAddress } from '../../dadata-component/types';
 import { useToast } from '../../Toast/useToast';
-import './AddressForm.css';
+import './FindAddress.css';
 
 interface LicsProps {
     initialAddress?: string;

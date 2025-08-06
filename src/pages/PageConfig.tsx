@@ -9,7 +9,8 @@ import {
     chatbubbleOutline,
     personOutline,
     statsChartOutline,
-    settingsOutline
+    settingsOutline,
+    listOutline
 } from 'ionicons/icons';
 import { PageConfigMap, UserRole, PageName, MenuGroup, UserAccess, PageConfig } from './pageTypes';
 
@@ -31,6 +32,7 @@ const InvoicesPage = React.lazy(() => import('../components/Invoices/components/
 
 // Служебные страницы - импортируем напрямую из-за специфики использования
 import { NotFoundPage, AccessDeniedPage, LoadingPage } from '../components/Common/NotFoundPages';
+import Lics from '../components/Lics/Lics';
 
 // ============================================
 // КОНФИГУРАЦИЯ СТРАНИЦ
@@ -46,6 +48,14 @@ export const pageConfig: PageConfigMap = {
         roles: ['master', 'technician', 'plumber', 'dispatcher', 'subcontractor'],
         description: 'Список активных заявок'
     },
+    // Заявки
+    lics: {
+        component: Lics,
+        title: 'Лицевые счета',
+        icon: listOutline,
+        roles: ['master', 'technician', 'plumber', 'dispatcher', 'subcontractor'],
+        description: 'Лицевые счета'
+    },
 
 };
 
@@ -56,7 +66,7 @@ export const pageConfig: PageConfigMap = {
 export const menuGroups: MenuGroup[] = [
     {
         title: 'Основное',
-        pages: ['dashboard', 'invoices']
+        pages: ['dashboard', 'invoices', 'lics']
     },
     {
         title: 'Работа',
@@ -79,7 +89,7 @@ export const menuGroups: MenuGroup[] = [
 export const roleAccess: Record<UserRole, UserAccess> = {
     master: {
         role: 'master',
-        allowedPages: [ 'invoices' ],
+        allowedPages: [ 'invoices', 'lics' ],
         defaultPage: 'invoices'
     },
     
@@ -132,7 +142,7 @@ export const getAllowedPages = (userRole: UserRole): PageName[] => {
 
 export const getMenuItems = (userRole: UserRole) => {
     const allowedPages = getAllowedPages(userRole);
-    
+    console.log(allowedPages)
     return menuGroups.map(group => ({
         ...group,
         pages: group.pages.filter(page => allowedPages.includes(page))

@@ -3,21 +3,21 @@ import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { IonModal, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonButtons, IonIcon, IonLoading } from '@ionic/react';
 import { close, save } from 'ionicons/icons';
 import { useLics } from './useFindLics';
-import './LicsForm.css';
+import './FindLics.css';
 import DropdownFilter from './DropDownFilter';
 
 interface LicsFormProps {
-    address: string;
-    invoiceId: string;
-    onUpdateLics: () => void;
+    address?: string;
+    invoiceId?: string;
+    onSelect: ( lic: string ) => void;
     isOpen: boolean;
     onClose: () => void;
 }
 
-const LicsForm: React.FC<LicsFormProps> = ({ 
+const FindLics: React.FC<LicsFormProps> = ({ 
     address, 
     invoiceId, 
-    onUpdateLics, 
+    onSelect, 
     isOpen, 
     onClose 
 }) => {
@@ -26,7 +26,8 @@ const LicsForm: React.FC<LicsFormProps> = ({
         loadSettlements, loadStreets, loadHouses, loadKv, loadLics 
     } = useLics();
 
-    const [ info, setInfo ] = useState('')
+    const [ info,   setInfo ] = useState('')
+    const [ lic,    setLic  ] = useState('')
 
     // Оптимизированный handleSelect с useCallback
     const handleSelect = useCallback((item: any) => {
@@ -58,7 +59,7 @@ const LicsForm: React.FC<LicsFormProps> = ({
                 loadLics(item.items);
                 break;
             case "lics":
-                // Выбран лицевой счет
+                setLic( item.name )
                 break;
         }
     }, [loadSettlements, loadStreets, loadHouses, loadKv, loadLics, info]);
@@ -136,10 +137,10 @@ const LicsForm: React.FC<LicsFormProps> = ({
     }, [onClose]);
 
     const handleSave = useCallback(() => {
-        if (onUpdateLics) {
-            onUpdateLics();
+        if (onSelect) {
+            onSelect( lic );
         }
-    }, [onUpdateLics]);
+    }, [onSelect]);
 
     return (
         <>
@@ -195,4 +196,4 @@ const LicsForm: React.FC<LicsFormProps> = ({
     );
 };
 
-export default React.memo(LicsForm);
+export default React.memo( FindLics );

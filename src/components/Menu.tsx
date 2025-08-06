@@ -31,7 +31,7 @@ const Menu: React.FC = () => {
 
     // Получаем пункты меню для текущей роли
     const menuItems = userRole ? getMenuItems(userRole) : [];
-
+    console.log( menuItems)
     // Обработчик выхода
     const handleLogout = () => {
         // Очищаем Store

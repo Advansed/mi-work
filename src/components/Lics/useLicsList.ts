@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getData, Store } from '../Store';
 
 // Типы/интерфейсы
 export interface IDebt {
@@ -105,15 +106,9 @@ export const useLicsList = () => {
     
     try {
       // Здесь будет вызов API метода get_lics
-      const response = await fetch('/api/get_lics', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({})
-      });
+      const response = await getData('getlics',{ token: Store.getState().login.token })
 
-      const result: ILicsResponse = await response.json();
+      const result: ILicsResponse = response;
       
       if (result.success) {
         setData(result.data);

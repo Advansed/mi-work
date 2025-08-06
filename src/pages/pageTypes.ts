@@ -9,6 +9,7 @@ export type UserRole = 'master' | 'technician' | 'plumber' | 'dispatcher' | 'sub
 export type PageName = 
     | 'dashboard'
     | 'invoices' 
+    | 'lics' 
     | 'maintenance'
     | 'repairs'
     | 'schedule'

@@ -5,7 +5,7 @@ import { callOutline, locationOutline, timeOutline, documentOutline, printOutlin
 import { Invoice, InvoiceStatus } from '../types';
 import './InvoiceView.css';
 import { AddressForm } from '../../Lics/components/FindAddress';
-import LicsForm from '../../Lics/components/FindLics';
+import FindLics from '../../Lics/components/FindLics';
 
 interface InvoiceViewProps {
     invoice: Invoice;
@@ -244,10 +244,10 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
             {
                 isAccountSearchModalOpen 
                     ? <>
-                        <LicsForm
+                        <FindLics
                             address         = { invoice.address } 
                             invoiceId       = { invoice.id } 
-                            onUpdateLics    = { ()=>{}} 
+                            onSelect        = { (lic)=>{ console.log(lic)}} 
                             isOpen          = { isAccountSearchModalOpen } 
                             onClose         = { ()=>{ setIsAccountSearchModalOpen(false)} }
                         />

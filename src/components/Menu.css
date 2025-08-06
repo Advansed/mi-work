@@ -173,10 +173,10 @@
    ============================================ */
 
 .menu-corporate .menu-item {
-  --background: var(--menu-corporate-white) !important;
   --color: var(--menu-corporate-text) !important;
   --border-color: var(--menu-corporate-border) !important;
-  background: var(--menu-corporate-white) !important;
+  --background: var(--menu-corporate-selected) !important;
+  background: var(--menu-corporate-selected) !important;
   border: 1px solid var(--menu-corporate-border) !important;
   border-radius: 8px !important;
   margin-bottom: 8px !important;
@@ -192,9 +192,9 @@
 }
 
 .menu-corporate .menu-item:hover {
-  --background: var(--menu-corporate-hover) !important;
+  /* --background: var(--menu-corporate-hover) !important;
   background: var(--menu-corporate-hover) !important;
-  border-left-color: var(--menu-corporate-accent) !important;
+  border-left-color: var(--menu-corporate-accent) !important; */
   transform: translateX(4px) !important;
   box-shadow: 0 4px 8px rgba(249, 115, 22, 0.2) !important;
 }
