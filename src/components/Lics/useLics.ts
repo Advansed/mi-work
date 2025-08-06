@@ -9,13 +9,15 @@ export interface IDebt {
 }
 
 export interface ICounter {
-  id: string;
-  code: string;
-  name: string;
-  tip: string;
-  indice: number;
-  period: string;
-  poverka: string;
+  id:           string;
+  code:         string;
+  name:         string;
+  tip:          string;
+  indice:       number;
+  period:       string;
+  poverka:      string;
+  seal:         string;
+  seal_date:    string;
 }
 
 export interface IAgree {

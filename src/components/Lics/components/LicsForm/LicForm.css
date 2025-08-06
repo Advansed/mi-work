@@ -1,54 +1,202 @@
 /* ============================================
-   СТИЛИ ДЛЯ ИНФОРМАЦИОННОЙ ФОРМЫ ЛИЦЕВОГО СЧЕТА
+   ОСНОВНЫЕ ПЕРЕМЕННЫЕ
    ============================================ */
+:root {
+  --lics-corporate-primary: #1e3a8a;
+  --lics-corporate-secondary: #3b82f6;
+  --lics-corporate-accent: #f97316;
+  --lics-corporate-success: #10b981;
+  --lics-corporate-warning: #f59e0b;
+  --lics-corporate-error: #ef4444;
+  --lics-corporate-text: #1f2937;
+  --lics-corporate-light-text: #6b7280;
+  --lics-corporate-border: #e5e7eb;
+  --lics-corporate-background: #f9fafb;
+  --lics-corporate-white: #ffffff;
+  --lics-corporate-blue: #3b82f6;
+}
 
-/* Поля информации */
-.lic-info-row {
-  display: flex;
-  flex-direction: column;
+/* ============================================
+   МОДАЛЬНОЕ ОКНО
+   ============================================ */
+.lics-form-modal {
+  --height: 90vh;
+  --width: 90vw;
+  --max-width: 800px;
+  --border-radius: 12px;
+}
+
+.lics-form-modal ion-header ion-toolbar {
+  --background: var(--lics-corporate-primary);
+  --color: var(--lics-corporate-white);
+}
+
+.close-button {
+  --color: var(--lics-corporate-white);
+}
+
+/* ============================================
+   ЕДИНЫЙ CARD
+   ============================================ */
+.lic-form-card {
+  background: var(--lics-corporate-white);
+  border-radius: 12px;
+  margin: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* ============================================
+   ОСНОВНАЯ ИНФОРМАЦИЯ (СТАТИЧНАЯ)
+   ============================================ */
+.lic-main-info {
+  padding: 20px;
+  background: linear-gradient(135deg, var(--lics-corporate-primary), var(--lics-corporate-secondary));
+  color: var(--lics-corporate-white);
+}
+
+.lic-main-title {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.lic-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
 
 .lic-info-field {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--lics-corporate-border);
-}
-
-.lic-info-field.full-width {
   flex-direction: column;
-  align-items: flex-start;
   gap: 4px;
 }
 
 .lic-info-field label {
-  font-weight: 600;
-  color: var(--lics-corporate-text);
-  font-size: 14px;
-  min-width: 120px;
+  font-size: 12px;
+  opacity: 0.8;
+  text-transform: uppercase;
+  font-weight: 500;
 }
 
 .lic-info-value {
-  color: var(--lics-corporate-primary);
-  font-weight: 500;
-  text-align: right;
-  word-wrap: break-word;
-  max-width: 60%;
-}
-
-.lic-info-field.full-width .lic-info-value {
-  text-align: left;
-  max-width: 100%;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 /* ============================================
-   ЗАДОЛЖЕННОСТИ
+   АККОРДЕОН КОНТЕЙНЕР
    ============================================ */
+.accordion-container {
+  padding: 0;
+}
+
+/* ============================================
+   АККОРДЕОН СЕКЦИИ
+   ============================================ */
+.accordion-section {
+  border-bottom: 1px solid var(--lics-corporate-border);
+}
+
+.accordion-section:last-child {
+  border-bottom: none;
+}
+
+.accordion-header {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 16px;
+}
+
+.accordion-header:hover {
+  background-color: var(--lics-corporate-background);
+}
+
+.accordion-title {
+  font-weight: 600;
+  color: var(--lics-corporate-primary);
+  text-align: left;
+}
+
+.accordion-icon {
+  color: var(--lics-corporate-light-text);
+  font-size: 20px;
+  transition: transform 0.2s ease;
+}
+
+.accordion-content {
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.2s ease;
+}
+
+.accordion-content.closed {
+  max-height: 0;
+  opacity: 0;
+}
+
+.accordion-content.open {
+  max-height: 1000px;
+  opacity: 1;
+}
+
+.accordion-content > div {
+  padding: 0 20px 20px 20px;
+}
+
+/* ============================================
+   ЗАДОЛЖЕННОСТЬ
+   ============================================ */
+.debt-section.debt-positive .accordion-title {
+  color: var(--lics-corporate-error);
+}
+
+.debt-section.debt-negative .accordion-title {
+  color: var(--lics-corporate-success);
+}
+
+.debt-total {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: var(--lics-corporate-background);
+  border-radius: 8px;
+}
+
+.debt-total .lic-info-field {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.debt-total label {
+  color: var(--lics-corporate-text);
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: none;
+}
+
+.debt-positive {
+  color: var(--lics-corporate-error) !important;
+  font-weight: 600;
+}
+
+.debt-negative {
+  color: var(--lics-corporate-success) !important;
+  font-weight: 600;
+}
+
+.debt-zero {
+  color: var(--lics-corporate-light-text) !important;
+}
 
 .debts-list {
-  margin-top: 12px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -58,49 +206,34 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 12px;
-  background: var(--lics-corporate-secondary);
+  padding: 10px 12px;
+  background: var(--lics-corporate-white);
+  border: 1px solid var(--lics-corporate-border);
   border-radius: 6px;
-  border-left: 3px solid var(--lics-corporate-border);
 }
 
 .debt-service {
-  font-size: 13px;
+  font-weight: 500;
   color: var(--lics-corporate-text);
-  flex: 1;
 }
 
 .debt-sum {
   font-weight: 600;
-  font-size: 14px;
-}
-
-.debt-positive {
-  color: var(--lics-corporate-error);
-}
-
-.debt-negative {
-  color: var(--lics-corporate-success);
-}
-
-.debt-none {
-  color: var(--lics-corporate-text);
+  font-family: monospace;
 }
 
 /* ============================================
-   СЧЕТЧИКИ
+   ПРИБОРЫ УЧЕТА
    ============================================ */
-
 .counters-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: 12px;
 }
 
 .counter-item {
   padding: 12px;
-  background: rgba(30, 58, 138, 0.02);
+  background: rgba(59, 130, 246, 0.02);
   border: 1px solid var(--lics-corporate-border);
   border-radius: 8px;
   border-left: 4px solid var(--lics-corporate-blue);
@@ -153,12 +286,10 @@
 /* ============================================
    ДОГОВОРЫ
    ============================================ */
-
 .agrees-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: 12px;
 }
 
 .agree-item {
@@ -213,14 +344,12 @@
 }
 
 /* ============================================
-   ОБОРУДОВАНИЕ
+   ГАЗОВОЕ ОБОРУДОВАНИЕ
    ============================================ */
-
 .equips-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: 12px;
 }
 
 .equip-item {
@@ -281,10 +410,29 @@
 }
 
 /* ============================================
+   ПУСТЫЕ СЕКЦИИ
+   ============================================ */
+.empty-section {
+  padding: 20px;
+  text-align: center;
+  color: var(--lics-corporate-light-text);
+  font-style: italic;
+  background: var(--lics-corporate-background);
+  border-radius: 6px;
+}
+
+/* ============================================
    АДАПТИВНОСТЬ
    ============================================ */
-
 @media (max-width: 768px) {
+  .lic-form-card {
+    margin: 8px;
+  }
+  
+  .lic-info-grid {
+    grid-template-columns: 1fr;
+  }
+  
   .lic-info-field {
     flex-direction: column;
     align-items: flex-start;
@@ -306,5 +454,10 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
+  }
+  
+  .debt-total .lic-info-field {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
