@@ -1,6 +1,6 @@
 // Оптимизированный useLics.ts
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
-import { getData, Store } from "../../Store";
+import { getData, Store } from "../../../Store";
 
 export interface DropdownOption {
   id: string | number;

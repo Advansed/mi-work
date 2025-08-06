@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import LicsList from './LicsList';
-import FindLics from './components/FindLics';
+import FindLics from './components/FindLic/FindLics';
 import styles from './Lics.module.css';
 
 const Lics: React.FC = () => {
