@@ -15,10 +15,9 @@ import {
     IonPopover
 } from '@ionic/react';
 import { locationOutline, ellipsisHorizontal, chevronDownOutline, saveOutline } from 'ionicons/icons';
-import { useDaData } from '../../dadata-component/useDaData';
-import { ConfidenceLevel, StandardizedAddress } from '../../dadata-component/types';
-import { useToast } from '../../Toast/useToast';
 import './FindAddress.css';
+import { ConfidenceLevel, StandardizedAddress, useDaData } from '../../../dadata-component';
+import { useToast } from '../../../Toast/useToast';
 
 interface LicsProps {
     initialAddress?: string;
