@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import LicsList from './components/List/List';
+import LicsList from './components/List/LicsList';
 import FindLics from './components/FindLic/FindLics';
 import { useLics } from './useLics';
 import styles from './Lics.module.css';

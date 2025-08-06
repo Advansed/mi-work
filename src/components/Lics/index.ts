@@ -4,7 +4,7 @@
 
 // Основные компоненты
 export { default as Lics } from './Lics';
-export { default as LicsList } from './components/List/List';
+export { default as LicsList } from './components/List/LicsList';
 
 // Хуки
 export { useLics } from './useLics';
