@@ -121,7 +121,34 @@ export const useLics = () => {
     } finally {
       setLoading(false);
     }
+
   };
+
+  const addLics = async (lc) => {
+
+    console.log("addLics")
+    console.log( lc )
+
+    try {
+      // Здесь будет вызов API метода get_lics
+      const response = await getData('addLic',{ token: Store.getState().login.token, lc: lc })
+
+      const result: ILicsResponse = response;
+      console.log( result )
+      
+      if (result.success) {
+        setData(result.data);
+      } else {
+        setError(result.message || 'Ошибка загрузки данных');
+      }
+    } catch (err) {
+      setError('Ошибка сети или сервера');
+      console.error('Error loading lics:', err);
+    } finally {
+      setLoading(false);
+    }
+
+  }
 
   const handleLicClick = (licAccount: ILicAccount) => {
     // Навигация к детальной карточке
@@ -143,6 +170,7 @@ export const useLics = () => {
     error,
     refreshData,
     handleLicClick,
+    addLics,
     // Утилиты
     formatSum,
     getTotalDebt,

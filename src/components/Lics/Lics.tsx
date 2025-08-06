@@ -13,6 +13,7 @@ const Lics: React.FC = () => {
     error,
     refreshData,
     handleLicClick,
+    addLics,
     formatSum,
     getTotalDebt,
     formatAddress,
@@ -21,55 +22,64 @@ const Lics: React.FC = () => {
     getDebtStatus
   } = useLics();
 
-  const openSearchModal = () => {
-    setIsSearchModalOpen(true);
+
+  // Заменить состояние
+  const [isAddLicModalOpen, setIsAddLicModalOpen] = useState<boolean>(false);
+
+  // Заменить функции
+  const openAddLicModal = () => {
+    setIsAddLicModalOpen(true);
   };
 
-  const closeSearchModal = () => {
-    setIsSearchModalOpen(false);
+  const closeAddLicModal = () => {
+    setIsAddLicModalOpen(false);
   };
 
-  const handleLicSelect = (lic: string) => {
-    console.log(lic);
-    closeSearchModal();
+  const handleLicAdd = (lic: string) => {
+    console.log('Adding new lic:', lic);
+    addLics( lic )
+    closeAddLicModal();
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Лицевые счета</h1>
-        
-        <div className={styles.actions}>
-          <button 
-            className={styles.searchButton}
-            onClick={openSearchModal}
-          >
-            <span className={styles.buttonIcon}>🔍</span>
-            Поиск
-          </button>
+        <div className='flex fl-space'>
+          <h1 className={styles.title}>Лицевые счета</h1>
+          
+          <div className={styles.actions}>
+            <button 
+              className={styles.addLicButton}
+              onClick={openAddLicModal}
+            >
+              <span className={styles.buttonIcon}>➕</span>
+              Добавить лицевой счет
+            </button>
+          </div>
         </div>
       </div>
 
       <div className={styles.content}>
         <LicsList 
-          data={data}
-          loading={loading}
-          error={error}
-          onLicClick={handleLicClick}
-          formatSum={formatSum}
-          getTotalDebt={getTotalDebt}
-          formatAddress={formatAddress}
-          getDebtStatus={getDebtStatus}
+          data            = { data }
+          loading         = { loading }
+          error           = { error }
+          onLicClick      = { handleLicClick }
+          formatSum       = { formatSum }
+          getTotalDebt    = { getTotalDebt }
+          formatAddress   = { formatAddress }
+          getDebtStatus   = { getDebtStatus }
         />
       </div>
 
-      {isSearchModalOpen && (
+      {isAddLicModalOpen && (
         <FindLics
-          isOpen={isSearchModalOpen}
-          onClose={closeSearchModal}
-          onSelect={handleLicSelect}
+          isOpen    = { isAddLicModalOpen }
+          onClose   = { closeAddLicModal }
+          onSelect  = { handleLicAdd }
         />
       )}
+
     </div>
   );
 };

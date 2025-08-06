@@ -59,10 +59,11 @@ const FindLics: React.FC<LicsFormProps> = ({
                 loadLics(item.items);
                 break;
             case "lics":
-                setLic( item.name )
+                onSelect( item.name )
+                console.log( 'lics -' + item.name )
                 break;
         }
-    }, [loadSettlements, loadStreets, loadHouses, loadKv, loadLics, info]);
+    }, [loadSettlements, loadStreets, loadHouses, loadKv, loadLics, info, lic]);
 
     // Мемоизированная конфигурация уровней - один useEffect вместо множественных
     const levelConfig = useMemo(() => {
@@ -137,6 +138,7 @@ const FindLics: React.FC<LicsFormProps> = ({
     }, [onClose]);
 
     const handleSave = useCallback(() => {
+        console.log("save - " + lic )
         if (onSelect) {
             onSelect( lic );
         }

@@ -137,6 +137,55 @@
   color: #6c757d;
 }
 
+/* Добавить в Lics.module.css */
+
+.addLicButton {
+  background: var(--lics-corporate-primary, #1e3a8a);
+  color: var(--lics-corporate-white, #ffffff);
+  border: none;
+  border-radius: 12px;
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 16px var(--lics-corporate-shadow, rgba(30, 58, 138, 0.3));
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-height: 48px;
+}
+
+.addLicButton:hover {
+  background: var(--lics-corporate-accent, #f97316);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(249, 115, 22, 0.4);
+}
+
+.addLicButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px var(--lics-corporate-shadow, rgba(30, 58, 138, 0.3));
+}
+
+.addLicButton .buttonIcon {
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.addLicButton:hover .buttonIcon {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
 /* Адаптивность */
 @media (max-width: 768px) {
   .container {
@@ -169,3 +218,4 @@
     font-size: 15px;
   }
 }
+

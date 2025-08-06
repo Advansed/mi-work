@@ -33,13 +33,13 @@ interface useLicsReturn {
 
 export const useLics = (): useLicsReturn => {
     const [state, setState] = useState<any>({
-        uluses: [],
-        settlements: [],
-        streets: [],
-        houses: [],
-        kv: [],
-        lics: [],
-        loading: false
+        uluses:         [],
+        settlements:    [],
+        streets:        [],
+        houses:         [],
+        kv:             [],
+        lics:           [],
+        loading:        false
     });
 
     // Ref для отмены запросов
@@ -218,7 +218,7 @@ export const useLics = (): useLicsReturn => {
     }, [loadUluses]);
 
     // Мемоизированные преобразования данных
-    const namedUluses = useMemo(() => 
+    const namedUluses       = useMemo(() => 
         state.uluses.map((ul, ind) => ({
             id: ind, 
             name: ul.ulus, 
@@ -227,7 +227,7 @@ export const useLics = (): useLicsReturn => {
         })), [state.uluses]
     );
 
-    const namedSettlements = useMemo(() => 
+    const namedSettlements  = useMemo(() => 
         state.settlements.map(ul => ({
             id: ul.s_id, 
             name: ul.settlement, 
@@ -235,7 +235,7 @@ export const useLics = (): useLicsReturn => {
         })), [state.settlements]
     );
 
-    const namedStreets = useMemo(() => 
+    const namedStreets      = useMemo(() => 
         state.streets.map(ul => ({
             id: JSON.stringify(ul.ids), 
             name: ul.street, 
@@ -243,7 +243,7 @@ export const useLics = (): useLicsReturn => {
         })), [state.streets]
     );
 
-    const namedHouses = useMemo(() => 
+    const namedHouses       = useMemo(() => 
         state.houses.map((ul, ind) => ({
             id: ind,
             name: ul.house,
@@ -252,7 +252,7 @@ export const useLics = (): useLicsReturn => {
         })), [state.houses]
     );
 
-    const namedKv = useMemo(() => 
+    const namedKv           = useMemo(() => 
         state.kv.map((ul, ind) => ({
             id: ind, 
             name: ul.apartment, 
@@ -261,7 +261,7 @@ export const useLics = (): useLicsReturn => {
         })), [state.kv]
     );
 
-    const namedLics = useMemo(() => 
+    const namedLics         = useMemo(() => 
         state.lics.map((ul, ind) => ({
             id: ind, 
             name: ul.code, 
