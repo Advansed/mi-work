@@ -1,10 +1,25 @@
 import React, { useState } from 'react';
-import LicsList from './LicsList';
+import LicsList from './components/List/List';
 import FindLics from './components/FindLic/FindLics';
+import { useLics } from './useLics';
 import styles from './Lics.module.css';
 
 const Lics: React.FC = () => {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
+  
+  const {
+    data,
+    loading,
+    error,
+    refreshData,
+    handleLicClick,
+    formatSum,
+    getTotalDebt,
+    formatAddress,
+    formatDate,
+    hasActiveDebts,
+    getDebtStatus
+  } = useLics();
 
   const openSearchModal = () => {
     setIsSearchModalOpen(true);
@@ -15,11 +30,9 @@ const Lics: React.FC = () => {
   };
 
   const handleLicSelect = (lic: string) => {
-    console.log( lic )
+    console.log(lic);
     closeSearchModal();
   };
-
-
 
   return (
     <div className={styles.container}>
@@ -38,7 +51,16 @@ const Lics: React.FC = () => {
       </div>
 
       <div className={styles.content}>
-        <LicsList  />
+        <LicsList 
+          data={data}
+          loading={loading}
+          error={error}
+          onLicClick={handleLicClick}
+          formatSum={formatSum}
+          getTotalDebt={getTotalDebt}
+          formatAddress={formatAddress}
+          getDebtStatus={getDebtStatus}
+        />
       </div>
 
       {isSearchModalOpen && (

@@ -1,19 +1,28 @@
 import React from 'react';
-import { useLicsList } from './useLicsList';
-import styles from './LicsList.module.css';
+import { ILicAccount, IDebt } from '../../useLics';
+import styles from './List.module.css';
 
-const LicsList: React.FC = () => {
-  const {
-    data,
-    loading,
-    error,
-    handleLicClick,
-    formatSum,
-    getTotalDebt,
-    formatAddress,
-    getDebtStatus
-  } = useLicsList();
+interface LicsListProps {
+  data: ILicAccount[];
+  loading: boolean;
+  error: string | null;
+  onLicClick: (licAccount: ILicAccount) => void;
+  formatSum: (sum: number) => string;
+  getTotalDebt: (debts: IDebt[]) => number;
+  formatAddress: (address: string) => string;
+  getDebtStatus: (debts: IDebt[]) => 'none' | 'positive' | 'negative';
+}
 
+const LicsList: React.FC<LicsListProps> = ({
+  data,
+  loading,
+  error,
+  onLicClick,
+  formatSum,
+  getTotalDebt,
+  formatAddress,
+  getDebtStatus
+}) => {
   if (loading) {
     return <div className={styles.loading}>Загрузка...</div>;
   }
@@ -46,7 +55,7 @@ const LicsList: React.FC = () => {
                 <tr 
                   key={lic.id}
                   className={`${styles.row} ${styles[`debt${debtStatus.charAt(0).toUpperCase() + debtStatus.slice(1)}`]}`}
-                  onClick={() => handleLicClick(lic)}
+                  onClick={() => onLicClick(lic)}
                 >
                   <td className={styles.code}>{lic.code}</td>
                   <td className={styles.name}>{lic.name}</td>

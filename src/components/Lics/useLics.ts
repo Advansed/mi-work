@@ -95,7 +95,7 @@ export const getDebtStatus = (debts: IDebt[]): 'none' | 'positive' | 'negative' 
 };
 
 // Хук
-export const useLicsList = () => {
+export const useLics = () => {
   const [data, setData] = useState<ILicAccount[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
