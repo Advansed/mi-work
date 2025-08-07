@@ -1,13 +1,17 @@
+/* ============================================
+   БАЗОВЫЕ СТИЛИ КОНТЕЙНЕРА
+   ============================================ */
+
 .container {
-  padding: 16px;
+  padding: clamp(12px, 4vw, 16px);
   background-color: #f8f9fa;
   min-height: 100vh;
 }
 
 .title {
-  font-size: 24px;
+  font-size: clamp(20px, 5vw, 24px);
   font-weight: 600;
-  margin-bottom: 20px;
+  margin-bottom: clamp(16px, 4vw, 20px);
   color: #2c3e50;
 }
 
@@ -29,90 +33,133 @@
   text-align: center;
 }
 
+/* ============================================
+   КОНТЕЙНЕР ЭЛЕМЕНТОВ
+   ============================================ */
+
 .itemsContainer {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: clamp(8px, 2vw, 12px);
 }
+
+/* ============================================
+   КАРТОЧКИ ЭЛЕМЕНТОВ
+   ============================================ */
 
 .item {
   background-color: #ffffff;
   border: 1px solid #dee2e6;
   border-radius: 8px;
-  padding: 16px;
+  padding: clamp(12px, 3vw, 16px);
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-height: 60px;
+  touch-action: manipulation;
+  contain: layout style;
 }
 
 .item:hover {
   border-color: #007bff;
   box-shadow: 0 4px 8px rgba(0, 123, 255, 0.1);
   transform: translateY(-1px);
+  will-change: transform;
 }
+
+.item:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.15);
+}
+
+/* ============================================
+   ЗАГОЛОВОК ЭЛЕМЕНТА
+   ============================================ */
 
 .itemHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: clamp(8px, 2vw, 12px);
   padding-bottom: 8px;
   border-bottom: 1px solid #e9ecef;
+  min-height: 44px;
 }
 
 .code {
-  font-size: 18px;
+  font-size: clamp(16px, 4vw, 18px);
   font-weight: 600;
   color: #495057;
+  line-height: 1.2;
 }
+
+/* ============================================
+   ИНФОРМАЦИЯ О ДОЛГЕ
+   ============================================ */
 
 .debtContainer {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: clamp(4px, 1vw, 8px);
+  flex-shrink: 0;
 }
 
 .debtSum {
-  font-size: 16px;
+  font-size: clamp(14px, 3.5vw, 16px);
   font-weight: 500;
+  line-height: 1.2;
 }
 
 .debtIndicator {
   color: #dc3545;
-  font-size: 12px;
+  font-size: clamp(10px, 2.5vw, 12px);
+  white-space: nowrap;
 }
+
+/* ============================================
+   СОДЕРЖИМОЕ ЭЛЕМЕНТА
+   ============================================ */
 
 .itemBody {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: clamp(4px, 1vw, 6px);
 }
 
 .name {
-  font-size: 16px;
+  font-size: clamp(14px, 3.5vw, 16px);
   font-weight: 500;
   color: #343a40;
+  line-height: 1.3;
 }
 
 .address {
-  font-size: 14px;
+  font-size: clamp(12px, 3vw, 14px);
   color: #6c757d;
   line-height: 1.4;
 }
 
 .plot {
-  font-size: 14px;
+  font-size: clamp(12px, 3vw, 14px);
   color: #6c757d;
+  line-height: 1.2;
 }
+
+/* ============================================
+   ПУСТОЕ СОСТОЯНИЕ
+   ============================================ */
 
 .empty {
   text-align: center;
-  padding: 40px;
+  padding: clamp(30px, 8vw, 40px);
   color: #6c757d;
-  font-size: 16px;
+  font-size: clamp(14px, 3.5vw, 16px);
 }
 
-/* Статусы долгов */
+/* ============================================
+   СТАТУСЫ ДОЛГОВ
+   ============================================ */
+
 .debtNone {
   border-left: 4px solid #28a745;
 }
@@ -137,26 +184,29 @@
   color: #6c757d;
 }
 
-/* Добавить в Lics.module.css */
+/* ============================================
+   КНОПКА ДОБАВЛЕНИЯ
+   ============================================ */
 
 .addLicButton {
   background: var(--lics-corporate-primary, #1e3a8a);
   color: var(--lics-corporate-white, #ffffff);
   border: none;
   border-radius: 12px;
-  padding: 14px 24px;
-  font-size: 16px;
+  padding: clamp(12px, 3vw, 14px) clamp(20px, 5vw, 24px);
+  font-size: clamp(14px, 3.5vw, 16px);
   font-weight: 600;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: clamp(8px, 2vw, 12px);
   box-shadow: 0 4px 16px var(--lics-corporate-shadow, rgba(30, 58, 138, 0.3));
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   min-height: 48px;
+  touch-action: manipulation;
 }
 
 .addLicButton:hover {
@@ -171,7 +221,7 @@
 }
 
 .addLicButton .buttonIcon {
-  font-size: 18px;
+  font-size: clamp(16px, 4vw, 18px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -187,23 +237,23 @@
   transform: scale(1.1);
 }
 
-/* Добавить в List.module.css */
+/* ============================================
+   ДЕЙСТВИЯ В ЗАГОЛОВКЕ
+   ============================================ */
 
-/* Контейнер для действий в заголовке */
 .headerActions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: clamp(4px, 1vw, 8px);
 }
 
-/* Кнопка удаления */
 .deleteButton {
   background: #fee2e2;
   border: 1px solid #fecaca;
   border-radius: 6px;
   padding: 4px 6px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: clamp(12px, 3vw, 14px);
   color: #dc2626;
   transition: all 0.2s ease;
   display: flex;
@@ -211,6 +261,7 @@
   justify-content: center;
   min-width: 28px;
   height: 28px;
+  touch-action: manipulation;
 }
 
 .deleteButton:hover {
@@ -224,17 +275,46 @@
   color: white;
   transform: scale(0.95);
 }
-/* Адаптивность */
-@media (max-width: 768px) {
+
+/* ============================================
+   МОБИЛЬНАЯ АДАПТАЦИЯ
+   ============================================ */
+
+/* Очень малые экраны */
+@media (max-width: 400px) {
   .container {
-    padding: 12px;
+    padding: 8px;
   }
   
-  .title {
-    font-size: 20px;
-    margin-bottom: 16px;
+  .itemHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding-bottom: 12px;
   }
   
+  .debtContainer {
+    align-self: flex-end;
+    width: 100%;
+    justify-content: flex-end;
+  }
+  
+  .code {
+    font-size: 16px;
+  }
+  
+  .name {
+    font-size: 14px;
+  }
+  
+  .address,
+  .plot {
+    font-size: 12px;
+  }
+}
+
+/* Планшеты и телефоны */
+@media (max-width: 768px) {
   .item {
     padding: 12px;
   }
@@ -248,12 +328,56 @@
     align-self: flex-end;
   }
   
-  .code {
-    font-size: 16px;
-  }
-  
-  .name {
-    font-size: 15px;
+  .addLicButton {
+    width: 100%;
+    justify-content: center;
   }
 }
 
+/* Touch-устройства */
+@media (pointer: coarse) {
+  .item:hover {
+    transform: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .item:active {
+    background-color: #f8f9fa;
+    transform: scale(0.98);
+  }
+  
+  .addLicButton:hover {
+    transform: none;
+  }
+  
+  .addLicButton:active {
+    transform: scale(0.96);
+  }
+  
+  .deleteButton:hover {
+    transform: none;
+  }
+}
+
+/* ============================================
+   ОПТИМИЗАЦИЯ ПРОИЗВОДИТЕЛЬНОСТИ
+   ============================================ */
+
+@media (max-width: 768px) {
+  .item {
+    will-change: auto;
+  }
+  
+  .itemsContainer {
+    scroll-behavior: smooth;
+  }
+  
+  /* Уменьшение теней на мобильных для производительности */
+  .item {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .item:hover {
+    box-shadow: 0 2px 6px rgba(0, 123, 255, 0.1);
+  }
+}

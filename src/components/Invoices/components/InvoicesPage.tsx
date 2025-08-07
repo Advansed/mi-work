@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useInvoices } from '../useInvoices';
 import { InvoicesBreadcrumb } from './InvoicesBreadcrumb';
-import { InvoicesList } from './InvoicesList';
+import { InvoicesList } from './InvoiceList/InvoicesList';
 import { InvoiceView } from './InvoiceView';
 import { InvoiceActs } from './InvoiceActs';
 import { InvoicePrintForm } from './InvoicePrintForm';

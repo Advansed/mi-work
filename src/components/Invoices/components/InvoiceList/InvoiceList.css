@@ -1,0 +1,339 @@
+/* src/components/Invoices/components/InvoiceList.css */
+
+/* ============================================ */
+/* INVOICE PAGE LAYOUT */
+/* ============================================ */
+
+.invoice-page {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.invoice-page-header {
+    padding: 16px 20px 8px 20px;
+    background: var(--ion-background-color);
+    border-bottom: 1px solid var(--ion-color-light);
+    flex-shrink: 0;
+}
+
+.invoice-page-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+}
+
+.invoice-page-subtitle {
+    margin: 4px 0 0 0;
+    font-size: 0.9rem;
+    color: var(--ion-color-medium);
+}
+
+.invoice-page-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-top: 8px;
+}
+
+/* ============================================ */
+/* INVOICES LIST */
+/* ============================================ */
+
+.invoices-list {
+    padding-bottom: 20px;
+}
+
+/* ============================================ */
+/* INVOICE CARD */
+/* ============================================ */
+
+.invoice-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid var(--ion-color-primary);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+    margin: 8px 16px;
+}
+
+.invoice-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.invoice-card:active {
+    transform: translateY(1px);
+}
+
+/* Цветовое кодирование по статусам */
+.invoice-card[data-status="danger"] {
+    border-left-color: var(--ion-color-danger);
+}
+
+.invoice-card[data-status="warning"] {
+    border-left-color: var(--ion-color-warning);
+}
+
+.invoice-card[data-status="success"] {
+    border-left-color: var(--ion-color-success);
+}
+
+.invoice-card[data-status="primary"] {
+    border-left-color: var(--ion-color-primary);
+}
+
+.invoice-card[data-status="medium"] {
+    border-left-color: var(--ion-color-medium);
+}
+
+.invoice-card[data-status="light"] {
+    border-left-color: var(--ion-color-light-shade);
+}
+
+/* ============================================ */
+/* INVOICE CARD CONTENT */
+/* ============================================ */
+
+.invoice-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.invoice-info {
+    margin-top: 8px;
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    color: var(--ion-color-medium);
+    line-height: 1.3;
+}
+
+.info-row:last-child {
+    margin-bottom: 0;
+}
+
+.info-row ion-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    color: var(--ion-color-primary);
+    flex-shrink: 0;
+}
+
+.info-row span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 200px;
+    flex: 1;
+}
+
+/* ============================================ */
+/* INVOICE CARD FOOTER */
+/* ============================================ */
+
+.invoice-footer {
+    background: var(--ion-color-light);
+    padding: 8px 16px;
+    border-top: 1px solid var(--ion-color-light-shade);
+    font-size: 0.8rem;
+    color: var(--ion-color-medium);
+}
+
+.invoice-footer ion-grid {
+    padding: 0;
+}
+
+.invoice-footer ion-col {
+    padding: 0;
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* ============================================ */
+/* EMPTY STATES */
+/* ============================================ */
+
+.empty-state {
+    text-align: center;
+    padding: 60px 40px;
+    color: var(--ion-color-medium);
+}
+
+.empty-state ion-text {
+    display: block;
+    margin-bottom: 16px;
+    font-size: 1rem;
+}
+
+.empty-state ion-button {
+    margin-top: 8px;
+}
+
+/* ============================================ */
+/* LOADING STATE */
+/* ============================================ */
+
+.loading-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--ion-color-medium);
+}
+
+.loading-state ion-text {
+    font-size: 1rem;
+}
+
+/* ============================================ */
+/* RESPONSIVE DESIGN */
+/* ============================================ */
+
+/* Планшеты */
+@media (min-width: 768px) {
+    .invoice-card {
+        margin: 8px 24px;
+    }
+    
+    .invoice-page-header {
+        padding: 20px 32px 12px 32px;
+    }
+    
+    .info-row span {
+        max-width: 300px;
+    }
+}
+
+/* Маленькие мобильные устройства */
+@media (max-width: 480px) {
+    .invoice-card {
+        margin: 6px 12px;
+        border-radius: 8px;
+    }
+    
+    .invoice-page-header {
+        padding: 12px 16px 8px 16px;
+    }
+    
+    .invoice-page-title {
+        font-size: 1.3rem;
+    }
+    
+    .info-row {
+        font-size: 0.85rem;
+    }
+    
+    .info-row span {
+        max-width: 150px;
+    }
+    
+    .info-row ion-icon {
+        width: 14px;
+        height: 14px;
+        margin-right: 6px;
+    }
+    
+    .invoice-footer {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+    }
+}
+
+/* Очень маленькие экраны */
+@media (max-width: 320px) {
+    .invoice-card {
+        margin: 4px 8px;
+    }
+    
+    .invoice-page-header {
+        padding: 10px 12px 6px 12px;
+    }
+    
+    .info-row span {
+        max-width: 120px;
+    }
+}
+
+/* ============================================ */
+/* DARK MODE SUPPORT */
+/* ============================================ */
+
+@media (prefers-color-scheme: dark) {
+    .invoice-card {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    .invoice-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+    
+    .invoice-footer {
+        background: var(--ion-color-dark);
+        border-top-color: var(--ion-color-dark-shade);
+    }
+}
+
+/* ============================================ */
+/* ACCESSIBILITY IMPROVEMENTS */
+/* ============================================ */
+
+.invoice-card ion-item {
+    cursor: pointer;
+}
+
+.invoice-card ion-item:focus {
+    outline: 2px solid var(--ion-color-primary);
+    outline-offset: 2px;
+}
+
+.info-row span {
+    word-break: break-word;
+    hyphens: auto;
+}
+
+/* Увеличение области нажатия для кнопки звонка */
+.invoice-card ion-button {
+    min-width: 44px;
+    min-height: 44px;
+}
+
+/* ============================================ */
+/* ANIMATION ENHANCEMENTS */
+/* ============================================ */
+
+.invoices-list {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.invoice-card {
+    animation: slideIn 0.2s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
