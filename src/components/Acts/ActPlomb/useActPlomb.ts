@@ -1,127 +1,105 @@
-import { useState, useCallback } from 'react';
-import { getData } from '../../Store';
+import { useState, useCallback, useMemo } from 'react';
+import { 
+  generateActPlombPDF, 
+  validateActPlombData,
+  generateActPlombFilename,
+  convertFormDataToActPlomb 
+} from '../../PDF';
 import { useToast } from '../../Toast/useToast';
+import { getData } from '../../Store';
 
-// Типы данных
+// === ТИПЫ ===
 export interface PlombMeter {
-  id?: string;
   meter_number: string;
   seal_number: string;
-  current_reading?: number;
+  current_reading?: string;
   meter_type?: string;
   notes?: string;
-  sequence_order: number;
+  sequence_order?: number;
 }
 
 export interface ActPlombData {
   id?: string;
-  invoice_id?: string;
   act_number?: string;
   act_date: string;
-  
-  // Адрес
-  address: string;
-  apartment: string;
-  house: string;
-  street: string;
   subscriber_name: string;
-  
-  // Представитель УСД
+  address?: string;
+  street: string;
+  house: string;
+  apartment: string;
   usd_representative: string;
-  representative_position: string;
-  
-  // Дата получения
-  received_date?: string;
-  
-  // Счетчики
+  notes?: string;
+  invoice_id?: string;
   meters: PlombMeter[];
+  recipient_signature?: string;
+  receipt_date?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
-export type PlombFormErrors = Partial<Record<Exclude<keyof ActPlombData, 'meters'>, string>> & {
-  meters?: { [index: number]: Partial<Record<keyof PlombMeter, string>> };
-};
+export interface PlombFormErrors {
+  act_date?: string;
+  subscriber_name?: string;
+  street?: string;
+  house?: string;
+  apartment?: string;
+  usd_representative?: string;
+  meters?: Record<number, Partial<Record<keyof PlombMeter, string>>>;
+}
 
-// Начальные данные
-const initialData: ActPlombData = {
-  id: '',
-  act_date: new Date().toISOString().split('T')[0],
-  address: '',
-  apartment: '',
-  house: '',
-  street: '',
-  subscriber_name: '',
-  usd_representative: '',
-  representative_position: '',
-  received_date: '',
-  meters: [createNewMeter(1)]
-};
+// === ФУНКЦИЯ СОЗДАНИЯ НОВОГО СЧЕТЧИКА ===
+const createNewMeter = (sequenceOrder: number = 1): PlombMeter => ({
+  meter_number: '',
+  seal_number: '',
+  current_reading: '',
+  meter_type: '',
+  notes: '',
+  sequence_order: sequenceOrder
+});
 
-function createNewMeter(sequence: number): PlombMeter {
-  return {
-    meter_number: '',
-    seal_number: '',
-    current_reading: undefined,
-    meter_type: '',
+// === ГЛАВНЫЙ ХУК ===
+export const useActPlomb = () => {
+  // === СОСТОЯНИЯ ===
+  const [data, setData] = useState<ActPlombData>({
+    act_date: new Date().toISOString().split('T')[0],
+    subscriber_name: '',
+    street: '',
+    house: '',
+    apartment: '',
+    usd_representative: '',
     notes: '',
-    sequence_order: sequence
-  };
-}
+    meters: [createNewMeter(1)]
+  });
 
-export const useActPlomb = (actId?: string) => {
-  const [data, setData] = useState<ActPlombData>(initialData);
-  const [errors, setErrors] = useState<PlombFormErrors>({ meters: {} });
+  const [errors, setErrors] = useState<PlombFormErrors>({});
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
+
   const { showSuccess, showError } = useToast();
 
-  // === НОВЫЕ HELPER ФУНКЦИИ ===
-  const updateField = useCallback((field: keyof ActPlombData, value: string) => {
-    if (field === 'meters') return; // Метры обрабатываются отдельно
+  // === УНИВЕРСАЛЬНАЯ ФУНКЦИЯ ОБНОВЛЕНИЯ ПОЛЯ ===
+  const updateField = useCallback((field: string, value: any) => {
+    setData(prev => ({ ...prev, [field]: value }));
     
-    setData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-    
-    // Очистка ошибки для поля
-    if (errors[field]) {
-      setErrors(prev => {
+    // Очищаем ошибку для этого поля
+    setErrors(prev => {
+      if (prev[field as keyof PlombFormErrors]) {
         const newErrors = { ...prev };
-        delete newErrors[field];
+        delete newErrors[field as keyof PlombFormErrors];
         return newErrors;
-      });
-    }
-  }, [errors]);
+      }
+      return prev;
+    });
+  }, []);
 
-  const getFieldValue = useCallback((field: keyof ActPlombData) => {
-    return (data as any)[field] || '';
-  }, [data]);
+  // === СТАБИЛЬНАЯ ФУНКЦИЯ ДЛЯ ОБРАБОТКИ ИЗМЕНЕНИЙ ===
+  const handleFieldChange = useCallback((field: string) => {
+    return (value: string) => updateField(field, value);
+  }, [updateField]);
 
-  const getFieldError = useCallback((field: keyof ActPlombData) => {
-    return (errors as any)[field] || '';
-  }, [errors]);
-
-  // Обработчик изменения основных полей
-  const handleFieldChange = useCallback((field: keyof ActPlombData, value: string) => {
-    if (field === 'meters') return; // Метры обрабатываются отдельно
-    
-    setData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-    
-    // Очистка ошибки для поля
-    if (errors[field]) {
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[field];
-        return newErrors;
-      });
-    }
-  }, [errors]);
-
-  // Обработчик изменения данных счетчика
-  const handleMeterChange = useCallback((index: number, field: keyof PlombMeter, value: string | number) => {
+  // === РАБОТА СО СЧЕТЧИКАМИ ===
+  const handleMeterChange = useCallback((index: number, field: keyof PlombMeter, value: string) => {
     setData(prev => ({
       ...prev,
       meters: prev.meters.map((meter, i) => 
@@ -129,22 +107,22 @@ export const useActPlomb = (actId?: string) => {
       )
     }));
 
-    // Очистка ошибки для поля счетчика
-    if (errors.meters?.[index]?.[field]) {
-      setErrors(prev => ({
-        ...prev,
-        meters: {
-          ...prev.meters || {},
-          [index]: {
-            ...prev.meters?.[index] || {},
-            [field]: undefined
+    // Очищаем ошибку для этого поля счетчика
+    setErrors(prev => {
+      if (prev.meters?.[index]?.[field]) {
+        const newErrors = { ...prev };
+        if (newErrors.meters && newErrors.meters[index]) {
+          delete newErrors.meters[index][field];
+          if (Object.keys(newErrors.meters[index]).length === 0) {
+            delete newErrors.meters[index];
           }
         }
-      }));
-    }
-  }, [errors.meters]);
+        return newErrors;
+      }
+      return prev;
+    });
+  }, []);
 
-  // Добавление нового счетчика
   const addMeter = useCallback(() => {
     setData(prev => ({
       ...prev,
@@ -152,47 +130,33 @@ export const useActPlomb = (actId?: string) => {
     }));
   }, []);
 
-  // Удаление счетчика
   const removeMeter = useCallback((index: number) => {
-    if (data.meters.length <= 1) return; // Минимум один счетчик должен остаться
-
     setData(prev => ({
       ...prev,
-      meters: prev.meters.filter((_, i) => i !== index).map((meter, i) => ({
-        ...meter,
-        sequence_order: i + 1
-      }))
+      meters: prev.meters.filter((_, i) => i !== index)
     }));
 
-    // Удаление ошибок для удаленного счетчика
+    // Очищаем ошибки для удаленного счетчика
     setErrors(prev => {
-      const newErrors = { ...prev };
-      if (newErrors.meters) {
-        delete newErrors.meters[index];
-        // Переиндексация ошибок
-        const reindexedErrors: typeof newErrors.meters = {};
-        Object.entries(newErrors.meters).forEach(([key, value]) => {
-          const oldIndex = parseInt(key);
-          if (oldIndex < index) {
-            reindexedErrors[oldIndex] = value;
-          } else if (oldIndex > index) {
-            reindexedErrors[oldIndex - 1] = value;
-          }
-        });
-        newErrors.meters = reindexedErrors;
+      if (prev.meters?.[index]) {
+        const newErrors = { ...prev };
+        if (newErrors.meters) {
+          delete newErrors.meters[index];
+        }
+        return newErrors;
       }
-      return newErrors;
+      return prev;
     });
-  }, [data.meters.length]);
+  }, []);
 
-  // Загрузка акта по заявке
+  // === ЗАГРУЗКА ДАННЫХ ===
   const loadActByInvoice = useCallback(async (invoiceId: string) => {
+    if (!invoiceId) return;
+
     try {
       setLoading(true);
-      setErrors({ meters: {} });
-
       const response = await getData('PLOMB_ACT_GET', { invoice_id: invoiceId });
-      
+
       if (response.success && response.data) {
         setData({
           ...response.data,
@@ -207,7 +171,7 @@ export const useActPlomb = (actId?: string) => {
     }
   }, [showError]);
 
-  // Валидация данных
+  // === ВАЛИДАЦИЯ ДАННЫХ ===
   const validateData = useCallback((): boolean => {
     const newErrors: PlombFormErrors = { meters: {} };
     let hasErrors = false;
@@ -266,7 +230,7 @@ export const useActPlomb = (actId?: string) => {
     return !hasErrors;
   }, [data]);
 
-  // Сохранение акта
+  // === СОХРАНЕНИЕ АКТА ===
   const saveAct = useCallback(async (): Promise<ActPlombData | null> => {
     if (!validateData()) {
       showError('Пожалуйста, исправьте ошибки в форме');
@@ -289,30 +253,113 @@ export const useActPlomb = (actId?: string) => {
         showSuccess(`Акт пломбирования ${data.id ? 'обновлен' : 'создан'} успешно`);
         return savedData;
       } else {
-        throw new Error(response.message || 'Ошибка сохранения');
+        throw new Error(response.message || 'Неизвестная ошибка при сохранении');
       }
-    } catch (error: any) {
+    } catch (error : any) {
       console.error('Ошибка сохранения:', error);
-      showError(error.message || 'Ошибка сохранения акта');
+      showError(`Ошибка сохранения: ${error.message}`);
       return null;
     } finally {
       setSaving(false);
     }
   }, [data, validateData, showSuccess, showError]);
 
+  // === PDF ФУНКЦИИ ===
+  const generatePDF = useCallback(async (autoDownload: boolean = true): Promise<Blob | null> => {
+    setPdfLoading(true);
+    try {
+      // Конвертируем данные формы в формат PDF
+      const pdfData = convertFormDataToActPlomb(data);
+      
+      // Валидация данных
+      const validation = validateActPlombData(pdfData);
+      if (!validation.isValid) {
+        showError(`Ошибки в данных:\n${validation.errors.join('\n')}`);
+        return null;
+      }
+
+      // Генерируем PDF
+      const filename = autoDownload ? generateActPlombFilename(pdfData) : undefined;
+      const blob = await generateActPlombPDF(pdfData, filename);
+      
+      if (autoDownload) {
+        showSuccess('PDF файл создан и скачан');
+      }
+      
+      return blob;
+    } catch (error: any) {
+      console.error('Ошибка генерации PDF:', error);
+      showError(`Ошибка создания PDF: ${error.message}`);
+      return null;
+    } finally {
+      setPdfLoading(false);
+    }
+  }, [data, showSuccess, showError]);
+
+  const previewPDF = useCallback(async (): Promise<string | null> => {
+    setPdfLoading(true);
+    try {
+      const blob = await generatePDF(false);
+      if (blob) {
+        const url = URL.createObjectURL(blob);
+        return url;
+      }
+      return null;
+    } catch (error: any) {
+      console.error('Ошибка предпросмотра PDF:', error);
+      showError(`Ошибка создания предпросмотра: ${error.message}`);
+      return null;
+    } finally {
+      setPdfLoading(false);
+    }
+  }, [generatePDF, showError]);
+
+  // === МЕМОИЗИРОВАННЫЕ ЗНАЧЕНИЯ ===
+  const formattedAddress = useMemo(() => {
+    return data.address || `${data.street || ''}, ${data.house || ''}, кв. ${data.apartment || ''}`.trim();
+  }, [data.address, data.street, data.house, data.apartment]);
+
+  const isFormValid = useMemo(() => {
+    return data.act_date && 
+           data.subscriber_name.trim() && 
+           data.street.trim() && 
+           data.house.trim() && 
+           data.apartment.trim() && 
+           data.usd_representative.trim() &&
+           data.meters.every(meter => meter.meter_number.trim() && meter.seal_number.trim());
+  }, [data]);
+
+  // === ВОЗВРАЩАЕМЫЕ ЗНАЧЕНИЯ ===
   return {
+    // Данные и состояния
     data,
     errors,
     loading,
     saving,
-    updateField,           // Новая функция
-    getFieldValue,         // Новая функция  
-    getFieldError,         // Новая функция
+    pdfLoading,
+    
+    // Вычисляемые значения
+    formattedAddress,
+    isFormValid,
+    
+    // Функции обновления данных
+    updateField,
     handleFieldChange,
     handleMeterChange,
     addMeter,
     removeMeter,
+    
+    // Функции работы с данными
     loadActByInvoice,
-    saveAct
+    validateData,
+    saveAct,
+    
+    // PDF функции
+    generatePDF,
+    previewPDF,
+    
+    // Утилиты
+    setData,
+    setErrors
   };
 };

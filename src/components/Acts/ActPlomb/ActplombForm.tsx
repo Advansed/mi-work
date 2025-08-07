@@ -4,6 +4,13 @@ import './ActPlombForm.css';
 import { IonLoading, IonModal } from '@ionic/react';
 import ActPlombPrint from './ActPlombPrint';
 import { FormField, FormRow, FormSection, ReadOnlyField, TextAreaField } from '../Forms/Forms';
+import { 
+  generateActPlombPDF, 
+  validateActPlombData,
+  generateActPlombFilename,
+  convertFormDataToActPlomb 
+} from '../../PDF';
+
 
 // === ТИПЫ И ИНТЕРФЕЙСЫ ===
 interface ActPlombFormProps {
@@ -34,6 +41,38 @@ const ActPlombForm: React.FC<ActPlombFormProps> = ({
   } = useActPlomb();
 
   const [showPrintModal, setShowPrintModal] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
+
+const handleGeneratePDF = useCallback(async () => {
+  setPdfLoading(true);
+  try {
+    // Конвертируем данные формы в формат PDF
+    const pdfData = convertFormDataToActPlomb(data);
+    
+    // Валидация данных
+    const validation = validateActPlombData(pdfData);
+    if (!validation.isValid) {
+      alert(`Ошибки в данных:\n${validation.errors.join('\n')}`);
+      return;
+    }
+
+    // Генерируем PDF с автоматическим именем файла
+    const filename = generateActPlombFilename(pdfData);
+    await generateActPlombPDF(pdfData, filename);
+    
+    console.log('PDF успешно создан и скачан');
+  } catch (error: any) {
+    console.error('Ошибка генерации PDF:', error);
+    alert(`Ошибка создания PDF: ${error.message}`);
+  } finally {
+    setPdfLoading(false);
+  }
+}, [data]);
+
+const handlePreview = useCallback(() => {
+  // Открываем существующий компонент предпросмотра
+  setShowPrintModal(true);
+}, []);
 
   // === HELPER ФУНКЦИИ ===
   const getFieldValue = useCallback((field: string) => {
@@ -79,7 +118,7 @@ const ActPlombForm: React.FC<ActPlombFormProps> = ({
         <ReadOnlyField
           label="Номер акта"
           value={data.act_number || (loading ? 'Загрузка...' : 'Будет присвоен при сохранении')}
-          hint={data.id ? 'Номер присвоен системой' : 'Номер будет сгенерирован автоматически при сохранении'}
+          // hint={data.id ? 'Номер присвоен системой' : 'Номер будет сгенерирован автоматически при сохранении'}
         />
         <FormField
           label="Дата акта"
@@ -94,7 +133,7 @@ const ActPlombForm: React.FC<ActPlombFormProps> = ({
           <ReadOnlyField
             label="Связанная заявка"
             value={`Заявка №${data.invoice_id}`}
-            hint="Акт создан для данной заявки"
+            // hint="Акт создан для данной заявки"
           />
         )}
       </FormRow>
@@ -206,7 +245,7 @@ const ActPlombForm: React.FC<ActPlombFormProps> = ({
               name={`meter_${index}_reading`}
               type="number"
               value={meter.current_reading?.toString() || ''}
-              onChange={(e) => handleMeterChange(index, 'current_reading', parseFloat(e.target.value) || 0)}
+              onChange={(e) => handleMeterChange(index, 'current_reading', e.target.value || '0')}
               error={errors.meters?.[index]?.current_reading}
               placeholder="м³"
             />
@@ -293,7 +332,7 @@ const ActPlombForm: React.FC<ActPlombFormProps> = ({
           {data.invoice_id && ` (Заявка №${data.invoice_id})`}
         </h2>
         <div className="form-actions">
-          <button type="button" onClick={handlePrint} className="btn btn-secondary">
+          <button type="button" onClick={handleGeneratePDF} className="btn btn-secondary">
             Печать
           </button>
           <button type="button" onClick={onCancel} className="btn btn-outline">

@@ -3,7 +3,7 @@
 // ============================================
 
 import jsPDF from 'jspdf';
-import { PDFConfig, ActOrderData } from './types';
+import { PDFConfig, ActOrderData, ActPlombData } from './types';
 import { DEFAULT_PDF_CONFIG } from './config';
 import { FontLoader, getErrorMessage } from './utils/fontLoader';
 import { ActOrderTemplate } from './templates/ActOrderTemplate';
@@ -110,12 +110,179 @@ export class PDFGenerator {
         }
     }
 
-    /**
-     * Создает упрощенный документ при ошибке генерации
+ /**
+     * ИСПРАВЛЕННАЯ генерация АКТА ПЛОМБИРОВАНИЯ с поддержкой кириллицы
      */
+    public async generateActPlomb(data: ActPlombData): Promise<void> {
+        if (!this.initialized) {
+            await this.initialize();
+        }
+
+        try {
+            console.log('🔄 Начинаем генерацию АКТА ПЛОМБИРОВАНИЯ с данными:', data);
+            
+            // Проверяем данные
+            if (!data || typeof data !== 'object') {
+                throw new Error('Данные для генерации не переданы или неверного формата');
+            }
+
+            // Валидация обязательных полей
+            if (!data.subscriber_name?.trim()) {
+                throw new Error('ФИО абонента обязательно для генерации акта');
+            }
+
+            if (!data.act_date) {
+                throw new Error('Дата акта обязательна для генерации');
+            }
+
+            // Очищаем документ и настраиваем кириллицу
+            this.createDocument();
+            await this.setupCyrillicSupport();
+
+            // Импортируем исправленный шаблон
+            const { ActPlombTemplate } = await import('./templates/ActplombTemplate');
+            const template = new ActPlombTemplate(this.doc, this.config);
+            
+            // Рендерим документ
+            template.renderDocument(data);
+            
+            console.log('✅ АКТ ПЛОМБИРОВАНИЯ сгенерирован успешно');
+        } catch (error) {
+            console.error('❌ Ошибка генерации АКТА ПЛОМБИРОВАНИЯ:', error);
+            
+            // Создаем минимальный документ при ошибке
+            this.createPlombFallbackDocument(data);
+            
+            throw new Error(`Не удалось сгенерировать АКТ ПЛОМБИРОВАНИЯ: ${ getErrorMessage(error) }`);
+        }
+    }
+
+    /**
+     * Настройка поддержки кириллицы
+     */
+    private async setupCyrillicSupport(): Promise<void> {
+        try {
+            console.log('🔄 Настраиваем поддержку кириллицы...');
+            
+            // Устанавливаем базовый шрифт Times
+            this.doc.setFont('times', 'normal');
+            this.doc.setFontSize(12);
+            this.doc.setTextColor(0, 0, 0);
+            
+            // Проверяем поддержку кириллицы
+            const testText = 'Тест кириллицы АБВ абв';
+            try {
+                this.doc.text(testText, -100, -100); // Тестируем вне видимой области
+                console.log('✅ Кириллица поддерживается');
+            } catch (cyrillicError) {
+                console.warn('⚠️ Ограниченная поддержка кириллицы:', cyrillicError);
+            }
+            
+        } catch (error) {
+            console.warn('⚠️ Ошибка настройки кириллицы:', error);
+        }
+    }
+
+    private createPlombFallbackDocument(data: ActPlombData): void {
+        try {
+            console.log('🔄 Создаем упрощенный документ АКТА ПЛОМБИРОВАНИЯ...');
+            
+            // Очищаем документ
+            this.createDocument();
+            
+            // Настраиваем шрифт
+            this.doc.setFont('times', 'bold');
+            this.doc.setFontSize(16);
+            this.doc.text('АКТ ПЛОМБИРОВАНИЯ ПРИБОРА УЧЕТА ГАЗА', 20, 30);
+            
+            this.doc.setFont('times', 'normal');
+            this.doc.setFontSize(12);
+            
+            let yPos = 50;
+            
+            // Основная информация
+            if (data.act_number) {
+                this.doc.text(`№ ${data.act_number}`, 20, yPos);
+                yPos += 10;
+            }
+            
+            if (data.act_date) {
+                try {
+                    const date = new Date(data.act_date).toLocaleDateString('ru-RU');
+                    this.doc.text(`Дата: ${date}`, 20, yPos);
+                } catch (dateError) {
+                    this.doc.text(`Дата: ${data.act_date}`, 20, yPos);
+                }
+                yPos += 10;
+            }
+            
+            if (data.subscriber_name) {
+                this.doc.text(`Абонент: ${data.subscriber_name}`, 20, yPos);
+                yPos += 10;
+            }
+            
+            // Адрес
+            const address = data.address || (data.street && data.house && data.apartment 
+                ? `${data.street}, ${data.house}, кв. ${data.apartment}` 
+                : '');
+            if (address) {
+                this.doc.text(`Адрес: ${address}`, 20, yPos);
+                yPos += 10;
+            }
+            
+            if (data.usd_representative) {
+                this.doc.text(`Представитель УСД: ${data.usd_representative}`, 20, yPos);
+                yPos += 10;
+            }
+            
+            // Список счетчиков
+            if (data.meters && data.meters.length > 0) {
+                yPos += 10;
+                this.doc.text('Приборы учета:', 20, yPos);
+                yPos += 10;
+                
+                data.meters.forEach((meter, index) => {
+                    if (yPos > this.doc.internal.pageSize.getHeight() - 40) {
+                        this.doc.addPage();
+                        yPos = 30;
+                    }
+                    
+                    const meterText = `${index + 1}. Счетчик №${meter.meter_number || 'не указан'}, пломба №${meter.seal_number || 'не указана'}`;
+                    this.doc.text(meterText, 25, yPos);
+                    yPos += 8;
+                    
+                    if (meter.current_reading) {
+                        this.doc.text(`   Показания: ${meter.current_reading}м³`, 25, yPos);
+                        yPos += 8;
+                    }
+                    
+                    yPos += 5;
+                });
+            }
+            
+            // Примечание об упрощенном режиме
+            const noteY = this.doc.internal.pageSize.getHeight() - 40;
+            this.doc.setFontSize(10);
+            this.doc.text('Документ создан в упрощенном режиме из-за ошибки генерации', 20, noteY);
+            
+            console.log('✅ Упрощенный документ АКТА ПЛОМБИРОВАНИЯ создан');
+        } catch (fallbackError) {
+            console.error('❌ Ошибка создания упрощенного документа АКТА ПЛОМБИРОВАНИЯ:', fallbackError);
+            
+            // Создаем минимальный документ
+            this.doc.setFont('times', 'normal');
+            this.doc.setFontSize(12);
+            this.doc.text('АКТ ПЛОМБИРОВАНИЯ', 20, 30);
+            this.doc.text('Ошибка генерации документа', 20, 50);
+            if (data.subscriber_name) {
+                this.doc.text(`Абонент: ${data.subscriber_name}`, 20, 70);
+            }
+        }
+    }
+    
     private createFallbackDocument(data: ActOrderData): void {
         try {
-            console.log('🔄 Создаем упрощенный документ...');
+            console.log('🔄 Создаем упрощенный документ АКТ-НАРЯДА...');
             
             // Очищаем документ
             this.createDocument();
@@ -132,34 +299,26 @@ export class PDFGenerator {
                 FontLoader.addTextSafe(this.doc, `Дата: ${date}`, 20, 70);
             }
             
-            if (data.representative?.name) {
-                FontLoader.addTextSafe(this.doc, `Представитель: ${data.representative.name}`, 20, 90);
-            }
+            FontLoader.addTextSafe(this.doc, 'Документ создан в упрощенном режиме из-за ошибки генерации', 20, 100);
             
-            if (data.order?.street || data.order?.house) {
-                const address = `${data.order.street || ''} ${data.order.house || ''}`.trim();
-                FontLoader.addTextSafe(this.doc, `Адрес: ${address}`, 20, 110);
-            }
-            
-            FontLoader.addTextSafe(this.doc, 'Документ создан с ограниченным функционалом', 20, 140);
-            
-            console.log('✅ Упрощенный документ создан');
+            console.log('✅ Упрощенный документ АКТ-НАРЯДА создан');
         } catch (fallbackError) {
-            console.error('❌ Ошибка создания упрощенного документа:', fallbackError);
+            console.error('❌ Ошибка создания упрощенного документа АКТ-НАРЯДА:', fallbackError);
         }
     }
 
+
     // ============================================
-    // СОХРАНЕНИЕ И ЭКСПОРТ
+    // ЭКСПОРТ И СОХРАНЕНИЕ
     // ============================================
 
     /**
-     * Сохраняет PDF файл
+     * Сохраняет PDF как файл
      */
     public savePDF(filename: string = 'document.pdf'): void {
         try {
             this.doc.save(filename);
-            console.log(`✅ PDF сохранен: ${filename}`);
+            console.log(`✅ PDF сохранен как: ${filename}`);
         } catch (error) {
             console.error('❌ Ошибка сохранения PDF:', error);
             throw new Error('Не удалось сохранить PDF файл');
@@ -171,7 +330,9 @@ export class PDFGenerator {
      */
     public getBlob(): Blob {
         try {
-            return this.doc.output('blob');
+            const blob = this.doc.output('blob');
+            console.log('✅ Blob создан');
+            return blob;
         } catch (error) {
             console.error('❌ Ошибка создания Blob:', error);
             throw new Error('Не удалось создать Blob');
@@ -179,23 +340,13 @@ export class PDFGenerator {
     }
 
     /**
-     * Возвращает PDF как base64 строку для предпросмотра
-     */
-    public getBase64(): string {
-        try {
-            return this.doc.output('datauristring');
-        } catch (error) {
-            console.error('❌ Ошибка создания base64:', error);
-            throw new Error('Не удалось создать base64');
-        }
-    }
-
-    /**
-     * Возвращает ArrayBuffer для отправки
+     * Возвращает PDF как ArrayBuffer
      */
     public getArrayBuffer(): ArrayBuffer {
         try {
-            return this.doc.output('arraybuffer');
+            const buffer = this.doc.output('arraybuffer');
+            console.log('✅ ArrayBuffer создан');
+            return buffer;
         } catch (error) {
             console.error('❌ Ошибка создания ArrayBuffer:', error);
             throw new Error('Не удалось создать ArrayBuffer');
@@ -261,89 +412,52 @@ export class PDFGenerator {
                 try {
                     iframe.contentWindow?.print();
                 } catch (printError) {
-                    console.warn('⚠️ Автоматическая печать недоступна, открываем в новом окне');
+                    console.warn('⚠️ Автоматическая печать не поддерживается, открываем в новом окне');
                     window.open(url, '_blank');
                 }
                 
-                // Удаляем iframe через некоторое время
+                // Очищаем после использования
                 setTimeout(() => {
-                    try {
-                        document.body.removeChild(iframe);
-                        URL.revokeObjectURL(url);
-                    } catch (cleanupError) {
-                        console.warn('⚠️ Ошибка очистки ресурсов печати');
-                    }
+                    document.body.removeChild(iframe);
+                    URL.revokeObjectURL(url);
                 }, 1000);
             };
+            
+            console.log('✅ Документ отправлен на печать');
         } catch (error) {
             console.error('❌ Ошибка печати:', error);
-            throw new Error('Не удалось отправить на печать');
+            throw new Error('Не удалось распечатать документ');
         }
     }
 
     // ============================================
-    // МОБИЛЬНЫЕ ФУНКЦИИ
+    // ПОДЕЛИТЬСЯ
     // ============================================
 
     /**
-     * Поделиться файлом (для мобильных устройств)
+     * Делится документом через Web Share API (если поддерживается)
      */
     public async share(filename: string = 'document.pdf'): Promise<void> {
         try {
-            if (navigator.share && navigator.canShare) {
-                const blob = this.getBlob();
-                const file = new File([blob], filename, { type: 'application/pdf' });
-                
-                if (navigator.canShare({ files: [file] })) {
-                    await navigator.share({
-                        title: 'АКТ-НАРЯД',
-                        text: 'Документ АКТ-НАРЯД на отключение газового оборудования',
-                        files: [file]
-                    });
-                    return;
-                }
-            }
-            
-            // Fallback: скачиваем файл
-            this.savePDF(filename);
-        } catch (error) {
-            console.error('❌ Ошибка при попытке поделиться:', error);
-            // Fallback: скачиваем файл
-            this.savePDF(filename);
-        }
-    }
-
-    /**
-     * Сохраняет в файловую систему устройства (мобильное)
-     */
-    public async saveToDevice(filename: string = 'document.pdf'): Promise<boolean> {
-        try {
-            // Для веб-платформы просто скачиваем
-            if (!('showSaveFilePicker' in window)) {
-                this.savePDF(filename);
-                return true;
+            if (!navigator.share) {
+                throw new Error('Web Share API не поддерживается');
             }
 
-            // Для современных браузеров с File System API
-            const fileHandle = await (window as any).showSaveFilePicker({
-                suggestedName: filename,
-                types: [{
-                    description: 'PDF файлы',
-                    accept: { 'application/pdf': ['.pdf'] }
-                }]
+            const blob = this.getBlob();
+            const file = new File([blob], filename, { type: 'application/pdf' });
+
+            await navigator.share({
+                title: 'PDF документ',
+                text: 'Поделиться PDF документом',
+                files: [file]
             });
 
-            const writable = await fileHandle.createWritable();
-            const blob = this.getBlob();
-            await writable.write(blob);
-            await writable.close();
-
-            return true;
+            console.log('✅ Документ успешно передан');
         } catch (error) {
-            console.error('❌ Ошибка сохранения на устройство:', error);
-            // Fallback: обычное скачивание
+            console.error('❌ Ошибка при передаче документа:', error);
+            
+            // Fallback - скачиваем файл
             this.savePDF(filename);
-            return false;
         }
     }
 
@@ -352,90 +466,45 @@ export class PDFGenerator {
     // ============================================
 
     /**
-     * Получает информацию о документе
+     * Возвращает информацию о документе
      */
-    public getDocumentInfo(): {
-        pageCount: number;
-        format: string;
-        orientation: string;
-        size: number; // в байтах
-    } {
-        try {
-            const blob = this.getBlob();
-            
-            return {
-                pageCount: this.doc.getNumberOfPages(),
-                format: this.config.format,
-                orientation: this.config.orientation,
-                size: blob.size
-            };
-        } catch (error) {
-            console.error('❌ Ошибка получения информации о документе:', error);
-            return {
-                pageCount: 1,
-                format: this.config.format,
-                orientation: this.config.orientation,
-                size: 0
-            };
-        }
+    public getDocumentInfo(): any {
+        return {
+            pageCount: this.doc.getNumberOfPages(),
+            pageSize: {
+                width: this.doc.internal.pageSize.getWidth(),
+                height: this.doc.internal.pageSize.getHeight()
+            },
+            config: this.config,
+            initialized: this.initialized
+        };
     }
 
     /**
-     * Проверяет состояние генератора
-     */
-    public getStatus(): {
-        initialized: boolean;
-        hasContent: boolean;
-        fontInfo: any;
-        error?: string;
-    } {
-        try {
-            return {
-                initialized: this.initialized,
-                hasContent: this.doc.getNumberOfPages() > 0,
-                fontInfo: FontLoader.getFontInfo(this.doc)
-            };
-        } catch (error) {
-            return {
-                initialized: this.initialized,
-                hasContent: false,
-                fontInfo: null,
-                error: getErrorMessage( error ) 
-            };
-        }
-    }
-
-    /**
-     * Сбрасывает документ для создания нового
+     * Очищает документ и создает новый
      */
     public reset(): void {
         try {
             this.createDocument();
-            console.log('✅ PDFGenerator сброшен');
+            console.log('✅ Документ сброшен');
         } catch (error) {
-            console.error('❌ Ошибка сброса PDFGenerator:', error);
+            console.error('❌ Ошибка сброса документа:', error);
+            throw new Error('Не удалось сбросить документ');
         }
     }
 
     /**
-     * Проверяет, инициализирован ли генератор
+     * Освобождает ресурсы
      */
-    public isInitialized(): boolean {
-        return this.initialized;
-    }
-
-    /**
-     * Получает текущую конфигурацию
-     */
-    public getConfig(): PDFConfig {
-        return { ...this.config };
-    }
-
-    /**
-     * Обновляет конфигурацию
-     */
-    public updateConfig(newConfig: Partial<PDFConfig>): void {
-        this.config = { ...this.config, ...newConfig };
-        console.log('✅ Конфигурация обновлена');
+    public dispose(): void {
+        try {
+            // Очищаем ссылки
+            delete (this as any).doc;
+            delete (this as any).config;
+            
+            console.log('✅ Ресурсы PDFGenerator освобождены');
+        } catch (error) {
+            console.error('❌ Ошибка освобождения ресурсов:', error);
+        }
     }
 }

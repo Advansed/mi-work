@@ -1,21 +1,15 @@
 import React from 'react';
 import { 
-    IonCard, 
     IonChip, 
     IonIcon, 
     IonItem, 
     IonLabel, 
-    IonButton,
-    IonGrid,
-    IonRow,
-    IonCol
+    IonButton
 } from '@ionic/react';
 import { 
     callOutline, 
     locationOutline, 
     timeOutline, 
-    chevronForwardOutline,
-    personOutline,
     constructOutline
 } from 'ionicons/icons';
 import { Invoice, InvoiceStatus } from '../../types';
@@ -46,73 +40,49 @@ export const InvoiceItem: React.FC<InvoiceCardProps> = ({
     };
 
     return (
-        <IonCard className="invoice-card" style={{ margin: '8px 16px' }}>
-            <IonItem 
-                button 
-                onClick={handleCardClick}
-                style={{ '--inner-padding-end': '8px' }}
-            >
-                <div slot="start" style={{ marginRight: '12px' }}>
-                    <IonChip color={status.color}>
+        <IonItem 
+            button 
+            onClick={handleCardClick}
+            className="mt-1"
+        >
+            <div className='w-100 pb-1'>
+                <div className="flex fl-space w-100">
+                    
+                    <div className="fs-09 fs-bold">#{invoice.number}</div>
+
+                    <IonChip color={status.color} className="invoice-status-chip">
                         {status.text}
                     </IonChip>
-                </div>
 
-                <IonLabel>
-                    <h2>
-                        <strong>#{invoice.number}</strong>
-                    </h2>
-                    
-                    <div className="invoice-info">
-                        
-                        <div className="info-row">
-                            <IonIcon icon={locationOutline} />
-                            <div>{invoice.address}</div>
-                        </div>
-                        
-                        <div className="info-row">
-                            <IonIcon icon={constructOutline} />
-                            <div>{invoice.service}</div>
-                        </div>
-                        
-                        <div className="info-row">
-                            <IonIcon icon={timeOutline} />
-                            <div>
-                                {formatDate(invoice.term_begin)} - {formatDate(invoice.term_end)}
-                                {invoice.term > 0 && ` (${invoice.term} дней)`}
-                            </div>
-                        </div>
+                </div>
+                
+                <div className="invoice-details">
+                    <div className="flex">
+                        <IonIcon icon={locationOutline} className='h-1 w-1' color="tertiary"/>
+                        <div className='ml-1 fs-08'>{invoice.address}</div>
                     </div>
-                </IonLabel>
-
-                <div slot="end" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                    <IonButton
-                        fill="clear"
-                        size="small"
-                        onClick={handleCallClick}
-                        title={`Позвонить ${formatPhone(invoice.phone)}`}
-                    >
-                        <IonIcon icon={callOutline} />
-                    </IonButton>
                     
-                    <IonIcon icon={chevronForwardOutline} color="medium" />
-                </div>
-            </IonItem>
+                    <div className="flex mt-05">
+                        <div>
+                            <IonIcon icon={constructOutline} className='h-1 w-1' color="tertiary"/>
+                        </div>
+                        <div className='ml-1 fs-08'>{invoice.service}</div>
+                    </div>
+                    
+                    <div className="flex mt-05">
+                        <IonIcon icon={timeOutline} className='h-1 w-1' color="tertiary"/>
+                        <div className='ml-1 fs-08'>{formatDate(invoice.term_begin)} - {formatDate(invoice.term_end)}
+                            {invoice.term > 0 && ` (${invoice.term} дней)`}</div>
+                    </div>
 
-            {/* Дополнительная информация */}
-            <div className="invoice-footer">
-                <IonGrid>
-                    <IonRow>
-                        <IonCol size="6">
-                            <small>ЛС: {invoice.lic.code}</small>
-                        </IonCol>
-                        <IonCol size="6" style={{ textAlign: 'right' }}>
-                            <small>Участок: {invoice.lic.plot}</small>
-                        </IonCol>
-                    </IonRow>
-                </IonGrid>
+                </div>
+
+                {/* <div className="invoice-footer">
+                    <span>ЛС: {invoice.lic.code}</span>
+                    <span>Участок: {invoice.lic.plot}</span>
+                </div> */}
             </div>
-        </IonCard>
+        </IonItem>
     );
 };
 

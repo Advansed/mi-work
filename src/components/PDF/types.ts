@@ -1,20 +1,81 @@
 // ============================================
-// ТИПЫ ДАННЫХ ДЛЯ PDF ГЕНЕРАТОРА
+// ОСНОВНЫЕ ТИПЫ PDF МОДУЛЯ
 // ============================================
 
-// ============================================
-// ЭКСПОРТЫ МОДУЛЯ ACTS
-// ============================================
-
-
-export interface ActOrderData {
-    actNumber: string;
-    date: string;
-    representative: RepresentativeData;
-    order: OrderData;
-    execution: ExecutionData;
-    reconnection: ReconnectionData;
+// Базовые конфигурационные типы
+export interface PDFConfig {
+    orientation: 'portrait' | 'landscape';
+    format: string | number[];
+    colors: {
+        primary: string;
+        secondary: string;
+        text: string;
+        background: string;
+    };
+    fonts: {
+        regular: FontConfig;
+        bold: FontConfig;
+        italic: FontConfig;
+    };
+    margins: {
+        top: number;
+        right: number;
+        bottom: number;
+        left: number;
+    };
 }
+
+export interface FontConfig {
+    family: string;
+    size: number;
+    lineHeight: number;
+}
+
+export interface TextOptions {
+    align?: 'left' | 'center' | 'right' | 'justify';
+    maxWidth?: number;
+    lineHeight?: number;
+    color?: string;
+    font?: string;
+    fontSize?: number;
+}
+
+export interface FieldPosition {
+    x: number;
+    y: number;
+    width?: number;
+    height?: number;
+}
+
+export interface TemplateLayout {
+    pageWidth: number;
+    pageHeight: number;
+    margins: {
+        top: number;
+        right: number;
+        bottom: number;
+        left: number;
+    };
+    sections: {
+        header: FieldPosition;
+        content: FieldPosition;
+        footer: FieldPosition;
+    };
+}
+
+export interface FieldPositions {
+    [key: string]: FieldPosition;
+}
+
+export interface SectionSpacing {
+    before: number;
+    after: number;
+    internal: number;
+}
+
+// ============================================
+// ТИПЫ ДЛЯ АКТ-НАРЯДА (существующие)
+// ============================================
 
 export interface RepresentativeData {
     name: string;
@@ -28,113 +89,120 @@ export interface OrderData {
     house: string;
     street: string;
     subscriber: string;
-    orderGiver: SignatureData;
-    orderReceiver: SignatureData;
 }
 
 export interface ExecutionData {
-    executor: string;
-    executionDate: string;
-    executionTime: string;
-    disconnectedEquipment: string;
-    representativeSignature: SignatureData;
-    subscriberSignature: SignatureData;
-}
-
-export interface ReconnectionData {
-    reconnectionDate: string;
-    reconnectionBy: string;
-    reconnectionOrder: string;
+    datetime: string;
+    equipment_description: string;
     apartment: string;
     house: string;
     street: string;
+}
+
+export interface ReconnectionData {
+    representative: string;
     subscriber: string;
-    representativeSignature: SignatureData;
-    subscriberSignature: SignatureData;
+    apartment: string;
+    house: string;
+    street: string;
+    connection_date: string;
 }
 
 export interface SignatureData {
-    name: string;
-    position: string;
-    signature?: string; // base64 изображение подписи
+    representative: string;
+    subscriber: string;
 }
 
-export interface PDFConfig {
-    format: 'a4' | 'letter';
-    orientation: 'portrait' | 'landscape';
-    margins: {
-        top: number;
-        right: number;
-        bottom: number;
-        left: number;
-    };
-    fonts: {
-        regular: FontConfig;
-        bold: FontConfig;
-        title: FontConfig;
-    };
-    colors: {
-        primary: string;
-        secondary: string;
-        text: string;
-        lines: string;
-    };
-    elements: {
-        logoWidth: number;
-        logoHeight: number;
-        lineHeight: number;
-        fieldHeight: number;
-        sectionSpacing: number;
-    };
+export interface ActOrderData {
+    actNumber: string;
+    date: string;
+    representative: RepresentativeData;
+    order: OrderData;
+    execution: ExecutionData;
+    reconnection: ReconnectionData;
+    signatures: SignatureData;
 }
 
-export interface FontConfig {
-    family: string;
-    size: number;
-    style: 'normal' | 'bold' | 'italic';
+// ============================================
+// ТИПЫ ДЛЯ АКТА ПЛОМБИРОВАНИЯ (новые)
+// ============================================
+
+export interface PlombMeterData {
+    meter_number: string;
+    seal_number: string;
+    current_reading?: string | number;
+    meter_type?: string;
+    notes?: string;
+    sequence_order?: number;
 }
 
-export interface TextOptions {
-    fontSize?: number;
-    fontStyle?: 'normal' | 'bold' | 'italic';
-    align?: 'left' | 'center' | 'right';
-    color?: string;
-    maxWidth?: number;
+export interface ActPlombData {
+    id?: string;
+    act_number?: string;
+    act_date: string;
+    subscriber_name: string;
+    address?: string;
+    street: string;
+    house: string;
+    apartment: string;
+    usd_representative: string;
+    notes?: string;
+    invoice_id?: string;
+    meters: PlombMeterData[];
+    recipient_signature?: string;
+    receipt_date?: string;
+    created_at?: string;
+    updated_at?: string;
 }
 
-export interface FieldPosition {
-    x: number;
-    y: number;
+// ============================================
+// ОБЩИЕ СЛУЖЕБНЫЕ ТИПЫ
+// ============================================
+
+export interface PDFGenerationResult {
+    success: boolean;
+    blob?: Blob;
+    url?: string;
+    error?: string;
+}
+
+export interface PDFGenerationOptions {
+    filename?: string;
+    autoDownload?: boolean;
+    showPreview?: boolean;
+    quality?: 'low' | 'medium' | 'high';
+}
+
+// ============================================
+// ТИПЫ ДЛЯ ШАБЛОНОВ
+// ============================================
+
+export interface TemplateRenderOptions {
+    data: ActOrderData | ActPlombData;
+    config?: Partial<PDFConfig>;
+    layout?: Partial<TemplateLayout>;
+}
+
+export interface TemplateValidationResult {
+    isValid: boolean;
+    errors: string[];
+    warnings: string[];
+}
+
+// ============================================
+// ТИПЫ ДЛЯ УТИЛИТ
+// ============================================
+
+export interface TextMeasurement {
     width: number;
-    height?: number;
+    height: number;
+    lines: string[];
 }
 
-export interface TemplateLayout {
-    header: {
-        height: number;
-        logoPosition: FieldPosition;
-        titlePosition: FieldPosition;
-        datePosition: FieldPosition;
-    };
-    sections: {
-        representative: FieldPosition;
-        order: FieldPosition;
-        execution: FieldPosition;
-        reconnection: FieldPosition;
-    };
-    footer: {
-        height: number;
-        notePosition: FieldPosition;
-    };
-}
-
-export interface FieldPositions {
-    [key: string]: FieldPosition;
-}
-
-export interface SectionSpacing {
-    beforeSection: number;
-    afterSection: number;
-    betweenElements: number;
-    beforeSignatures: number;
+export interface FontInfo {
+    family: string;
+    style: string;
+    size: number;
+    available: boolean;
+    cyrillic: boolean;
 }
