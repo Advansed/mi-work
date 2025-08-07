@@ -64,10 +64,6 @@ export const InvoiceItem: React.FC<InvoiceCardProps> = ({
                     </h2>
                     
                     <div className="invoice-info">
-                        <div className="info-row">
-                            <IonIcon icon={personOutline} />
-                            <div>{invoice.applicant}</div>
-                        </div>
                         
                         <div className="info-row">
                             <IonIcon icon={locationOutline} />
