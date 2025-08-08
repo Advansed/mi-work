@@ -2,14 +2,9 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useActPlomb } from './useActPlomb';
 import './ActPlombForm.css';
 import { IonLoading, IonModal } from '@ionic/react';
-import ActPlombPrint from './ActPlombPrint';
 import { FormField, FormRow, FormSection, ReadOnlyField, TextAreaField } from '../Forms/Forms';
-import { 
-  generateActPlombPDF, 
-  validateActPlombData,
-  generateActPlombFilename,
-  convertFormDataToActPlomb 
-} from '../../PDF';
+
+import { PDFDoc } from '../../Files/Files';
 
 
 // === ТИПЫ И ИНТЕРФЕЙСЫ ===
@@ -31,48 +26,36 @@ const ActPlombForm: React.FC<ActPlombFormProps> = ({
     errors,
     loading,
     saving,
-    updateField,           // Новая функция: обновление + очистка ошибки
-    handleFieldChange,     // Теперь стабильная ссылка!
+    updateField,            // Новая функция: обновление + очистка ошибки
+    setLoading,             // Теперь стабильная ссылка!
     handleMeterChange,
     addMeter,
     removeMeter,
     loadActByInvoice,
-    saveAct
+    saveAct,
+    getPDF
   } = useActPlomb();
 
   const [showPrintModal, setShowPrintModal] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
+  const [ pdf, setPDF ] = useState( '' )
 
-const handleGeneratePDF = useCallback(async () => {
-  setPdfLoading(true);
-  try {
-    // Конвертируем данные формы в формат PDF
-    const pdfData = convertFormDataToActPlomb(data);
-    
-    // Валидация данных
-    const validation = validateActPlombData(pdfData);
-    if (!validation.isValid) {
-      alert(`Ошибки в данных:\n${validation.errors.join('\n')}`);
-      return;
+  const handleGeneratePDF = useCallback(async () => {
+    setLoading(true);
+    try {
+      // Конвертируем данные формы в формат PDF
+      const pdfData = await getPDF();
+      setPDF( pdfData )
+      setShowPrintModal( true )
+      console.log('PDF успешно создан и скачан');
+    } catch (error: any) {
+      console.error('Ошибка генерации PDF:', error);
+      alert(`Ошибка создания PDF: ${error.message}`);
+    } finally {
+      setLoading(false);
     }
+  }, [data]);
 
-    // Генерируем PDF с автоматическим именем файла
-    const filename = generateActPlombFilename(pdfData);
-    await generateActPlombPDF(pdfData, filename);
-    
-    console.log('PDF успешно создан и скачан');
-  } catch (error: any) {
-    console.error('Ошибка генерации PDF:', error);
-    alert(`Ошибка создания PDF: ${error.message}`);
-  } finally {
-    setPdfLoading(false);
-  }
-}, [data]);
-
-const handlePreview = useCallback(() => {
-  // Открываем существующий компонент предпросмотра
-  setShowPrintModal(true);
-}, []);
 
   // === HELPER ФУНКЦИИ ===
   const getFieldValue = useCallback((field: string) => {
@@ -369,12 +352,8 @@ const handlePreview = useCallback(() => {
       </form>
 
       {/* Модальное окно печати */}
-      <IonModal isOpen={showPrintModal} onDidDismiss={handleClosePrintModal}>
-        <ActPlombPrint 
-          data={data}
-          mode="print"
-          onClose={handleClosePrintModal}
-        />
+      <IonModal isOpen={ showPrintModal } onDidDismiss={handleClosePrintModal}>
+        <PDFDoc url = { pdf } name = { "PDF" }  title = { "PDF"}/>
       </IonModal>
     </div>
   );

@@ -1,10 +1,4 @@
 import { useState, useCallback, useMemo } from 'react';
-import { 
-  generateActPlombPDF, 
-  validateActPlombData,
-  generateActPlombFilename,
-  convertFormDataToActPlomb 
-} from '../../PDF';
 import { useToast } from '../../Toast/useToast';
 import { getData } from '../../Store';
 
@@ -70,6 +64,8 @@ export const useActPlomb = () => {
     notes: '',
     meters: [createNewMeter(1)]
   });
+
+  const [pdf, setPDF ] = useState("")
 
   const [errors, setErrors] = useState<PlombFormErrors>({});
   const [loading, setLoading] = useState(false);
@@ -264,55 +260,37 @@ export const useActPlomb = () => {
     }
   }, [data, validateData, showSuccess, showError]);
 
-  // === PDF ФУНКЦИИ ===
-  const generatePDF = useCallback(async (autoDownload: boolean = true): Promise<Blob | null> => {
-    setPdfLoading(true);
-    try {
-      // Конвертируем данные формы в формат PDF
-      const pdfData = convertFormDataToActPlomb(data);
-      
-      // Валидация данных
-      const validation = validateActPlombData(pdfData);
-      if (!validation.isValid) {
-        showError(`Ошибки в данных:\n${validation.errors.join('\n')}`);
-        return null;
-      }
+  const getPDF = useCallback(async (): Promise<string | ''> => {
+    if (!validateData()) {
+      showError('Пожалуйста, исправьте ошибки в форме');
+      return '';
+    }
 
-      // Генерируем PDF
-      const filename = autoDownload ? generateActPlombFilename(pdfData) : undefined;
-      const blob = await generateActPlombPDF(pdfData, filename);
-      
-      if (autoDownload) {
-        showSuccess('PDF файл создан и скачан');
+    try {
+      setSaving(true);
+
+      const saveData = {
+        ...data,
+        address: `${data.street}, ${data.house}, кв. ${data.apartment}`.trim()
+      };
+
+      const response = await getData('PDF_ACT_PLOMB', saveData);
+
+      if (response.success) {
+        setPDF( response.data )
+        showSuccess(`PDF получен`);
+        return response.data;
+      } else {
+        throw new Error(response.message || 'PDF не создан');
       }
-      
-      return blob;
-    } catch (error: any) {
-      console.error('Ошибка генерации PDF:', error);
+    } catch (error : any) {
+      console.error('Ошибка сохранения:', error);
       showError(`Ошибка создания PDF: ${error.message}`);
-      return null;
+      return '';
     } finally {
-      setPdfLoading(false);
+      setSaving(false);
     }
-  }, [data, showSuccess, showError]);
-
-  const previewPDF = useCallback(async (): Promise<string | null> => {
-    setPdfLoading(true);
-    try {
-      const blob = await generatePDF(false);
-      if (blob) {
-        const url = URL.createObjectURL(blob);
-        return url;
-      }
-      return null;
-    } catch (error: any) {
-      console.error('Ошибка предпросмотра PDF:', error);
-      showError(`Ошибка создания предпросмотра: ${error.message}`);
-      return null;
-    } finally {
-      setPdfLoading(false);
-    }
-  }, [generatePDF, showError]);
+  }, [ pdf, validateData, showSuccess, showError ]);
 
   // === МЕМОИЗИРОВАННЫЕ ЗНАЧЕНИЯ ===
   const formattedAddress = useMemo(() => {
@@ -336,7 +314,6 @@ export const useActPlomb = () => {
     errors,
     loading,
     saving,
-    pdfLoading,
     
     // Вычисляемые значения
     formattedAddress,
@@ -350,14 +327,12 @@ export const useActPlomb = () => {
     removeMeter,
     
     // Функции работы с данными
+    setLoading,
     loadActByInvoice,
     validateData,
     saveAct,
-    
-    // PDF функции
-    generatePDF,
-    previewPDF,
-    
+    getPDF,
+
     // Утилиты
     setData,
     setErrors

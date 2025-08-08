@@ -1,0 +1,352 @@
+/* ============================================
+   КОРПОРАТИВНЫЙ СТИЛЬ ДЛЯ PDFDOC КОМПОНЕНТА
+   ============================================ */
+
+/* Основные CSS переменные */
+:root {
+  --pdfdoc-corporate-primary: #1E3A8A;      /* Темно-синий */
+  --pdfdoc-corporate-secondary: #E5E7EB;    /* Светло-серый */
+  --pdfdoc-corporate-accent: #F97316;       /* Оранжевый */
+  --pdfdoc-corporate-white: #FFFFFF;        /* Белый */
+  --pdfdoc-corporate-text: #1F2937;         /* Темно-серый текст */
+  --pdfdoc-corporate-blue: #3B82F6;         /* Синий */
+  
+  /* Дополнительные корпоративные цвета */
+  --pdfdoc-corporate-border: #d1d5db;
+  --pdfdoc-corporate-shadow: rgba(0, 0, 0, 0.1);
+  --pdfdoc-corporate-hover: #f3f4f6;
+  --pdfdoc-corporate-success: #10b981;
+  --pdfdoc-corporate-warning: #f59e0b;
+  --pdfdoc-corporate-error: #ef4444;
+}
+
+/* ============================================
+   ОСНОВНОЙ КОНТЕЙНЕР PDFDOC
+   ============================================ */
+
+.pdfdoc-container {
+  width: 100%;
+  height: 100%;
+  background: var(--pdfdoc-corporate-secondary);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px var(--pdfdoc-corporate-shadow);
+  border: 2px solid var(--pdfdoc-corporate-border);
+  border-left: 6px solid var(--pdfdoc-corporate-primary);
+  position: relative;
+}
+
+/* Декоративный элемент в правом верхнем углу */
+.pdfdoc-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid var(--pdfdoc-corporate-primary);
+  border-bottom: 20px solid transparent;
+  opacity: 0.1;
+  z-index: 1;
+}
+
+.pdfdoc-container:hover {
+  border-left-color: var(--pdfdoc-corporate-accent);
+  box-shadow: 0 6px 24px rgba(249, 115, 22, 0.2);
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+}
+
+/* ============================================
+   ПАНЕЛЬ УПРАВЛЕНИЯ PDF
+   ============================================ */
+
+.pdfdoc-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--pdfdoc-corporate-primary);
+  color: var(--pdfdoc-corporate-white);
+  border-bottom: 3px solid var(--pdfdoc-corporate-accent);
+  box-shadow: 0 2px 8px var(--pdfdoc-corporate-shadow);
+  position: relative;
+  z-index: 2;
+}
+
+/* Заголовок панели */
+.pdfdoc-toolbar-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pdfdoc-toolbar-icon {
+  font-size: 18px;
+  color: var(--pdfdoc-corporate-accent);
+  background: var(--pdfdoc-corporate-white);
+  padding: 6px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Кнопки управления */
+.pdfdoc-toolbar-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pdfdoc-toolbar ion-button {
+  --background: var(--pdfdoc-corporate-white);
+  --background-hover: var(--pdfdoc-corporate-hover);
+  --background-activated: var(--pdfdoc-corporate-secondary);
+  --color: var(--pdfdoc-corporate-primary);
+  --border-radius: 8px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --height: 36px;
+  font-weight: 600;
+  font-size: 16px;
+  box-shadow: 0 2px 4px var(--pdfdoc-corporate-shadow);
+  transition: all 0.2s ease;
+  margin: 0 2px;
+}
+
+.pdfdoc-toolbar ion-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px var(--pdfdoc-corporate-shadow);
+}
+
+/* Кнопка масштаба (показ процентов) */
+.pdfdoc-scale-display {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--pdfdoc-corporate-white);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  min-width: 50px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* ============================================
+   ОБЛАСТЬ ПРОСМОТРА PDF
+   ============================================ */
+
+.pdfdoc-viewer-container {
+  flex: 1;
+  background: var(--pdfdoc-corporate-white);
+  padding: 16px;
+  overflow: auto;
+  position: relative;
+}
+
+/* Стилизация PDF viewer */
+.pdfdoc-viewer-container .rpv-core__viewer {
+  background: var(--pdfdoc-corporate-white);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px var(--pdfdoc-corporate-shadow);
+}
+
+.pdfdoc-viewer-container .rpv-core__page {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+/* ============================================
+   СОСТОЯНИЯ И АНИМАЦИИ
+   ============================================ */
+
+/* Состояние загрузки */
+.pdfdoc-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+  height: 200px;
+  background: var(--pdfdoc-corporate-white);
+  color: var(--pdfdoc-corporate-text);
+}
+
+.pdfdoc-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--pdfdoc-corporate-border);
+  border-top: 4px solid var(--pdfdoc-corporate-primary);
+  border-radius: 50%;
+  animation: pdfdoc-spin 1s linear infinite;
+}
+
+.pdfdoc-loading-text {
+  font-weight: 600;
+  color: var(--pdfdoc-corporate-primary);
+}
+
+@keyframes pdfdoc-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Состояние ошибки */
+.pdfdoc-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  height: 200px;
+  background: var(--pdfdoc-corporate-white);
+  color: var(--pdfdoc-corporate-error);
+  text-align: center;
+  padding: 20px;
+}
+
+.pdfdoc-error-icon {
+  font-size: 48px;
+  color: var(--pdfdoc-corporate-error);
+}
+
+.pdfdoc-error-text {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* ============================================
+   АДАПТИВНОСТЬ
+   ============================================ */
+
+/* Мобильные устройства */
+@media (max-width: 768px) {
+  .pdfdoc-toolbar {
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 8px 12px;
+  }
+
+  .pdfdoc-toolbar-title {
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .pdfdoc-toolbar-icon {
+    font-size: 16px;
+    padding: 4px;
+  }
+
+  .pdfdoc-toolbar ion-button {
+    --height: 32px;
+    --padding-start: 8px;
+    --padding-end: 8px;
+    font-size: 14px;
+  }
+
+  .pdfdoc-scale-display {
+    padding: 6px 8px;
+    font-size: 11px;
+    min-width: 40px;
+  }
+
+  .pdfdoc-viewer-container {
+    padding: 8px;
+  }
+}
+
+/* Планшеты */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .pdfdoc-toolbar {
+    padding: 10px 14px;
+  }
+
+  .pdfdoc-viewer-container {
+    padding: 12px;
+  }
+}
+
+/* ============================================
+   ДОПОЛНИТЕЛЬНЫЕ УТИЛИТАРНЫЕ КЛАССЫ
+   ============================================ */
+
+.pdfdoc-hidden {
+  display: none !important;
+}
+
+.pdfdoc-fade-in {
+  animation: pdfdoc-fadeIn 0.3s ease;
+}
+
+@keyframes pdfdoc-fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Кастомные скроллбары */
+.pdfdoc-viewer-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.pdfdoc-viewer-container::-webkit-scrollbar-track {
+  background: var(--pdfdoc-corporate-secondary);
+  border-radius: 4px;
+}
+
+.pdfdoc-viewer-container::-webkit-scrollbar-thumb {
+  background: var(--pdfdoc-corporate-border);
+  border-radius: 4px;
+}
+
+.pdfdoc-viewer-container::-webkit-scrollbar-thumb:hover {
+  background: var(--pdfdoc-corporate-primary);
+}
+
+/* ============================================
+   ПЕРЕОПРЕДЕЛЕНИЕ IONIC КОМПОНЕНТОВ
+   ============================================ */
+
+.pdfdoc-container ion-button.button-clear {
+  --color: var(--pdfdoc-corporate-primary);
+}
+
+.pdfdoc-container ion-button.button-clear:hover {
+  --color: var(--pdfdoc-corporate-accent);
+}
+
+/* ============================================
+   ПЕЧАТЬ
+   ============================================ */
+
+@media print {
+  .pdfdoc-toolbar {
+    display: none !important;
+  }
+
+  .pdfdoc-container {
+    box-shadow: none;
+    border: none;
+    height: auto;
+  }
+
+  .pdfdoc-viewer-container {
+    padding: 0;
+    overflow: visible;
+  }
+}
