@@ -42,6 +42,7 @@ export interface ActShutdownData {
   reconnection_house?: string;
   reconnection_street?: string;
   reconnection_subscriber?: string;
+  
 }
 
 export type ShutdownFormErrors = Partial<Record<keyof ActShutdownData, string>>;

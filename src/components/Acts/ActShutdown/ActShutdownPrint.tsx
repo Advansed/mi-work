@@ -149,7 +149,7 @@ const ActShutdown: React.FC<ActShutdownProps> = ({
                   + ' квартире №' + (data.apartment || '__') + ' дома ' + (data.house || '__') 
                   + ' по ул ' + (data.street || '____________')
                } />
-                <div className="act-field-description">указать наименование, количество приборов, способ отключения</div>
+              <div className="act-field-description">указать наименование, количество приборов, способ отключения</div>
 
               <div className="act-execution-section">
                   <div className="act-signatures-title">Подписи:</div>

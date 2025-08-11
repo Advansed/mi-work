@@ -73,17 +73,11 @@ const CompletedPrint: React.FC<CompletedPrintProps> = ({
           <div className="completed-print-content">
             {/* Заголовок организации */}
             <div className="completed-document-header">
-              <div className="completed-logo-section">
-                <div className="completed-logo-circle">
-                  <div className="completed-logo-text">УСД</div>
-                </div>
-                <div className="completed-company-info">
-                  <div className="completed-company-name">САХА ТРАНСНЕФТЕГАЗ</div>
-                  <div className="completed-department">УСД</div>
-                </div>
+              <div className="logo-section">
+                <img src="USD.png" alt="USD" className='h-4'/>
               </div>
-              <div className="completed-qr-code">
-                <div className="completed-qr-placeholder">QR</div>
+              <div className="logo-section">
+                <img src="qr.png" alt="USD" className='h-4'/>
               </div>
             </div>
 

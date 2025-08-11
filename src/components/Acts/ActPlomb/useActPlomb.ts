@@ -261,10 +261,6 @@ export const useActPlomb = () => {
   }, [data, validateData, showSuccess, showError]);
 
   const getPDF = useCallback(async (): Promise<string | ''> => {
-    if (!validateData()) {
-      showError('Пожалуйста, исправьте ошибки в форме');
-      return '';
-    }
 
     try {
       setSaving(true);

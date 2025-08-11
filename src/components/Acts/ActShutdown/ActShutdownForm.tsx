@@ -111,7 +111,7 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
         <ReadOnlyField
           label="Номер акта"
           value={getFieldValue('act_number') || (data.id ? 'Загрузка...' : 'Будет присвоен при сохранении')}
-          hint={data.id ? 'Номер присвоен системой' : 'Номер будет сгенерирован автоматически при сохранении'}
+          // hint={data.id ? 'Номер присвоен системой' : 'Номер будет сгенерирован автоматически при сохранении'}
         />
         <FormField
           label="Дата акта"
@@ -126,7 +126,7 @@ const ShutdownOrderForm: React.FC<ShutdownOrderFormProps> = ({
           <ReadOnlyField
             label="Связанная заявка"
             value={`Заявка №${data.invoice_id}`}
-            hint="Акт создан для данной заявки"
+            // hint="Акт создан для данной заявки"
           />
         )}
       </FormRow>
