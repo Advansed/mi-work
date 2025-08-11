@@ -1,0 +1,560 @@
+/* ============================================
+   ЕДИНЫЙ CSS ФАЙЛ ДЛЯ ВСЕХ PRINT-КОМПОНЕНТОВ ACTS
+   ============================================ */
+
+/* ============================================
+   CSS ПЕРЕМЕННЫЕ
+   ============================================ */
+
+:root {
+  --acts-page-width: 210mm;
+  --acts-page-height: 297mm;
+  --acts-font-family: 'Times New Roman', serif;
+  --acts-font-size-base: 12px;
+  --acts-font-size-print: 12pt;
+  --acts-line-height: 1.4;
+  --acts-text-color: #000;
+  --acts-border-color: #000;
+  --acts-bg-color: white;
+  --acts-container-bg: #f5f5f5;
+  --acts-logo-size: 60px;
+  --acts-section-margin: 20px;
+  --acts-field-margin: 10px;
+}
+
+/* ============================================
+   ОСНОВНЫЕ КОНТЕЙНЕРЫ
+   ============================================ */
+
+.acts-print-wrapper {
+  background: var(--acts-container-bg);
+  min-height: 100vh;
+  padding: 20px;
+  font-family: var(--acts-font-family);
+  overflow-y: scroll;
+}
+
+.acts-print-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.acts-print-scrollable {
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--acts-bg-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+}
+
+.acts-print-content {
+  padding: 40px 30px;
+  margin: 0 auto;
+  max-width: var(--acts-page-width);
+  min-height: var(--acts-page-height);
+  background: var(--acts-bg-color);
+  font-size: var(--acts-font-size-base);
+  line-height: var(--acts-line-height);
+  color: var(--acts-text-color);
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* ============================================
+   КНОПКИ
+   ============================================ */
+
+.acts-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.acts-btn-primary {
+  background: #3b82f6;
+  color: white;
+}
+
+.acts-btn-primary:hover {
+  background: #2563eb;
+}
+
+.acts-btn-secondary {
+  background: #6b7280;
+  color: white;
+}
+
+.acts-btn-secondary:hover {
+  background: #4b5563;
+}
+
+.acts-btn-outline {
+  background: white;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.acts-btn-outline:hover {
+  background: #f9fafb;
+}
+
+/* ============================================
+   ЗАГОЛОВОК ДОКУМЕНТА
+   ============================================ */
+
+.acts-document-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--acts-border-color);
+  padding-bottom: 10px;
+}
+
+.acts-logo-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.acts-logo-circle {
+  width: var(--acts-logo-size);
+  height: var(--acts-logo-size);
+  background: #1e40af;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.acts-logo-text {
+  color: white;
+  font-weight: bold;
+  font-size: 10px;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.acts-qr-placeholder {
+  width: var(--acts-logo-size);
+  height: var(--acts-logo-size);
+  border: 2px solid var(--acts-border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  text-align: center;
+}
+
+.acts-document-title {
+  text-align: center;
+  margin-bottom: var(--acts-section-margin);
+}
+
+.acts-document-title h1 {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0 0 10px 0;
+}
+
+.acts-document-title h2 {
+  font-size: 14px;
+  font-weight: normal;
+  margin: 0;
+}
+
+/* ============================================
+   ПОЛЯ И СТРОКИ
+   ============================================ */
+
+.acts-field-row {
+  margin-bottom: var(--acts-field-margin);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: baseline;
+}
+
+.acts-field-label {
+  margin-right: 5px;
+}
+
+.acts-field-value {
+  border-bottom: 1px solid var(--acts-border-color);
+  min-width: 100px;
+  display: inline-block;
+  padding: 0 5px 2px 5px;
+}
+
+.acts-field-value--wide {
+  min-width: 200px;
+}
+
+.acts-field-value--full {
+  width: 100%;
+}
+
+/* ============================================
+   ПОДПИСИ
+   ============================================ */
+
+.acts-signatures-section {
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+
+.acts-signature-block {
+  display: inline-block;
+  width: 45%;
+  margin-right: 5%;
+  margin-bottom: 15mm;
+  vertical-align: top;
+}
+
+.acts-signature-line {
+  border-bottom: 1px solid var(--acts-border-color);
+  height: 20px;
+  margin-bottom: 5px;
+}
+
+/* ============================================
+   СПЕЦИФИЧНЫЕ МОДИФИКАТОРЫ
+   ============================================ */
+
+/* Модификатор для предписаний */
+.acts-print-content--prescript {
+  padding: 25mm;
+  font-size: 11pt;
+}
+
+.acts-violations-section {
+  margin: 20px 0;
+}
+
+.acts-violations-header {
+  background: #f0f0f0;
+  padding: 8px;
+  border: 1px solid var(--acts-border-color);
+  margin-bottom: 10px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.acts-violation-item {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-left: 3px solid #dc2626;
+  background: #fef2f2;
+}
+
+.acts-warning-text {
+  background: #fef3cd;
+  border: 1px solid #f59e0b;
+  padding: 12px;
+  margin: 15px 0;
+  font-weight: bold;
+}
+
+.acts-deadline-box {
+  background: #ecfdf5;
+  padding: 8px;
+  border: 1px solid #10b981;
+  margin-bottom: 10px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Модификатор для отключений */
+.acts-shutdown-section {
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+
+.acts-shutdown-reason-block {
+  border: 1px solid var(--acts-border-color);
+  padding: 10px;
+  margin: 15px 0;
+  background: #f9f9f9;
+}
+
+.acts-reconnection-section {
+  border-top: 1px solid var(--acts-border-color);
+  padding-top: 15px;
+  margin-top: 20px;
+}
+
+.acts-execution-section {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px dashed var(--acts-border-color);
+}
+
+/* Модификатор для завершенных работ */
+.acts-work-section {
+  margin: 15px 0;
+  padding: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.acts-work-title {
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-decoration: underline;
+}
+
+/* Модификатор для обследований дома */
+.acts-meter-block {
+  margin: 15px 0;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+}
+
+.acts-meter-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #374151;
+}
+
+.acts-witness-section {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid var(--acts-border-color);
+}
+
+/* ============================================
+   СЛУЖЕБНЫЕ БЛОКИ
+   ============================================ */
+
+.acts-contact-info {
+  margin-bottom: 20px;
+  font-size: 10pt;
+  border-top: 1px solid #ccc;
+  padding-top: 15px;
+}
+
+.acts-note-section {
+  font-size: 9pt;
+  font-style: italic;
+  border-top: 1px solid #ccc;
+  padding-top: 10px;
+  margin-top: 20px;
+}
+
+/* ============================================
+   УТИЛИТАРНЫЕ КЛАССЫ
+   ============================================ */
+
+.acts-text-center {
+  text-align: center;
+}
+
+.acts-text-right {
+  text-align: right;
+}
+
+.acts-text-left {
+  text-align: left;
+}
+
+.acts-font-bold {
+  font-weight: bold;
+}
+
+.acts-font-italic {
+  font-style: italic;
+}
+
+.acts-spacing-top {
+  margin-top: 15px;
+}
+
+.acts-spacing-bottom {
+  margin-bottom: 15px;
+}
+
+.acts-section-spacing {
+  margin-top: var(--acts-section-margin);
+  margin-bottom: var(--acts-section-margin);
+}
+
+/* ============================================
+   ПЕЧАТЬ
+   ============================================ */
+
+@media print {
+  .acts-print-actions {
+    display: none !important;
+  }
+
+  .acts-print-wrapper {
+    background: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .acts-print-scrollable {
+    max-height: none !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+  }
+
+  .acts-print-content {
+    padding: 15mm !important;
+    box-shadow: none !important;
+    border: none !important;
+    max-width: none !important;
+    min-height: auto !important;
+    font-size: var(--acts-font-size-print) !important;
+    line-height: var(--acts-line-height) !important;
+  }
+
+  .acts-print-content--prescript {
+    padding: 15mm !important;
+  }
+
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .acts-document-title h1 {
+    font-size: 16pt !important;
+  }
+
+  .acts-document-title h2 {
+    font-size: 14pt !important;
+  }
+
+  .acts-logo-circle {
+    background: var(--acts-border-color) !important;
+    color: white !important;
+  }
+
+  .acts-field-value {
+    border-bottom: 1px solid var(--acts-border-color) !important;
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+
+  .acts-violations-header,
+  .acts-warning-text {
+    background: #f0f0f0 !important;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .acts-violation-item {
+    background: white !important;
+    border-left: 2px solid #000 !important;
+  }
+
+  .acts-deadline-box {
+    background: white !important;
+    border: 2px solid #000 !important;
+  }
+
+  .acts-shutdown-reason-block {
+    background: white !important;
+  }
+
+  /* Предотвращение разрыва страницы */
+  .acts-signatures-section,
+  .acts-section-spacing,
+  .acts-meter-block,
+  .acts-work-section,
+  .acts-reconnection-section,
+  .acts-execution-section {
+    page-break-inside: avoid;
+  }
+}
+
+@page {
+  size: A4;
+  margin: 15mm;
+}
+
+/* ============================================
+   АДАПТИВНОСТЬ
+   ============================================ */
+
+@media screen and (max-width: 768px) {
+  .acts-print-wrapper {
+    padding: 10px;
+  }
+
+  .acts-print-content {
+    padding: 20px 15px;
+    font-size: 11px;
+  }
+
+  .acts-print-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .acts-btn {
+    width: 200px;
+    justify-content: center;
+  }
+
+  /* .acts-document-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 15px;
+  } */
+
+  .acts-logo-section {
+    justify-content: center;
+  }
+
+  .acts-signature-block {
+    width: 100%;
+    margin-right: 0;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .acts-print-content {
+    padding: 15px 10px;
+    font-size: 10px;
+  }
+
+  .acts-document-title h1 {
+    font-size: 14px;
+  }
+
+  .acts-document-title h2 {
+    font-size: 12px;
+  }
+
+  .acts-logo-circle {
+    width: 50px;
+    height: 50px;
+  }
+
+  .acts-logo-text {
+    font-size: 8px;
+  }
+
+  .acts-qr-placeholder {
+    width: 50px;
+    height: 50px;
+  }
+}

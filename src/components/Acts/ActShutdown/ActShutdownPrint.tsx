@@ -1,5 +1,5 @@
 import React from 'react';
-import './ActShutdownPrint.css';
+import '../ActsPrint.css'; // НОВЫЙ ИМПОРТ ЕДИНОГО CSS
 import { PrintRow } from '../Forms/Forms';
 
 // Интерфейс данных для печатной формы
@@ -85,28 +85,31 @@ const ActShutdown: React.FC<ActShutdownProps> = ({
   // Режим печати - возвращаем только печатную форму
   if (mode === 'print') {
     return (
-      <div className="act-form-container sroll">
-        <div className="act-print-actions no-print">
-          <button className="btn btn-primary" onClick={handlePrint}>
+      <div className="acts-print-wrapper">
+        <div className="acts-print-actions">
+          <button className="acts-btn acts-btn-primary" onClick={handlePrint}>
             Печать PDF
           </button>
-          <button className="btn btn-secondary" onClick={onClose}>
+          <button className="acts-btn acts-btn-secondary" onClick={onClose}>
             Вернуться к редактированию
           </button>
         </div>
 
-        <div className="print-content-scrollable">
-          <div className="print-content">
+        <div className="acts-print-scrollable">
+          <div className="acts-print-content">
             {/* Заголовок с логотипом */}
-            <div className="document-header">
-              <div className="logo-section">
+            <div className="acts-document-header">
+              <div className="acts-logo-section">
                 <img src="USD.png" alt="USD" className='h-4'/>
+              </div>
+              <div className="acts-logo-section">
+                <img src="qr.png" alt="USD" className='h-4'/>
               </div>
             </div>
 
 
             {/* Заголовок акта */}
-            <div className="act-document-title">
+            <div className="acts-document-title">
               <div className='fs-bold fs-12'> {'АКТ-НАРЯД №' + ( data.actNumber || '____') }</div>
               <div className='fs-bold fs-12'> на отключение газоиспользующего оборудования </div>
             </div>
@@ -119,25 +122,26 @@ const ActShutdown: React.FC<ActShutdownProps> = ({
             </div>
 
             {/* Содержание документа */}
-            <div className="act-document-content">
+            <div className="acts-section-spacing">
               <PrintRow prefix={'Мною, представителем организации УСД АО «Сахатранснефтегаз»'} data={data.representativeName || ''} />
-              <div className="act-field-description">должность, ф.и.о.</div>
+              <div className="acts-field-description">должность, ф.и.о.</div>
 
               <PrintRow prefix={'в присутствии абонента:'} data={data.subscriberName || ''} />
-              <div className="act-field-description">ф.и.о.</div>
+              <div className="acts-field-description">ф.и.о.</div>
 
               <PrintRow prefix={'по причине'} data={data.reason || ''} />
 
-              <PrintRow prefix={'по адресу: кв.№'} data={(data.apartment || '__') + ' дома ' + (data.house || '__') + ' по ул.' + (data.street || '______________')} />
+              <PrintRow prefix={'по адресу: кв.№'} data={(data.apartment || '__') + ' дома ' + (data.house || '__') + ' по ул.'
+                + (data.street || '______________')} />
 
               <PrintRow prefix={'у абонента'} data={data.subscriberName || ''} />
-              <div className="act-field-description">ф.и.о.</div>
+              <div className="acts-field-description">ф.и.о.</div>
 
               <PrintRow prefix={'Наряд выдал'} data={data.orderIssuedBy || ''} />
-              <div className="act-field-description">должность, ф.и.о., подпись</div>
+              <div className="acts-field-description">должность, ф.и.о., подпись</div>
               
               <PrintRow prefix={'Наряд получил'} data={data.orderReceivedBy || ''} />
-              <div className="act-field-description">должность, ф.и.о., подпись</div>
+              <div className="acts-field-description">должность, ф.и.о., подпись</div>
 
               <PrintRow prefix={'мною'} data={(data.executorName || '')
                   + ' "' + (executionDateFormatted.day || '__') + '"'
@@ -149,22 +153,22 @@ const ActShutdown: React.FC<ActShutdownProps> = ({
                   + ' квартире №' + (data.apartment || '__') + ' дома ' + (data.house || '__') 
                   + ' по ул ' + (data.street || '____________')
                } />
-              <div className="act-field-description">указать наименование, количество приборов, способ отключения</div>
+              <div className="acts-field-description">указать наименование, количество приборов, способ отключения</div>
 
-              <div className="act-execution-section">
-                  <div className="act-signatures-title">Подписи:</div>
+              <div className="acts-execution-section">
+                  <div className="acts-signatures-title">Подписи:</div>
 
                   <PrintRow prefix={'Представитель эксплуатационной организации'} data={''} />
                   <PrintRow prefix={''} data={' '} />
-                  <div className="act-field-description">ф.и.о., подпись</div>
+                  <div className="acts-field-description">ф.и.о., подпись</div>
 
                   <PrintRow prefix={'Ответственный квартиросъёмщик (абонент)'} data={''} />
                   <PrintRow prefix={''} data={' '} />
-                  <div className="act-field-description">ф.и.о., подпись</div>
+                  <div className="acts-field-description">ф.и.о., подпись</div>
 
               </div>
 
-              <div className="act-note-section">
+              <div className="acts-note-section">
                 <strong>Примечание:</strong> Акт-наряд составляется в двух экземплярах, 
                 один из которых выдаётся на руки абоненту, другой хранится в эксплуатационной организации.
               </div>

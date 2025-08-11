@@ -1,5 +1,5 @@
 import React from 'react';
-import './CompletedPrint.css';
+import '../ActsPrint.css'; // НОВЫЙ ИМПОРТ ЕДИНОГО CSS
 import { PrintRow } from '../Forms/Forms';
 import { ActCompletedData } from './useCompleted';
 
@@ -59,85 +59,77 @@ const CompletedPrint: React.FC<CompletedPrintProps> = ({
 
   if (mode === 'print') {
     return (
-      <div className="completed-form-container">
-        <div className="completed-print-actions">
-          <button onClick={handlePrint} className="completed-btn completed-btn-primary">
+      <div className="acts-print-wrapper">
+        <div className="acts-print-actions">
+          <button onClick={handlePrint} className="acts-btn acts-btn-primary">
             🖨️ Печать
           </button>
-          <button onClick={onClose} className="completed-btn completed-btn-secondary">
+          <button onClick={onClose} className="acts-btn acts-btn-secondary">
             ✕ Закрыть
           </button>
         </div>
 
-        <div className="completed-print-content-scrollable">
-          <div className="completed-print-content">
-            {/* Заголовок организации */}
-            <div className="completed-document-header">
-              <div className="logo-section">
+        <div className="acts-print-scrollable">
+          <div className="acts-print-content">
+            
+            {/* Заголовок с логотипом */}
+            <div className="acts-document-header">
+              <div className="acts-logo-section">
                 <img src="USD.png" alt="USD" className='h-4'/>
               </div>
-              <div className="logo-section">
+              <div className="acts-logo-section">
                 <img src="qr.png" alt="USD" className='h-4'/>
               </div>
             </div>
 
             {/* Реквизиты организации */}
-            <div className="completed-company-details">
-              <div className="completed-divider-line"></div>
-              <div className="completed-details-text">
-                <strong>Структурное подразделение Управление по сбытовой деятельности «Сахатранснефтегаз»</strong>
-              </div>
-              <div className="completed-details-text">
-                ИНН 1435142972, КПП 140045003, ОГРН 1031402073097
-              </div>
-              <div className="completed-details-text">
-                Адрес пункта приема платежа: г.Якутск, ул. П.Алексеева, 64б, тел/факс: 46-00-93, 46-00-41
-              </div>
-              <div className="completed-details-text">
-                Время работы: будни с 8:00 до 17:00, обед с 12:00 до 13:00; суббота, воскресенье - выходной
-              </div>
+            <div className="acts-company-details">
+              <div className="acts-divider-line"></div>
+              <div className="acts-details-text">Республика Саха (Якутия), г. Якутск, ул. Кирова, д. 20</div>
+              <div className="acts-details-text">Тел.: +7 (4112) 42-42-42, факс: +7 (4112) 42-42-43</div>
+              <div className="acts-details-text">Email: info@stngas.ru</div>
+              <div className="acts-divider-line"></div>
             </div>
 
-            {/* Заголовок документа */}
-            <div className="completed-document-title">
+            {/* Заголовок акта */}
+            <div className="acts-document-title">
               <h1>АКТ ВЫПОЛНЕННЫХ РАБОТ</h1>
-              
-              <div className="completed-date-line">
-                от «<span className="completed-field-value">{actDateFormatted.day}</span>»
-                <span className="completed-field-value">{actDateFormatted.month}</span>
-                20<span className="completed-field-value">{actDateFormatted.year}</span>г.
-                <span className="completed-field-value completed-act-number">№ {data.act_number || '__________'}</span>
+              <div className="acts-date-line">
+                <span>
+                  от «{actDateFormatted.day}» {actDateFormatted.month} 20{actDateFormatted.year}г.
+                </span>
+                <span className="acts-field-value acts-act-number">№ {data.act_number || '__________'}</span>
               </div>
             </div>
 
             {/* Содержание документа */}
-            <div className="completed-document-content">
+            <div className="acts-section-spacing">
               
               {/* Данные исполнителя */}
-              <div className="completed-content-section">
+              <div className="acts-work-section">
                 <PrintRow prefix={'Исполнитель работ:'} data={data.executor_name || ''} />
-                <div className="completed-field-description">ф.и.о.</div>
+                <div className="acts-field-description">ф.и.о.</div>
                 
                 <PrintRow prefix={'Должность:'} data={data.executor_position || ''} />
               </div>
 
               {/* Данные заказчика */}
-              <div className="completed-content-section">
+              <div className="acts-work-section">
                 <PrintRow prefix={'Заказчик (абонент):'} data={data.client_name || ''} />
-                <div className="completed-field-description">ф.и.о.</div>
+                <div className="acts-field-description">ф.и.о.</div>
                 
                 <PrintRow prefix={'Адрес выполнения работ:'} data={formatAddress()} />
               </div>
 
               {/* Описание работ */}
-              <div className="completed-content-section">
-                <div className="completed-section-title">Выполненные работы:</div>
+              <div className="acts-work-section">
+                <div className="acts-work-title">Выполненные работы:</div>
                 
-                <div className="completed-work-description">
+                <div className="acts-work-description">
                   {data.work_description ? (
-                    <div className="completed-work-text">{data.work_description}</div>
+                    <div className="acts-work-text">{data.work_description}</div>
                   ) : (
-                    <div className="completed-work-placeholder">
+                    <div className="acts-work-placeholder">
                       _____________________________________________________________________
                       _____________________________________________________________________
                       _____________________________________________________________________
@@ -145,29 +137,29 @@ const CompletedPrint: React.FC<CompletedPrintProps> = ({
                     </div>
                   )}
                 </div>
-                <div className="completed-field-description">подробное описание выполненных работ</div>
+                <div className="acts-field-description">подробное описание выполненных работ</div>
               </div>
 
               {/* Использованные материалы */}
-              <div className="completed-content-section">
-                <div className="completed-section-title">Использованные материалы и оборудование:</div>
+              <div className="acts-work-section">
+                <div className="acts-work-title">Использованные материалы и оборудование:</div>
                 
-                <div className="completed-equipment-used">
+                <div className="acts-equipment-used">
                   {data.equipment_used ? (
-                    <div className="completed-equipment-text">{data.equipment_used}</div>
+                    <div className="acts-equipment-text">{data.equipment_used}</div>
                   ) : (
-                    <div className="completed-equipment-placeholder">
+                    <div className="acts-equipment-placeholder">
                       _____________________________________________________________________
                       _____________________________________________________________________
                       _____________________________________________________________________
                     </div>
                   )}
                 </div>
-                <div className="completed-field-description">наименование, количество, характеристики</div>
+                <div className="acts-field-description">наименование, количество, характеристики</div>
               </div>
 
               {/* Сроки выполнения */}
-              <div className="completed-content-section">
+              <div className="acts-work-section">
                 <PrintRow prefix={'Работы начаты:'} data={
                   data.work_started_date ? 
                   `«${workStartedFormatted.day}» ${workStartedFormatted.month} 20${workStartedFormatted.year}г.` :
@@ -182,14 +174,14 @@ const CompletedPrint: React.FC<CompletedPrintProps> = ({
               </div>
 
               {/* Оценка качества */}
-              <div className="completed-content-section">
-                <div className="completed-section-title">Оценка качества выполненных работ:</div>
+              <div className="acts-work-section">
+                <div className="acts-work-title">Оценка качества выполненных работ:</div>
                 
-                <div className="completed-quality-assessment">
+                <div className="acts-quality-assessment">
                   {data.quality_assessment ? (
-                    <div className="completed-quality-text">{data.quality_assessment}</div>
+                    <div className="acts-quality-text">{data.quality_assessment}</div>
                   ) : (
-                    <div className="completed-quality-placeholder">
+                    <div className="acts-quality-placeholder">
                       _____________________________________________________________________
                       _____________________________________________________________________
                     </div>
@@ -199,64 +191,64 @@ const CompletedPrint: React.FC<CompletedPrintProps> = ({
 
               {/* Недостатки */}
               {data.defects_found && (
-                <div className="completed-content-section">
-                  <div className="completed-section-title">Обнаруженные недостатки:</div>
-                  <div className="completed-defects-text">{data.defects_found}</div>
+                <div className="acts-work-section">
+                  <div className="acts-work-title">Обнаруженные недостатки:</div>
+                  <div className="acts-defects-text">{data.defects_found}</div>
                 </div>
               )}
 
               {/* Рекомендации */}
               {data.recommendations && (
-                <div className="completed-content-section">
-                  <div className="completed-section-title">Рекомендации:</div>
-                  <div className="completed-recommendations-text">{data.recommendations}</div>
+                <div className="acts-work-section">
+                  <div className="acts-work-title">Рекомендации:</div>
+                  <div className="acts-recommendations-text">{data.recommendations}</div>
                 </div>
               )}
 
               {/* Примечания */}
               {data.notes && (
-                <div className="completed-content-section">
-                  <div className="completed-section-title">Примечания:</div>
-                  <div className="completed-notes-text">{data.notes}</div>
+                <div className="acts-work-section">
+                  <div className="acts-work-title">Примечания:</div>
+                  <div className="acts-notes-text">{data.notes}</div>
                 </div>
               )}
 
               {/* Секция подписей */}
-              <div className="completed-signatures-section">
-                <div className="completed-signatures-title">Подписи сторон:</div>
+              <div className="acts-signatures-section">
+                <div className="acts-signatures-title">Подписи сторон:</div>
 
-                <div className="completed-signature-block">
+                <div className="acts-signature-block">
                   <PrintRow prefix={'Исполнитель работ:'} data={''} />
-                  <div className="completed-signature-line">
-                    <span className="completed-signature-placeholder">_________________________</span>
-                    <span className="completed-signature-name">({data.executor_signature || data.executor_name || ''})</span>
+                  <div className="acts-signature-line">
+                    <span className="acts-signature-placeholder">_________________________</span>
+                    <span className="acts-signature-name">({data.executor_signature || data.executor_name || ''})</span>
                   </div>
-                  <div className="completed-field-description">подпись, ф.и.о.</div>
+                  <div className="acts-field-description">подпись, ф.и.о.</div>
                 </div>
 
-                <div className="completed-signature-block">
+                <div className="acts-signature-block">
                   <PrintRow prefix={'Заказчик (абонент):'} data={''} />
-                  <div className="completed-signature-line">
-                    <span className="completed-signature-placeholder">_________________________</span>
-                    <span className="completed-signature-name">({data.client_signature || data.client_name || ''})</span>
+                  <div className="acts-signature-line">
+                    <span className="acts-signature-placeholder">_________________________</span>
+                    <span className="acts-signature-name">({data.client_signature || data.client_name || ''})</span>
                   </div>
-                  <div className="completed-field-description">подпись, ф.и.о.</div>
+                  <div className="acts-field-description">подпись, ф.и.о.</div>
                 </div>
 
                 {data.representative_signature && (
-                  <div className="completed-signature-block">
+                  <div className="acts-signature-block">
                     <PrintRow prefix={'Представитель организации:'} data={''} />
-                    <div className="completed-signature-line">
-                      <span className="completed-signature-placeholder">_________________________</span>
-                      <span className="completed-signature-name">({data.representative_signature})</span>
+                    <div className="acts-signature-line">
+                      <span className="acts-signature-placeholder">_________________________</span>
+                      <span className="acts-signature-name">({data.representative_signature})</span>
                     </div>
-                    <div className="completed-field-description">подпись, ф.и.о.</div>
+                    <div className="acts-field-description">подпись, ф.и.о.</div>
                   </div>
                 )}
               </div>
 
               {/* Примечание о копиях */}
-              <div className="completed-note-section">
+              <div className="acts-note-section">
                 <strong>Примечание:</strong> Акт составляется в двух экземплярах, 
                 один из которых выдается на руки заказчику, другой хранится в исполняющей организации.
               </div>
