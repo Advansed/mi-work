@@ -32,7 +32,7 @@ class SocketService {
   }
 
   emit(event: string, data?: any): void {
-    if (this.socket) {
+    if (this.socket && this.socket.connected) {
       this.socket.emit(event, data);
     }
   }

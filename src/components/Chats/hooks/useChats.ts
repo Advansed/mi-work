@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSocket } from './useSocket';
 import { Chat } from '../types/chat';
 
@@ -6,6 +6,7 @@ export const useChats = () => {
   const [chats, setChats] = useState<Chat[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const requestInProgress = useRef(false);
   
   const { isConnected, error: socketError, emit, on, off } = useSocket();
 
@@ -18,10 +19,11 @@ export const useChats = () => {
   }, [socketError]);
 
   useEffect(() => {
-    if (isConnected) {
+    if (isConnected && !requestInProgress.current) {
+      requestInProgress.current = true;
       emit('get_user_chats');
     }
-  }, [isConnected, emit]);
+  }, [isConnected]);
 
   useEffect(() => {
     const onChatsList = (data: { chats: Chat[] }) => {
@@ -29,6 +31,7 @@ export const useChats = () => {
       setChats(data.chats);
       setLoading(false);
       setError(null);
+      requestInProgress.current = false;
     };
 
     const onNewChat = (chat: Chat) => {
@@ -48,6 +51,7 @@ export const useChats = () => {
     const onError = (data: { error: string }) => {
       setError(data.error);
       setLoading(false);
+      requestInProgress.current = false;
     };
 
     on('user_chats', onChatsList);
@@ -66,8 +70,9 @@ export const useChats = () => {
   }, [on, off]);
 
   const refetchChats = () => {
-    if (isConnected) {
+    if (isConnected && !requestInProgress.current) {
       setLoading(true);
+      requestInProgress.current = true;
       emit('get_user_chats');
     }
   };
