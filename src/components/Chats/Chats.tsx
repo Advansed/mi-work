@@ -28,10 +28,6 @@ export const Chats: React.FC = () => {
 
   return (
     <div className={styles.chatsApp}>
-      <header className={styles.header}>
-        <h1>Чаты</h1>
-        <button className={styles.menuButton}>⋮</button>
-      </header>
 
       <main className={styles.main}>
         {currentView === 'chats-list' ? (
