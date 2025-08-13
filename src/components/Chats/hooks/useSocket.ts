@@ -6,18 +6,22 @@ export const useSocket = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log( 'useeffect use socket')
     const socket = socketService.connect();
 
     const onConnect = () => {
+      console.log("socket connected")
       setIsConnected(true);
       setError(null);
     };
 
     const onDisconnect = () => {
+      console.log("socket disconnected")
       setIsConnected(false);
     };
 
     const onConnectError = (error: any) => {
+      console.log("socket connect error")
       setError('Ошибка подключения: проверьте авторизацию');
       setIsConnected(false);
     };

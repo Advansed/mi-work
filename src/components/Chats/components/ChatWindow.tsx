@@ -156,7 +156,6 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, onBack }) => {
   const {
     loading,
     error,
-    isJoined,
     messages,
     sendingMessage,
     hasMoreMessages,
@@ -165,8 +164,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, onBack }) => {
     loadMoreMessages,
     startTyping,
     stopTyping,
-    clearError,
-    retryJoin
+    clearError
   } = useChatWindow({ chatId });
 
   // Рефы для автопрокрутки
@@ -222,73 +220,60 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, onBack }) => {
           ←
         </button>
         <h2>Чат {chatId}</h2>
-        {!isJoined && (
+        {loading && (
           <span className={styles.connectionStatus}>
-            {loading ? 'Подключение...' : 'Не подключен'}
+            Загрузка...
           </span>
         )}
       </header>
 
-      {/* Область сообщений */}
+      {/* Ошибки */}
+      {error && (
+        <div className={styles.errorBar}>
+          <span>{error}</span>
+          <button onClick={clearError} className={styles.errorClose}>
+            ✕
+          </button>
+        </div>
+      )}
+
+      {/* Список сообщений */}
       <div 
-        className={styles.messagesArea}
+        className={styles.messagesContainer}
         ref={messagesContainerRef}
         onScroll={handleScroll}
       >
-        {/* Состояние загрузки */}
-        {loading && (
+        {loading && messages.length === 0 ? (
           <div className={styles.loadingMessages}>
-            <p>Загрузка сообщений...</p>
+            Загрузка сообщений...
           </div>
-        )}
-
-        {/* Ошибка */}
-        {error && (
-          <div className={styles.errorMessage}>
-            <p>{error}</p>
-            <button onClick={clearError} className={styles.clearErrorButton}>
-              Закрыть
-            </button>
-            {!isJoined && (
-              <button onClick={retryJoin} className={styles.retryButton}>
-                Повторить подключение
-              </button>
+        ) : messages.length === 0 ? (
+          <div className={styles.noMessages}>
+            Нет сообщений
+          </div>
+        ) : (
+          <>
+            {hasMoreMessages && (
+              <div className={styles.loadMoreButton}>
+                <button onClick={loadMoreMessages}>
+                  Загрузить старые сообщения
+                </button>
+              </div>
             )}
-          </div>
+            {messages.map((message) => (
+              <MessageItem
+                key={message.id}
+                message={message}
+                isOwn={isOwnMessage(message)}
+              />
+            ))}
+          </>
         )}
-
-        {/* Пустое состояние */}
-        {!loading && !error && messages.length === 0 && (
-          <div className={styles.emptyState}>
-            <p>Сообщений пока нет</p>
-            <p>Начните разговор!</p>
-          </div>
-        )}
-
-        {/* Индикатор загрузки старых сообщений */}
-        {hasMoreMessages && (
-          <div className={styles.loadMoreIndicator}>
-            <button onClick={loadMoreMessages} className={styles.loadMoreButton}>
-              Загрузить предыдущие сообщения
-            </button>
-          </div>
-        )}
-
-        {/* Список сообщений */}
-        {messages.map((message) => (
-          <MessageItem
-            key={message.message_id}
-            message={message}
-            isOwn={isOwnMessage(message)}
-          />
-        ))}
-
-        {/* Индикатор печати */}
-        <TypingIndicator typingUsers={typingUsers} />
-
-        {/* Невидимый элемент для автопрокрутки */}
         <div ref={messagesEndRef} />
       </div>
+
+      {/* Индикатор печати */}
+      <TypingIndicator typingUsers={typingUsers} />
 
       {/* Поле ввода сообщения */}
       <MessageInput
@@ -296,7 +281,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, onBack }) => {
         onStartTyping={startTyping}
         onStopTyping={stopTyping}
         sendingMessage={sendingMessage}
-        disabled={!isJoined}
+        disabled={!!error || loading}
       />
     </div>
   );

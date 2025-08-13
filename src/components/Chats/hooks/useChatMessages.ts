@@ -1,16 +1,16 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSocket } from './useSocket';
 
-// Типы для сообщений
 export interface ChatMessage {
-  message_id: string;
+  id: string;
   chat_id: string;
   sender_id: string;
-  sender_name?: string;
+  sender_name: string;
   message_text: string;
   sent_at: string;
-  message_type: 'text' | 'image' | 'file' | 'system';
-  is_own?: boolean;
+  message_type: number;
+  is_deleted: boolean;
+  is_own: boolean;
 }
 
 export interface UseChatMessagesProps {
@@ -24,70 +24,127 @@ export interface UseChatMessagesReturn {
   messagesError: string | null;
   sendMessage: (text: string) => Promise<void>;
   loadMoreMessages: () => void;
-  loadMessages: (offset?: number, isLoadMore?: boolean) => void;
+  loadMessages: () => void;
   clearMessagesError: () => void;
 }
 
 export const useChatMessages = ({ chatId }: UseChatMessagesProps): UseChatMessagesReturn => {
-  // Состояние
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [sendingMessage, setSendingMessage] = useState(false);
-  const [hasMoreMessages, setHasMoreMessages] = useState(false);
-  const [messagesOffset, setMessagesOffset] = useState(0);
+  const [hasMoreMessages, setHasMoreMessages] = useState(true);
   const [messagesError, setMessagesError] = useState<string | null>(null);
+  const [loadingMessages, setLoadingMessages] = useState(false);
   
-  // Рефы
-  const loadingMessagesRef = useRef(false);
-  
-  // Socket
   const { isConnected, emit, on, off } = useSocket();
+  const messagesRef = useRef<ChatMessage[]>([]);
+  const pageRef = useRef(1);
+  const loadedRef = useRef(false);
+
+  // Синхронизация состояния
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
 
   // Загрузка сообщений
-  const loadMessages = useCallback((offset = 0, isLoadMore = false) => {
-    if (loadingMessagesRef.current || !isConnected || !chatId) return;
+  const loadMessages = useCallback(async () => {
+    if (!chatId || loadingMessages) return;
     
-    loadingMessagesRef.current = true;
-    setMessagesError(null);
-    
-    console.log(`📥 Загрузка сообщений для чата ${chatId}, offset: ${offset}`);
-    emit('get_messages', {
-      chat_id: chatId,
-      limit: 50,
-      offset: offset
-    });
-  }, [isConnected, chatId, emit]);
+    try {
+      setLoadingMessages(true);
+      setMessagesError(null);
+      
+      console.log(`📥 Загрузка сообщений для чата ${chatId}`);
+      
+      // Эмулируем загрузку через WebSocket или API
+      // В реальном приложении здесь будет вызов API
+      const response = await fetch('/api/chat/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: chatId,
+          page: 1,
+          limit: 50
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setMessages(data.messages || []);
+        setHasMoreMessages(data.has_more || false);
+        pageRef.current = 1;
+        loadedRef.current = true;
+      } else {
+        throw new Error('Ошибка загрузки сообщений');
+      }
+      
+    } catch (error) {
+      console.error('❌ Ошибка загрузки сообщений:', error);
+      setMessagesError('Ошибка загрузки сообщений');
+    } finally {
+      setLoadingMessages(false);
+    }
+  }, [chatId, loadingMessages]);
 
   // Загрузка дополнительных сообщений
-  const loadMoreMessages = useCallback(() => {
-    if (hasMoreMessages && !loadingMessagesRef.current) {
-      loadMessages(messagesOffset, true);
+  const loadMoreMessages = useCallback(async () => {
+    if (!chatId || !hasMoreMessages || loadingMessages) return;
+    
+    try {
+      setLoadingMessages(true);
+      
+      const nextPage = pageRef.current + 1;
+      
+      const response = await fetch('/api/chat/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: chatId,
+          page: nextPage,
+          limit: 50
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        const newMessages = data.messages || [];
+        
+        setMessages(prev => [...newMessages, ...prev]);
+        setHasMoreMessages(data.has_more || false);
+        pageRef.current = nextPage;
+      }
+      
+    } catch (error) {
+      console.error('❌ Ошибка загрузки дополнительных сообщений:', error);
+      setMessagesError('Ошибка загрузки сообщений');
+    } finally {
+      setLoadingMessages(false);
     }
-  }, [hasMoreMessages, messagesOffset, loadMessages]);
+  }, [chatId, hasMoreMessages, loadingMessages]);
 
   // Отправка сообщения
-  const sendMessage = useCallback(async (text: string): Promise<void> => {
-    if (!text.trim() || !isConnected || !chatId || sendingMessage) {
-      return;
-    }
-
-    setSendingMessage(true);
-    setMessagesError(null);
-
+  const sendMessage = useCallback(async (text: string) => {
+    if (!text.trim() || !chatId || sendingMessage || !isConnected) return;
+    
     try {
+      setSendingMessage(true);
+      setMessagesError(null);
+      
       console.log(`📤 Отправка сообщения в чат ${chatId}`);
+      
       emit('send_message', {
         chat_id: chatId,
         message_text: text.trim(),
-        message_type: 'text'
+        message_type: 1
       });
-    } catch (err) {
-      console.error('❌ Ошибка отправки сообщения:', err);
+      
+    } catch (error) {
+      console.error('❌ Ошибка отправки сообщения:', error);
       setMessagesError('Ошибка отправки сообщения');
       setSendingMessage(false);
     }
-  }, [isConnected, chatId, sendingMessage, emit]);
+  }, [chatId, sendingMessage, isConnected, emit]);
 
-  // Очистка ошибки
+  // Очистка ошибок
   const clearMessagesError = useCallback(() => {
     setMessagesError(null);
   }, []);
@@ -95,81 +152,47 @@ export const useChatMessages = ({ chatId }: UseChatMessagesProps): UseChatMessag
   // Сброс состояния при смене чата
   useEffect(() => {
     setMessages([]);
-    setMessagesOffset(0);
-    setHasMoreMessages(false);
-    setSendingMessage(false);
     setMessagesError(null);
-    loadingMessagesRef.current = false;
+    setHasMoreMessages(true);
+    setSendingMessage(false);
+    pageRef.current = 1;
+    loadedRef.current = false;
   }, [chatId]);
 
   // WebSocket обработчики
   useEffect(() => {
-    // История сообщений
-    const onMessagesHistory = (data: { 
-      chat_id: string; 
-      messages: ChatMessage[]; 
-      has_more: boolean;
-    }) => {
-      if (data.chat_id === chatId) {
-        console.log(`📨 Получена история сообщений: ${data.messages.length} шт.`);
-        
-        setMessages(prev => {
-          // Если это загрузка дополнительных сообщений (offset > 0)
-          if (messagesOffset > 0) {
-            return [...data.messages.reverse(), ...prev];
-          }
-          // Если это первая загрузка
-          return data.messages.reverse();
-        });
-        
-        setHasMoreMessages(data.has_more);
-        setMessagesOffset(prev => prev + data.messages.length);
-        loadingMessagesRef.current = false;
-      }
-    };
-
     // Новое сообщение
-    const onNewMessage = (message: ChatMessage) => {
-      if (message.chat_id === chatId) {
-        console.log(`📨 Новое сообщение в чате ${chatId}`);
-        setMessages(prev => [...prev, message]);
+    const onNewMessage = (data: ChatMessage) => {
+      if (data.chat_id === chatId) {
+        setMessages(prev => [...prev, data]);
       }
     };
 
     // Подтверждение отправки
-    const onMessageSent = (data: { success: boolean; message_id: string }) => {
-      console.log(`✅ Сообщение отправлено: ${data.message_id}`);
+    const onMessageSent = (data: { success: boolean; message_id?: string }) => {
       setSendingMessage(false);
+      if (!data.success) {
+        setMessagesError('Ошибка отправки сообщения');
+      }
     };
 
-    // Ошибки
+    // Ошибка сообщения
     const onMessageError = (data: { error: string }) => {
-      console.error(`❌ Ошибка сообщения: ${data.error}`);
-      setMessagesError(data.error);
       setSendingMessage(false);
-    };
-
-    const onMessagesError = (data: { error: string }) => {
-      console.error(`❌ Ошибка загрузки сообщений: ${data.error}`);
       setMessagesError(data.error);
-      loadingMessagesRef.current = false;
     };
 
     // Подписка на события
-    on('messages_history', onMessagesHistory);
     on('new_message', onNewMessage);
     on('message_sent', onMessageSent);
     on('message_error', onMessageError);
-    on('messages_error', onMessagesError);
 
     return () => {
-      off('messages_history', onMessagesHistory);
       off('new_message', onNewMessage);
       off('message_sent', onMessageSent);
       off('message_error', onMessageError);
-      off('messages_error', onMessagesError);
     };
-  }, [chatId, messagesOffset, on, off]);
+  }, [chatId, on, off]);
 
   return {
     messages,
