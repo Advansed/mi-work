@@ -5,6 +5,7 @@ import { IonLoading, IonModal } from '@ionic/react';
 import { FormField, FormRow, FormSection, ReadOnlyField, TextAreaField } from '../Forms/Forms';
 
 import { PDFDoc } from '../../Files/Files';
+import ActPlombPrint from './ActPlombPrint';
 
 
 // === ТИПЫ И ИНТЕРФЕЙСЫ ===
@@ -315,7 +316,7 @@ const ActPlombForm: React.FC<ActPlombFormProps> = ({
           {data.invoice_id && ` (Заявка №${data.invoice_id})`}
         </h2>
         <div className="form-actions">
-          <button type="button" onClick={handleGeneratePDF} className="btn btn-secondary">
+          <button type="button" onClick={handlePrint } className="btn btn-secondary">
             Печать
           </button>
           <button type="button" onClick={onCancel} className="btn btn-outline">
@@ -353,7 +354,11 @@ const ActPlombForm: React.FC<ActPlombFormProps> = ({
 
       {/* Модальное окно печати */}
       <IonModal isOpen={ showPrintModal } onDidDismiss={handleClosePrintModal}>
-        <PDFDoc url = { pdf } name = { "PDF" }  title = { "PDF"}/>
+        <ActPlombPrint
+          data={data}
+          mode= "print"
+          onClose={handleClosePrintModal}
+        />
       </IonModal>
     </div>
   );

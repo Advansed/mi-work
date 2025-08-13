@@ -1,5 +1,5 @@
 import React from 'react';
-import './ActPrescriptPrint.css';
+import '../ActsPrint.css'; // НОВЫЙ ИМПОРТ ЕДИНОГО CSS
 import { PrintRow } from '../Forms/Forms';
 
 // Интерфейс данных для печатной формы предписания
@@ -79,28 +79,31 @@ const ActPrescriptPrint: React.FC<ActPrescriptPrintProps> = ({
   // Режим печати - возвращаем только печатную форму
   if (mode === 'print') {
     return (
-      <div className="prescript-form-container">
+      <div className="acts-print-wrapper">
         {/* Панель действий */}
-        <div className="prescript-print-actions prescript-no-print">
-          <button onClick={handlePrint} className="prescript-btn prescript-btn-primary">
+        <div className="acts-print-actions">
+          <button onClick={handlePrint} className="acts-btn acts-btn-primary">
             🖨️ Печать
           </button>
-          <button onClick={onClose} className="prescript-btn prescript-btn-secondary">
+          <button onClick={onClose} className="acts-btn acts-btn-secondary">
             ✕ Закрыть
           </button>
         </div>
 
         {/* Контент для печати */}
-        <div className="prescript-print-content-scrollable">
-          <div className="prescript-print-content">
+        <div className="acts-print-scrollable">
+          <div className="acts-print-content">
             {/* Заголовок документа */}
-              <div className="act-document-header">
-                <div className="act-logo-section">
+              <div className="acts-document-header">
+                <div className="acts-logo-section">
                   <img src="USD.png" alt="USD" className='h-4'/>
                 </div>
+                <div className="acts-logo-section">
+                  <img src="qr.png" alt="USD" className='h-4'/>
+                </div>
               </div>
-              <div className="prescript-header-info">
-                <div className="prescript-department">
+              <div className="acts-header-info">
+                <div className="acts-department">
                   Структурное подразделение<br/>
                   Управление по сбытовой деятельности<br/>
                   677005, Республика Саха (Якутия), г.Якутск, ул.П.Алексеева, 64 Б
@@ -108,8 +111,8 @@ const ActPrescriptPrint: React.FC<ActPrescriptPrintProps> = ({
               </div>
 
             {/* Основное содержание документа */}
-            <div className="prescript-document-content">
-              <div className="prescript-document-title">
+            <div className="acts-document-content">
+              <div className="acts-document-title">
                 <h1>ПРЕДПИСАНИЕ №{data.prescription_number || '______'}</h1>
                 <h2>за нарушение правил пользования газом в быту</h2>
               </div>
@@ -121,101 +124,65 @@ const ActPrescriptPrint: React.FC<ActPrescriptPrintProps> = ({
                   </div>
               </div>
 
-              <div className="prescript-main-content">
+              <div className="acts-main-content">
                 <PrintRow 
                   prefix={'Представителю эксплуатационной организации'} 
                   data={data.violator_name || ''}
                 />
-                <div className="prescript-field-description">ф.и.о., должность</div>
+                <div className="acts-field-description">ф.и.о., должность</div>
 
                 <PrintRow 
                   prefix={'в присутствии абонента:'} 
                   data={data.subscriber_name || ''}
                 />
-                <div className="prescript-field-description">ф.и.о. (полн.)</div>
+                <div className="acts-field-description">ф.и.о. (полностью)</div>
 
                 <PrintRow 
-                  prefix={'реквизиты документа, удостоверяющего личность:'} 
-                  data={''}
+                  prefix={'по адресу:'} 
+                  data={`${data.street || ''}, д. ${data.house || ''}, кв. ${data.apartment || ''}`.trim() || data.violator_address || ''}
                 />
 
                 <PrintRow 
-                  prefix={'представителя абонента:'} 
-                  data={''}
+                  prefix={'при осмотре газифицированного жилого помещения'} 
+                  data={violationDateFormatted.day + ' ' + violationDateFormatted.month + ' 20' + violationDateFormatted.year + 'г. в ' + (violationTimeFormatted.hours || '__') + ':' + (violationTimeFormatted.minutes || '__') + ' час.'}
                 />
-                <div className="prescript-field-description">ф.и.о. (полн.)</div>
 
                 <PrintRow 
-                  prefix={'реквизиты документа, удостоверяющего личность:'} 
-                  data={''}
+                  prefix={'установлено нарушение:'} 
+                  data={data.violation_description || ''}
                 />
+                <div className="acts-field-description">описание нарушения</div>
 
-                <div className="prescript-violation-section">
-                  <PrintRow 
-                    prefix={'составлен настоящий акт о том, что «'} 
-                    data={violationDateFormatted.day}
-                  />
-                  <PrintRow prefix={''} data={violationDateFormatted.month} />
-                  <PrintRow prefix={'202'} data={violationDateFormatted.year + 'г.'} />
-                  <PrintRow prefix={'в'} data={violationTimeFormatted.hours} />
-                  <PrintRow prefix={'час.'} data={violationTimeFormatted.minutes + ' мин.'} />
-                  
-                  <div className="prescript-violation-text">
-                    <PrintRow prefix={'выявлено:'} data={data.violation_description || ''} />
+                <PrintRow 
+                  prefix={'что является нарушением:'} 
+                  data={data.legal_basis || ''}
+                />
+                <div className="acts-field-description">правовая основа</div>
+
+                <div className="acts-violation-section">
+                  <div className="acts-warning-box">
+                    <div className="acts-warning-title">
+                      В связи с этим ПРЕДПИСЫВАЮ:
+                    </div>
+                    <div className="acts-warning-content">
+                      Устранить выявленные нарушения в срок до 
+                      <span className="acts-field-value acts-underline">
+                        {eliminationDateFormatted.day + ' ' + eliminationDateFormatted.month + ' 20' + eliminationDateFormatted.year + 'г.'}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="prescript-location-section">
-                  <PrintRow 
-                    prefix={'по адресу: кв.'} 
-                    data={data.apartment || '__'} 
-                  />
-                  <PrintRow prefix={'дом'} data={data.house || '__'} />
-                  <PrintRow prefix={'ул.'} data={data.street || '______________'} />
-                </div>
-
-                <div className="prescript-legal-section">
-                  <PrintRow 
-                    prefix={'Согласно Постановлению Правительства РФ от 21 июля 2008г. №549 «О порядке поставки газа для обеспечения коммунально-бытовых нужд граждан»'} 
-                    data={''}
-                  />
-                  
-                  <div className="prescript-order-text">
-                    <PrintRow 
-                      prefix={'ПРЕДПИСЫВАЮ:'} 
-                      data={data.legal_basis || ''}
-                    />
-                  </div>
-
-                  <PrintRow 
-                    prefix={'Срок устранения нарушений до «'} 
-                    data={eliminationDateFormatted.day}
-                  />
-                  <PrintRow prefix={''} data={eliminationDateFormatted.month} />
-                  <PrintRow prefix={'202'} data={eliminationDateFormatted.year + 'г.'} />
-                </div>
-
-                <div className="prescript-equipment-section">
-                  <div className="prescript-subsection-title">показания счетчиков:</div>
-                  
-                  <PrintRow prefix={'1. тип: Г_______ №'} data={''} />
+                <div className="acts-equipment-section">
+                  <PrintRow prefix={'Показания счетчиков:'} data={''} />
+                  <PrintRow prefix={'счетчик №'} data={'____________________ '} />
+                  <PrintRow prefix={'тип: Г_______ №'} data={''} />
                   <PrintRow prefix={'составляют: ___'} data={'м³ пломба____'} />
                   <PrintRow prefix={'цвет'} data={''} />
                   
-                  <div className="prescript-field-description">газовое оборудование:</div>
+                  <div className="acts-field-description">газовое оборудование:</div>
                   
-                  <div className="prescript-measurement-text">
-                    Произведен контрольный замер отапливаемых площадей:<br/>
-                    жилая площадь ____________м² нежилая площадь ________________м² количество _______ чел.
-                  </div>
-
-                  <PrintRow prefix={'2. тип: Г_______ №'} data={''} />
-                  <PrintRow prefix={'составляют: ___'} data={'м³ пломба____'} />
-                  <PrintRow prefix={'цвет'} data={''} />
-                  
-                  <div className="prescript-field-description">газовое оборудование:</div>
-                  
-                  <div className="prescript-measurement-text">
+                  <div className="acts-measurement-text">
                     Произведен контрольный замер отапливаемых площадей:<br/>
                     жилая площадь ____________м² нежилая площадь ________________м² количество _______ чел.
                   </div>
@@ -224,14 +191,14 @@ const ActPrescriptPrint: React.FC<ActPrescriptPrintProps> = ({
                   <PrintRow prefix={'Примечание:'} data={data.additional_notes || ''} />
                 </div>
 
-                <div className="prescript-signatures-section">
-                  <div className="prescript-signatures-title">Подписи сторон:</div>
+                <div className="acts-signatures-section">
+                  <div className="acts-signatures-title">Подписи сторон:</div>
 
                   <PrintRow 
                     prefix={'представитель организации'} 
                     data={''}
                   />
-                  <div className="prescript-field-description">должность, ф.и.о.</div>
+                  <div className="acts-field-description">должность, ф.и.о.</div>
 
                   <PrintRow prefix={'абонент'} data={''} />
 
@@ -244,10 +211,10 @@ const ActPrescriptPrint: React.FC<ActPrescriptPrintProps> = ({
                     prefix={'При проведении проверки и составлении акта присутствовал: Ф.И.О.:'} 
                     data={''}
                   />
-                  <div className="prescript-field-description">реквизиты документа, удостоверяющего личность</div>
+                  <div className="acts-field-description">реквизиты документа, удостоверяющего личность</div>
                 </div>
 
-                <div className="prescript-note-section">
+                <div className="acts-note-section">
                   <strong>Примечание:</strong> АКТ составляется в двух экземплярах, один из которых выдаётся на руки абоненту, 
                   другой хранится у поставщика газа.
                 </div>

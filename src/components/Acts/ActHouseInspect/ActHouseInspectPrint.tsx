@@ -1,5 +1,5 @@
 import React from 'react';
-import './ActHouseInspectPrint.css';
+import '../ActsPrint.css'; // НОВЫЙ ИМПОРТ ЕДИНОГО CSS
 import { PrintRow } from '../Forms/Forms';
 import { HouseInspectData } from './useActHouseInspects';
 
@@ -52,45 +52,45 @@ const ActHouseInspectPrint: React.FC<ActHouseInspectPrintProps> = ({
 
   // Режим печати - возвращаем только печатную форму
     return (
-      <div className="act-form-container act-print-form-container">
-        <div className="act-print-actions act-no-print">
-          <button className="act-btn act-btn-primary" onClick={handlePrint}>
+      <div className="acts-print-wrapper">
+        <div className="acts-print-actions">
+          <button className="acts-btn acts-btn-primary" onClick={handlePrint}>
             Печать PDF
           </button>
-          <button className="act-btn act-btn-secondary" onClick={onClose}>
+          <button className="acts-btn acts-btn-secondary" onClick={onClose}>
             Вернуться к редактированию
           </button>
         </div>
 
-        <div className="act-print-content-scrollable">
-          <div className="act-print-content">
+        <div className="acts-print-scrollable">
+          <div className="acts-print-content">
             {/* Заголовок с логотипом */}
-            <div className="act-document-header">
-              <div className="act-logo-section">
+            <div className="acts-document-header">
+              <div className="acts-logo-section">
                 <img src="USD.png" alt="USD" className='h-4'/>
               </div>
             </div>
 
             {/* Заголовок акта */}
-            <div className="act-document-title">
-              <div className='act-title-main'><b>{'АКТ №' + (data.act_number || '____')}</b></div>
-              <div className='act-title-subtitle'><b>проверки газифицированного объекта по адресу:</b></div>
+            <div className="acts-document-title">
+              <div className='acts-title'><b>{'АКТ №' + (data.act_number || '____')}</b></div>
+              <div className='acts-subtitle'><b>проверки газифицированного объекта по адресу:</b></div>
             </div>
 
             <div className='flex fl-space'>
               <div></div>
-              <div className="act-date-line">
+              <div className="acts-date-line">
                 от «{actDateFormatted.day}» {actDateFormatted.month} 20{actDateFormatted.year}г.
               </div>
             </div>
 
             {/* Содержание документа */}
-            <div className="act-document-content">
+            <div className="acts-document-content">
               <PrintRow prefix={'Мной, представителем организации УСД АО «Сахатранснефтегаз»'} data={data.organization_representative || ''} />
-              <div className="act-field-description">должность, ф.и.о.</div>
+              <div className="acts-field-description">должность, ф.и.о.</div>
 
               <PrintRow prefix={'в присутствии абонента:'} data={data.subscriber_name || ''} />
-              <div className="act-field-description">ф.и.о.</div>
+              <div className="acts-field-description">ф.и.о.</div>
 
               {data.subscriber_document && (
                 <>
@@ -101,7 +101,7 @@ const ActHouseInspectPrint: React.FC<ActHouseInspectPrintProps> = ({
               {data.subscriber_representative_name && (
                 <>
                   <PrintRow prefix={'представителя абонента:'} data={data.subscriber_representative_name || ''} />
-                  <div className="act-field-description">ф.и.о.</div>
+                  <div className="acts-field-description">ф.и.о.</div>
                   <PrintRow prefix={'реквизиты документа, удостоверяющего личность:'} data={data.subscriber_representative_document || ''} />
                 </>
               )}
@@ -109,42 +109,35 @@ const ActHouseInspectPrint: React.FC<ActHouseInspectPrintProps> = ({
               {data.witness_name && (
                 <>
                   <PrintRow prefix={'при свидетеле:'} data={data.witness_name || ''} />
-                  <div className="act-field-description">ф.и.о.</div>
+                  <div className="acts-field-description">ф.и.о.</div>
                   <PrintRow prefix={'реквизиты документа, удостоверяющего личность:'} data={data.witness_document || ''} />
                 </>
               )}
 
-              <PrintRow prefix={'составлен настоящий акт о том, что «'} data={actDateFormatted.day + '» ' + actDateFormatted.month + ' 20' + actDateFormatted.year + 'г. в ' + (actTimeFormatted.hours || '__') + ':' + (actTimeFormatted.minutes || '__') + ' час. « » мин.'} />
+              <PrintRow prefix={'составлен настоящий акт о том, что «'} data={actDateFormatted.day + '» ' + actDateFormatted.month + ' 20' + actDateFormatted.year + 'г. в ' 
+                + (actTimeFormatted.hours || '__') + ':' + (actTimeFormatted.minutes || '__') + ' час. « » мин.'} />
 
               <PrintRow prefix={'по адресу:'} data={formatAddress()} />
 
               <PrintRow prefix={'выявлено:'} data={ data.violations_found || '_____'} />
-                  <div className="act-field-description">описание выявленных проблем</div>
+                  <div className="acts-field-description">описание выявленных проблем</div>
 
 
               {/* Секция счетчиков */}
-              <div className="act-meters-section">
-                <div className="act-section-title"></div>
+              <div className="acts-meters-section">
+                <div className="acts-section-title"></div>
                 <PrintRow prefix={'Показания счетчиков:'} data={""} />
                 
                 {data.meters && data.meters.length > 0 ? (
                   data.meters.map((meter, index) => (
-                    <div key={index} className="act-meter-item">
-                      <div className='ml-4'>
-                          <PrintRow prefix = { "" }  data = {`${meter.meter_type || 'G_____'} № 
-                              ${meter.meter_number || '____________________'} составляют: ${meter.current_reading || '___'} м³ пломба 
-                              ${meter.seal_number || '_______________'} цвет ${meter.seal_color || '__________'} `
-                            }/>
-                          <PrintRow prefix={ "" } data={'газовое оборудование: ' + meter.gas_equipment || ''} />
-                          <PrintRow prefix={'Произведен контрольный замер отапливаемых площадей:'} data = { "" } />
-                          <PrintRow prefix = {""} data={`жилая площадь ${meter.living_area || '____________'} м² нежилая площадь ${meter.non_living_area || '________________'} м² количество ${meter.residents_count || '______'} чел.`} />
-                      </div>
-                      
+                    <div key={index} className="acts-meter-block">
+                      <PrintRow prefix={'счетчик №'} data={(meter.meter_number || '____') + ' тип: ' + (meter.meter_type || '_____') + ' показания: ' + (meter.current_reading || '_____') + ' м³'} />
                     </div>
                   ))
                 ) : (
-                  <div>
-                    <PrintRow prefix={'1. тип: G_____ №'} data={'____________________ составляют: ___ м³ пломба _______________ цвет __________'} />
+                  <div className="acts-meter-block">
+                    <PrintRow prefix={'счетчик №'} data={'____________________ тип: G_____ №'} />
+                    <PrintRow prefix={'показания:'} data={'____________________ составляют: ___ м³ пломба _______________ цвет __________'} />
                     <PrintRow prefix={'газовое оборудование:'} data={''} />
                     <PrintRow prefix={'Произведен контрольный замер отапливаемых площадей:'} data={'жилая площадь ____________ м² нежилая площадь ________________ м² количество ______ чел.'} />
                   </div>
@@ -164,22 +157,22 @@ const ActHouseInspectPrint: React.FC<ActHouseInspectPrintProps> = ({
               )}
 
               {/* Секция подписей */}
-              <div className="act-signatures-section">
-                <div className="act-signatures-title">Подписи сторон:</div>
+              <div className="acts-signatures-section">
+                <div className="acts-signatures-title">Подписи сторон:</div>
 
                 <PrintRow prefix={'представитель организации'} data={''} />
                 <PrintRow prefix={''} data={' '} />
-                <div className="act-field-description">ф.и.о., подпись</div>
+                <div className="acts-field-description">ф.и.о., подпись</div>
 
                 <PrintRow prefix={'абонент'} data={''} />
                 <PrintRow prefix={''} data={' '} />
-                <div className="act-field-description">ф.и.о., подпись</div>
+                <div className="acts-field-description">ф.и.о., подпись</div>
 
                 {data.subscriber_representative_name && (
                   <>
                     <PrintRow prefix={'представитель абонента'} data={''} />
                     <PrintRow prefix={''} data={' '} />
-                    <div className="act-field-description">ф.и.о., подпись</div>
+                    <div className="acts-field-description">ф.и.о., подпись</div>
                   </>
                 )}
 
@@ -191,7 +184,7 @@ const ActHouseInspectPrint: React.FC<ActHouseInspectPrintProps> = ({
                 )}
               </div>
 
-              <div className="act-note-section">
+              <div className="acts-note-section">
                 <strong>Примечание:</strong> АКТ составляется в двух экземплярах, один из которых выдается на руки абоненту, другой хранится у поставщика газа.
               </div>
             </div>

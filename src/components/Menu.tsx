@@ -71,6 +71,7 @@ const Menu: React.FC = () => {
 
     // Объединяем все пункты меню в один массив
     const allMenuPages = menuItems.reduce((acc, group) => [...acc, ...group.pages], [] as string[]);
+    console.log( allMenuPages )
 
     return (
         <IonMenu contentId="main" type="overlay" className="menu-corporate">
@@ -103,6 +104,7 @@ const Menu: React.FC = () => {
                     <IonList className="menu-group">
                         {/* Все страницы приложения */}
                         {allMenuPages.map((pageName) => {
+                            console.log( pageName )
                             const pageConfig = getPageConfig(pageName);
                             if (!pageConfig) return null;
 

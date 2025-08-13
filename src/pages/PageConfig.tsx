@@ -10,7 +10,8 @@ import {
     personOutline,
     statsChartOutline,
     settingsOutline,
-    listOutline
+    listOutline,
+    chatboxEllipsesOutline
 } from 'ionicons/icons';
 import { PageConfigMap, UserRole, PageName, MenuGroup, UserAccess, PageConfig } from './pageTypes';
 
@@ -33,6 +34,7 @@ const InvoicesPage = React.lazy(() => import('../components/Invoices/components/
 // Служебные страницы - импортируем напрямую из-за специфики использования
 import { NotFoundPage, AccessDeniedPage, LoadingPage } from '../components/Common/NotFoundPages';
 import Lics from '../components/Lics/Lics';
+import { Chats } from '../components/Chats/Chats';
 
 // ============================================
 // КОНФИГУРАЦИЯ СТРАНИЦ
@@ -53,6 +55,14 @@ export const pageConfig: PageConfigMap = {
         component: Lics,
         title: 'Лицевые счета',
         icon: listOutline,
+        roles: ['master', 'technician', 'plumber', 'dispatcher', 'subcontractor'],
+        description: 'Лицевые счета'
+    },
+    // Чат
+    chats: {
+        component: Chats,
+        title: 'Чаты',
+        icon: chatboxEllipsesOutline,
         roles: ['master', 'technician', 'plumber', 'dispatcher', 'subcontractor'],
         description: 'Лицевые счета'
     },
@@ -78,7 +88,7 @@ export const menuGroups: MenuGroup[] = [
     },
     {
         title: 'Прочее',
-        pages: ['chat', 'profile', 'settings']
+        pages: ['chats', 'profile', 'settings']
     }
 ];
 
@@ -89,7 +99,7 @@ export const menuGroups: MenuGroup[] = [
 export const roleAccess: Record<UserRole, UserAccess> = {
     master: {
         role: 'master',
-        allowedPages: [ 'invoices', 'lics' ],
+        allowedPages: [ 'invoices', 'lics', 'chats' ],
         defaultPage: 'invoices'
     },
     

@@ -1,7 +1,7 @@
 // src/components/Acts/ActPlomb/ActPlombPrint.tsx
 import React, { useState } from 'react';
 import { ActPlombData } from './useActPlomb';
-import './ActPlombPrint.css';
+import '../ActsPrint.css'; // НОВЫЙ ИМПОРТ ЕДИНОГО CSS
 import { PrintRow } from '../Forms/Forms';
 
 interface ActPlombPrintProps {
@@ -54,65 +54,64 @@ const ActPlombPrint: React.FC<ActPlombPrintProps> = ({
   // Режим печати
   if (mode === 'print') {
     return (
-      <div className="plomb-print-container">
-        <div className="print-actions no-print">
-          <button onClick={handlePrint} className="btn btn-primary">
+      <div className="acts-print-wrapper">
+        <div className="acts-print-actions">
+          <button onClick={handlePrint} className="acts-btn acts-btn-primary">
             🖨️ Печать
           </button>
-          <button onClick={handleSavePDF} className="btn btn-secondary">
+          <button onClick={handleSavePDF} className="acts-btn acts-btn-secondary">
             📄 Сохранить PDF
           </button>
-          <button onClick={onClose} className="btn btn-outline">
+          <button onClick={onClose} className="acts-btn acts-btn-outline">
             ✖ Закрыть
           </button>
         </div>
 
-        <div className="print-content-scrollable">
-          <div className="print-content">
+        <div className="acts-print-scrollable">
+          <div className="acts-print-content">
             {/* Заголовок с логотипом */}
-            <div className="document-header flex">
-              <div className="logo-section">
+            <div className="acts-document-header">
+              <div className="acts-logo-section">
                 <img src="USD.png" alt="USD" className='h-4'/>
               </div>
-              <div className="qr-code">
-                {/* QR код будет добавлен позже */}
-                <div className="qr-placeholder">QR</div>
+              <div className="acts-logo-section">
+                <img src="qr.png" alt="USD" className='h-4'/>
               </div>
             </div>
 
             {/* Реквизиты организации */}
-            <div className="company-details">
-              <div className="divider-line"></div>
-              <div className="details-text fs-07">
+            <div className="acts-company-details">
+              <div className="acts-divider-line"></div>
+              <div className="acts-details-text fs-07">
                 Структурное подразделение Управление по сбытовой деятельности «Сахатранснефтегаз»
               </div>
-              <div className="details-text">
+              <div className="acts-details-text">
                 ИНН 1435142972, КПП 140045003, ОГРН 1031402073097
               </div>
-              <div className="details-text">
-                Адрес пункта приема платежа: г.Якутск, ул. П.Алексеева, 64Б, тел/факс: 46-00-93, 46-00-41
+              <div className="acts-details-text">
+                Адрес пункта приема платежа: г.Якутск, ул.П.Алексеева, 64Б, тел/факс: 46-00-93, 46-00-41
               </div>
-              <div className="details-text">
+              <div className="acts-details-text">
                 Время работы: будни с 8:00 до 17:00, обед с 12:00 до 13:00; суббота, воскресенье - выходной
               </div>
             </div>
 
             {/* Заголовок документа */}
-            <div className="document-title">
+            <div className="acts-document-title">
               <div><b>АКТ ПЛОМБИРОВАНИЯ ПРИБОРА УЧЕТА ГАЗА</b></div>
               
               <div className='flex fl-space'>
                 <div></div>
-                <div className="date-line">
-                  от «<span className="field-value">{actDateFormatted.day}</span>»
-                  <span className="field-value">{actDateFormatted.month}</span>
-                  20<span className="field-value">{actDateFormatted.year}</span>г.
+                <div className="acts-date-line">
+                  от «<span className="acts-field-value">{actDateFormatted.day}</span>»
+                  <span className="acts-field-value">{actDateFormatted.month}</span>
+                  20<span className="acts-field-value">{actDateFormatted.year}</span>г.
                 </div>
               </div>
             </div>
 
             {/* Основная информация */}
-            <div className="document-content">
+            <div className="acts-document-content">
 
               <PrintRow  prefix = { "Дан(а) ФИО:" } data = { data.subscriber_name } />
 
@@ -121,11 +120,11 @@ const ActPlombPrint: React.FC<ActPlombPrintProps> = ({
               <PrintRow  prefix = { "Прибор учета расхода газа опломбирован:" } data = { '' } />
 
               {/* Список приборов учета */}
-              <div className="meters-section">
+              <div className="acts-meters-section">
                 {data.meters && data.meters.length > 0 ? (
                   data.meters.map((meter, index) => (
-                    <div key={index} className="meter-block">
-                      <div className="content-line">
+                    <div key={index} className="acts-meter-block">
+                      <div className="acts-content-line">
                         <PrintRow prefix = { "" } data = { (index + 1) + ".G- № сч " + (meter.meter_number || '____') + ' пломба ' + (meter.seal_number || '_________') + ' примечания ' + (meter.notes || '________') 
                           + ' текущие показания прибора учета газа:' + (meter.current_reading || '__') 
                         } />
@@ -133,8 +132,8 @@ const ActPlombPrint: React.FC<ActPlombPrintProps> = ({
                     </div>
                   ))
                 ) : (
-                    <div key={ 1 } className="meter-block">
-                      <div className="content-line">
+                    <div key={ 1 } className="acts-meter-block">
+                      <div className="acts-content-line">
                         <PrintRow prefix = { "" } data = { (1) + ".G- № сч " + ( '____') + ' пломба ' + ( '_________') + ' примечания ' + ( '________') 
                           + ' текущие показания прибора учета газа:' + ( '__') 
                         } />
@@ -144,7 +143,7 @@ const ActPlombPrint: React.FC<ActPlombPrintProps> = ({
               </div>
 
               {/* Подписи */}
-              <div className="signatures-section">
+              <div className="acts-signatures-section">
 
                 <PrintRow prefix = { 'УСД АО «Сахатранснефтегаз» ' } data = { '______________/_______/' } />
 

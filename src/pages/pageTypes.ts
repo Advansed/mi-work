@@ -14,7 +14,7 @@ export type PageName =
     | 'repairs'
     | 'schedule'
     | 'subscribers'
-    | 'chat'
+    | 'chats'
     | 'profile'
     | 'reports'
     | 'settings';
