@@ -40,7 +40,7 @@ export const useChatWindow = ({ chatId }: UseChatWindowProps): UseChatWindowRetu
   const [error, setError] = useState<string | null>(null);
   
   // Socket
-  const { isConnected, emit, on, off } = useSocket();
+  const { isConnected, error: socketError, emit, on, off } = useSocket();
   
   // Специализированные хуки
   const {
@@ -61,6 +61,11 @@ export const useChatWindow = ({ chatId }: UseChatWindowProps): UseChatWindowRetu
     stopTyping
   } = useTyping({ chatId });
 
+  // Refs для предотвращения дублирования
+  const loadingInitiated = useRef(false);
+  const currentChatId = useRef<string>('');
+  const loadTimeout = useRef<number | undefined>(undefined);
+
   // Очистка общих ошибок
   const clearError = useCallback(() => {
     setError(null);
@@ -69,44 +74,65 @@ export const useChatWindow = ({ chatId }: UseChatWindowProps): UseChatWindowRetu
 
   // Сброс состояния при смене чата
   useEffect(() => {
-    console.log(`🔄 Переключение на чат: ${chatId}`);
-    
-    // Сбрасываем состояния
-    setLoading(true);
-    setError(null);
+    if (currentChatId.current !== chatId) {
+      console.log(`🔄 Переключение на чат: ${chatId}`);
+      
+      currentChatId.current = chatId;
+      loadingInitiated.current = false;
+      
+      // Очищаем предыдущий таймаут
+      if (loadTimeout.current) {
+        window.clearTimeout(loadTimeout.current);
+      }
+      
+      // Сбрасываем состояния
+      setLoading(true);
+      setError(null);
+    }
   }, [chatId]);
 
-  // Автоматическая загрузка сообщений при подключении
+  // Отслеживание ошибок сокета
   useEffect(() => {
-    console.log('load')
-    console.log( isConnected, chatId )
-    if (isConnected && chatId) {
-      console.log(`📥 Загрузка сообщений для чата: ${chatId}`);
+    if (socketError) {
+      console.error(`❌ Ошибка сокета: ${socketError}`);
+      setError(`Ошибка подключения: ${socketError}`);
+      setLoading(false);
+    }
+  }, [socketError]);
+
+  // Автоматическая загрузка сообщений при подключении (только один раз за чат)
+  useEffect(() => {
+    if (isConnected && chatId && !loadingInitiated.current) {
+      console.log(`📥 Инициируем загрузку сообщений для чата: ${chatId}`);
       
-      // Загружаем сообщения сразу
-      setTimeout(() => {
+      loadingInitiated.current = true;
+      
+      // Debounced загрузка с задержкой
+      loadTimeout.current = window.setTimeout(() => {
+        console.log(`📥 Выполняем загрузку сообщений для чата: ${chatId}`);
         loadMessages();
         setLoading(false);
-      }, 100);
+      }, 200);
     }
-  }, [isConnected, chatId, loadMessages]);
+  }, [isConnected, chatId]); // Убираем loadMessages из зависимостей
 
-  // WebSocket обработчики для общих событий
+  // WebSocket обработчики для общих событий (устанавливаем только один раз)
   useEffect(() => {
+    if (!chatId) return;
+
     // Отключение от сокета
     const onDisconnect = () => {
-      console.log(`🔌 Отключение от сокета`);
+      console.log(`🔌 Отключение от сокета для чата ${chatId}`);
+      setError('Подключение потеряно. Попытка переподключения...');
     };
 
     // Переподключение к сокету
     const onReconnect = () => {
-      console.log(`🔌 Переподключение к сокету`);
-      if (chatId) {
-        // Небольшая задержка перед повторной загрузкой сообщений
-        setTimeout(() => {
-          loadMessages();
-        }, 500);
-      }
+      console.log(`🔌 Переподключение к сокету для чата ${chatId}`);
+      setError(null);
+      
+      // При переподключении сбрасываем флаг и даем возможность загрузить сообщения заново
+      loadingInitiated.current = false;
     };
 
     // Подписка на события
@@ -116,8 +142,13 @@ export const useChatWindow = ({ chatId }: UseChatWindowProps): UseChatWindowRetu
     return () => {
       off('disconnect', onDisconnect);
       off('connect', onReconnect);
+      
+      // Очищаем таймаут при размонтировании
+      if (loadTimeout.current) {
+        window.clearTimeout(loadTimeout.current);
+      }
     };
-  }, [chatId, loadMessages, emit, on, off]);
+  }, [chatId, on, off]); // Минимальные зависимости
 
   // Автоматическое снятие состояния загрузки при получении ошибок сообщений
   useEffect(() => {
@@ -125,6 +156,17 @@ export const useChatWindow = ({ chatId }: UseChatWindowProps): UseChatWindowRetu
       setLoading(false);
     }
   }, [messagesError]);
+
+  // Убираем периодическую отладку - оставляем только важные моменты
+  useEffect(() => {
+    console.log('📊 Состояние useChatWindow изменилось:');
+    console.log('  - chatId:', chatId);
+    console.log('  - isConnected:', isConnected);
+    console.log('  - loading:', loading);
+    console.log('  - loadingInitiated:', loadingInitiated.current);
+    console.log('  - error:', error);
+    console.log('  - messagesError:', messagesError);
+  }, [chatId, isConnected, loading, error, messagesError]);
 
   return {
     // Общие состояния
