@@ -4,8 +4,7 @@ import {
     getPageConfig, 
     hasAccess, 
     NotFoundPage, 
-    AccessDeniedPage,
-    LoadingPage 
+    AccessDeniedPage
 } from './PageConfig';
 import { PageRouterProps, RouteState } from './pageTypes';
 

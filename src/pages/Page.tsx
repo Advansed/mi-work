@@ -80,32 +80,6 @@ const Page: React.FC = () => {
             </IonHeader>
 
             <IonContent fullscreen className="page-content">
-                {/* Collapsible header для больших экранов */}
-                {/* <IonHeader collapse="condense">
-                    <IonToolbar className="page-header">
-                        <IonTitle size="large">
-                            <div className="page-title-large">
-                                {pageConfig?.icon && (
-                                    <IonIcon icon={pageConfig.icon} className="page-title-icon-large" />
-                                )}
-                                <div className="page-title-content">
-                                    <span className="page-title-text">{pageTitle}</span>
-                                    {pageConfig?.description && (
-                                        <span className="page-title-description">
-                                            {pageConfig.description}
-                                        </span>
-                                    )}
-                                </div>
-                                {pageConfig?.badge && (
-                                    <IonBadge className="page-title-badge-large">
-                                        {pageConfig.badge}
-                                    </IonBadge>
-                                )}
-                            </div>
-                        </IonTitle>
-                    </IonToolbar>
-                </IonHeader> */}
-
                 {/* Основной контент страницы */}
                 <div className="page-content-wrapper">
                     <PageRouter name={name} userRole={userRole} />
