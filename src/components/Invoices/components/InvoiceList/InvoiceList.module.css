@@ -1,0 +1,233 @@
+/* src/components/Invoices/components/InvoiceList/InvoiceList.module.css */
+
+/* ============================================ */
+/* INVOICE PAGE LAYOUT */
+/* ============================================ */
+
+.invoicePage {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.invoicePageHeader {
+    padding: 16px 20px 8px 20px;
+    background: var(--ion-background-color);
+    border-bottom: 1px solid var(--ion-color-light);
+    flex-shrink: 0;
+}
+
+.invoicePageTitle {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+}
+
+.invoicePageSubtitle {
+    margin: 4px 0 0 0;
+    font-size: 0.9rem;
+    color: var(--ion-color-medium);
+}
+
+.invoicePageContent {
+    flex: 1;
+    overflow-y: auto;
+    padding-top: 8px;
+}
+
+/* ============================================ */
+/* INVOICES LIST */
+/* ============================================ */
+
+.invoicesList {
+    padding-bottom: 20px;
+}
+
+/* ============================================ */
+/* INVOICE CARD */
+/* ============================================ */
+
+.invoiceCard {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid var(--ion-color-primary);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+    margin: 8px 16px;
+}
+
+.invoiceCard:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.invoiceCard:active {
+    transform: translateY(1px);
+}
+
+/* Цветовое кодирование по статусам */
+.invoiceCard[data-status="danger"] {
+    border-left-color: var(--ion-color-danger);
+}
+
+.invoiceCard[data-status="warning"] {
+    border-left-color: var(--ion-color-warning);
+}
+
+.invoiceCard[data-status="success"] {
+    border-left-color: var(--ion-color-success);
+}
+
+.invoiceCard[data-status="primary"] {
+    border-left-color: var(--ion-color-primary);
+}
+
+.invoiceCard[data-status="medium"] {
+    border-left-color: var(--ion-color-medium);
+}
+
+.invoiceCard[data-status="light"] {
+    border-left-color: var(--ion-color-light-shade);
+}
+
+/* ============================================ */
+/* INVOICE CARD CONTENT */
+/* ============================================ */
+
+.invoiceActions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.invoiceInfo {
+    margin-top: 8px;
+}
+
+.infoRow {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    color: var(--ion-color-medium);
+    line-height: 1.3;
+}
+
+.infoRow:last-child {
+    margin-bottom: 0;
+}
+
+.infoRow ion-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    color: var(--ion-color-primary);
+    flex-shrink: 0;
+}
+
+.infoRow span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 200px;
+    flex: 1;
+}
+
+/* ============================================ */
+/* INVOICE CARD FOOTER */
+/* ============================================ */
+
+.invoiceFooter {
+    background: var(--ion-color-light);
+    padding: 8px 16px;
+    border-top: 1px solid var(--ion-color-light-shade);
+    font-size: 0.8rem;
+    color: var(--ion-color-medium);
+}
+
+.invoiceFooter ion-grid {
+    padding: 0;
+}
+
+.invoiceFooter ion-col {
+    padding: 0;
+}
+
+.textRight {
+    text-align: right;
+}
+
+/* ============================================ */
+/* EMPTY STATES */
+/* ============================================ */
+
+.loadingState {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    flex-direction: column;
+}
+
+.emptyState {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* ============================================ */
+/* INVOICE ITEM COMPACT (из InvoiceCard.css) */
+/* ============================================ */
+
+.invoiceItemCompact {
+    margin: 8px 16px;
+    --inner-padding-end: 8px;
+    --border-radius: 8px;
+    --background: var(--ion-color-light);
+    font-size: 0.85rem;
+}
+
+.invoiceHeader {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.invoiceNumber {
+    font-weight: bold;
+    margin: 0;
+    font-size: 1rem;
+}
+
+.invoiceStatusChip {
+    font-size: 0.7rem;
+    height: 20px;
+}
+
+.invoiceDetails {
+    margin-bottom: 8px;
+}
+
+.detailRow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 3px;
+    font-size: 0.8rem;
+    color: var(--ion-color-medium);
+}
+
+.detailRow ion-icon {
+    font-size: 12px;
+    min-width: 12px;
+}
+
+.detailRow span {
+    flex: 1;
+}

@@ -8,7 +8,7 @@ import {
 } from '@ionic/react';
 import { InvoicesListProps } from '../../types';
 import { InvoiceItem } from './InvoiceItem';
-import './InvoiceList.css';
+import styles from './InvoiceList.module.css';
 
 export const InvoicesList: React.FC<InvoicesListProps> = ({
     invoices,
@@ -39,30 +39,30 @@ export const InvoicesList: React.FC<InvoicesListProps> = ({
     }, []);
 
     return (
-        <div className="invoice-page">
-            <div className="invoice-page-header">
-                <h2 className="invoice-page-title">Заявки</h2>
-                <p className="invoice-page-subtitle">Всего: {invoices.length}</p>
+        <div className={styles.invoicePage}>
+            <div className={styles.invoicePageHeader}>
+                <h2 className={styles.invoicePageTitle}>Заявки</h2>
+                <p className={styles.invoicePageSubtitle}>Всего: {invoices.length}</p>
             </div>
 
             <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
                 <IonRefresherContent />
             </IonRefresher>
 
-            <div className="invoice-page-content">
+            <div className={styles.invoicePageContent}>
                 {loading && !refreshing ? (
-                    <div className="loading-state">
+                    <div className={styles.loadingState}>
                         <IonText color="medium">Загрузка заявок...</IonText>
                     </div>
                 ) : invoices.length === 0 ? (
-                    <div className="empty-state">
+                    <div className={styles.emptyState}>
                         <IonText color="medium">Нет заявок</IonText>
                         <IonButton fill="clear" onClick={onRefresh}>
                             Обновить
                         </IonButton>
                     </div>
                 ) : (
-                    <div className="invoices-list">
+                    <div className={styles.invoicesList}>
                         {invoices.map(invoice => (
                             <InvoiceItem
                                 key={invoice.id}
@@ -83,16 +83,7 @@ export const InvoicesList: React.FC<InvoicesListProps> = ({
                 onDidDismiss={onClearError}
                 header="Ошибка"
                 message={error || ''}
-                buttons={[
-                    {
-                        text: 'Повторить',
-                        handler: onRefresh
-                    },
-                    {
-                        text: 'Закрыть',
-                        role: 'cancel'
-                    }
-                ]}
+                buttons={['ОК']}
             />
         </div>
     );
