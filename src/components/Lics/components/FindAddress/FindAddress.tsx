@@ -62,6 +62,7 @@ export function AddressForm({
     }, [initialAddress]);
 
     const handleAddressChange = (value: string) => {
+        console.log(" handleAddress ")
         setAddress(value);
         if (isStandardized) {
             setIsStandardized(false);
