@@ -131,15 +131,12 @@ export const useLics = () => {
   
   const addLics     = async (lc) => {
 
-    console.log("addLics")
-    console.log( lc )
 
     try {
       // Здесь будет вызов API метода get_lics
       const response = await getData('addLic',{ token: Store.getState().login.token, lc: lc })
 
       const result: ILicsResponse = response;
-      console.log( result )
       
       if (result.success) {
         setData(result.data);
@@ -148,7 +145,6 @@ export const useLics = () => {
       }
     } catch (err) {
       setError('Ошибка сети или сервера');
-      console.error('Error loading lics:', err);
     } finally {
       setLoading(false);
     }
@@ -158,15 +154,12 @@ export const useLics = () => {
 
   const deleteLics  = async (lc) => {
 
-    console.log("deleteLic")
-    console.log( lc )
 
     try {
       // Здесь будет вызов API метода get_lics
       const response = await getData( 'deleteLic', { token: Store.getState().login.token, lc: lc } )
 
       const result: ILicsResponse = response;
-      console.log( result )
       
       if (result.success) {
         setData(result.data);
@@ -185,7 +178,6 @@ export const useLics = () => {
   
   const handleLicClick = (licAccount: ILicAccount) => {
     // Навигация к детальной карточке
-    console.log('Navigate to lic details:', licAccount.id);
     setItem( licAccount )
   };
 

@@ -13,7 +13,6 @@ export interface ToastOptions {
 export const useToast = () => {
     
     const showSuccess = useCallback((message: string, options?: ToastOptions) => {
-        console.log("show success toast")
         Store.dispatch({
             type: 'toast',
             data: {

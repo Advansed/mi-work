@@ -184,7 +184,5 @@ export function Phone(phone): string {
 
 export async function exec( method, params, name ){
     const res = await getData( method,  params )
-    console.log( method );
-    console.log( res );
     Store.dispatch({ type: name, data: res.data})
 }

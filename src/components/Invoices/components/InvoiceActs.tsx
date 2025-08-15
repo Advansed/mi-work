@@ -96,7 +96,6 @@ export const InvoiceActs: React.FC<InvoiceActsProps> = ({ invoice }) => {
 
     // Обработчик сохранения акта отключения
     const handleSaveShutdownAct = (data: any) => {
-        console.log('Акт отключения сохранен:', data);
         showSuccess(`Акт-наряд №${data.act_number || 'б/н'} успешно сохранен`);
         setCurrentView('list');
     };

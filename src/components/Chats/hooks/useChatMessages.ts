@@ -58,13 +58,6 @@ export const useChatMessages = ({ chatId }: UseChatMessagesProps): UseChatMessag
         loadingMessages || 
         requestInProgress.current ||
         currentChatId.current === chatId && loadedRef.current) {
-      console.log('📥 Пропускаем загрузку сообщений:', {
-        chatId,
-        isConnected,
-        loadingMessages,
-        requestInProgress: requestInProgress.current,
-        alreadyLoaded: currentChatId.current === chatId && loadedRef.current
-      });
       return;
     }
     
@@ -72,8 +65,6 @@ export const useChatMessages = ({ chatId }: UseChatMessagesProps): UseChatMessag
       setLoadingMessages(true);
       setMessagesError(null);
       requestInProgress.current = true;
-      
-      console.log(`📥 Загрузка сообщений для чата ${chatId}`);
       
       emit('get_messages', {
         chat_id: chatId,
@@ -104,8 +95,6 @@ export const useChatMessages = ({ chatId }: UseChatMessagesProps): UseChatMessag
       
       const offset = messagesRef.current.length;
       
-      console.log(`📥 Загрузка дополнительных сообщений для чата ${chatId}, offset: ${offset}`);
-      
       emit('get_messages', {
         chat_id: chatId,
         limit: 50,
@@ -113,7 +102,6 @@ export const useChatMessages = ({ chatId }: UseChatMessagesProps): UseChatMessag
       });
       
     } catch (error) {
-      console.error('❌ Ошибка загрузки дополнительных сообщений:', error);
       setMessagesError('Ошибка загрузки сообщений');
       setLoadingMessages(false);
       requestInProgress.current = false;
@@ -128,7 +116,6 @@ export const useChatMessages = ({ chatId }: UseChatMessagesProps): UseChatMessag
       setSendingMessage(true);
       setMessagesError(null);
       
-      console.log(`📤 Отправка сообщения в чат ${chatId}`);
       
       emit('send_message', {
         chat_id:        chatId,
@@ -152,7 +139,6 @@ export const useChatMessages = ({ chatId }: UseChatMessagesProps): UseChatMessag
   // Сброс состояния при смене чата
   useEffect(() => {
     if (currentChatId.current !== chatId) {
-      console.log(`🔄 Сброс состояния сообщений для нового чата: ${chatId}`);
       
       currentChatId.current = chatId;
       
@@ -177,8 +163,6 @@ export const useChatMessages = ({ chatId }: UseChatMessagesProps): UseChatMessag
       has_more: boolean;
     }) => {
       if (data.chat_id === chatId) {
-        console.log(`✅ Получены сообщения для чата ${data.chat_id}:`, data.messages.length);
-        console.log()
         if (loadedRef.current) {
           // Это загрузка дополнительных сообщений (добавляем в начало)
           setMessages(prev => [...data.messages, ...prev]);
@@ -197,14 +181,12 @@ export const useChatMessages = ({ chatId }: UseChatMessagesProps): UseChatMessag
     // Новое сообщение
     const onNewMessage = (data: ChatMessage) => {
       if (data.chat_id === chatId) {
-        console.log(`📩 Новое сообщение в чате ${chatId}`);
         setMessages(prev => [...prev, data]);
       }
     };
 
     // Подтверждение отправки
     const onMessageSent = (data: { success: boolean; message_id?: string }) => {
-      console.log(`✅ Сообщение отправлено:`, data);
       setSendingMessage(false);
       if (!data.success) {
         setMessagesError('Ошибка отправки сообщения');

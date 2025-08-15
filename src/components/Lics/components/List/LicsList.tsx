@@ -28,7 +28,6 @@ const LicsList: React.FC<LicsListProps> = ({
 
    const handleDelete = (licAccount: ILicAccount, event: React.MouseEvent) => {
     event.stopPropagation(); // Предотвращаем клик по карточке
-    console.log('Удаление лицевого счета:', licAccount.code, licAccount.id);
     onLicDel( licAccount.code )
   };
 

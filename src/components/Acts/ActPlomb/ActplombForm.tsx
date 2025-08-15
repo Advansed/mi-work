@@ -48,7 +48,6 @@ const ActPlombForm: React.FC<ActPlombFormProps> = ({
       const pdfData = await getPDF();
       setPDF( pdfData )
       setShowPrintModal( true )
-      console.log('PDF успешно создан и скачан');
     } catch (error: any) {
       console.error('Ошибка генерации PDF:', error);
       alert(`Ошибка создания PDF: ${error.message}`);

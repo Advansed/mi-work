@@ -40,12 +40,10 @@ const Lics: React.FC = () => {
   };
 
   const handleLicAdd = (lic: string) => {
-    console.log('Adding new lic:', lic);
     addLics( lic )
     closeAddLicModal();
   };
   const handleLicDel = (lic: string) => {
-    console.log('deleting lic:', lic);
     deleteLics( lic )
   };
 

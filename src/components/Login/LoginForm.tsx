@@ -48,7 +48,6 @@ const LoginForm: React.FC = () => {
     useEffect(() => {
         const savedPhone = localStorage.getItem('rememberedPhone');
 
-        console.log(savedPhone)
         if (typeof savedPhone === 'string' && savedPhone) {
             setPhone(savedPhone);
             setRememberMe(true);
@@ -107,7 +106,7 @@ const LoginForm: React.FC = () => {
             setPasswordError(error || '');
         }
         if (error) clearError();
-        console.log(newPassword)
+
     };
 
     // Обработка отправки формы

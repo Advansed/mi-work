@@ -198,14 +198,11 @@ export const useCompleted = (actId?: string) => {
     setLoading(true);
     try {
       const params = { invoice_id: invoiceId, user_id: Store.getState().login.userId };
-      console.log("completed_get", params);
       
       const result = await getData('COMPLETED_GET', params);
-      console.log(result);
       
       if (result.success) {
         const actData = result.data;
-        console.log(actData);
 
         // Используем Immer для установки загруженных данных
         setData(produce(draft => {
@@ -230,11 +227,8 @@ export const useCompleted = (actId?: string) => {
 
   const saveAct = useCallback(async (): Promise<ActCompletedData | null> => {
     if (!validateForm()) {
-      console.log("Validation failed");
       return null;
     }
-
-    console.log("saveAct");
     setSaving(true);
 
     try {
@@ -245,7 +239,6 @@ export const useCompleted = (actId?: string) => {
 
       if (result.success) {
         showSuccess("Акт выполненных работ сохранен");
-        console.log(result);
         
         // Обновляем данные результатом с сервера
         setData(produce(draft => {

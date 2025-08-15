@@ -86,7 +86,7 @@ export const useLogin = () => {
                 login:      formattedPhone,
                 password:   password
             }) as LoginResponse;
-            console.log(response)
+            
             if (response.success) {
                 // Формируем объект login
                 const loginData: LoginData = {

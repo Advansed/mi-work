@@ -37,8 +37,6 @@ const FindLics: React.FC<LicsFormProps> = ({
                 loadSettlements(item.items);
                 break;
             case "settle":
-                console.log( info )
-                console.log( item.name )
                 setInfo( info + ' → ' + item.name )
                 loadStreets(item.id);
                 break;
@@ -60,7 +58,6 @@ const FindLics: React.FC<LicsFormProps> = ({
                 break;
             case "lics":
                 onSelect( item.name )
-                console.log( 'lics -' + item.name )
                 break;
         }
     }, [loadSettlements, loadStreets, loadHouses, loadKv, loadLics, info, lic]);
@@ -138,7 +135,7 @@ const FindLics: React.FC<LicsFormProps> = ({
     }, [onClose]);
 
     const handleSave = useCallback(() => {
-        console.log("save - " + lic )
+
         if (onSelect) {
             onSelect( lic );
         }

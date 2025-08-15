@@ -152,7 +152,6 @@ export const getAllowedPages = (userRole: UserRole): PageName[] => {
 
 export const getMenuItems = (userRole: UserRole) => {
     const allowedPages = getAllowedPages(userRole);
-    console.log(allowedPages)
     return menuGroups.map(group => ({
         ...group,
         pages: group.pages.filter(page => allowedPages.includes(page))

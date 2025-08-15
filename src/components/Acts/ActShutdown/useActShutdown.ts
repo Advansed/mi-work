@@ -195,15 +195,12 @@ export const useShutdownAct = (actId?: string) => {
     setLoading(true);
     try {
       const params = { invoice_id: invoiceId, user_id: Store.getState().login.userId };
-      console.log("shutdown_order_get", params);
       
       const result = await getData('SHUTDOWN_ORDER_GET', params);
-      console.log(result);
       
       if (result.success) {
         const actData = result.data;
-        console.log(actData);
-
+      
         // Используем Immer для установки загруженных данных
         setData(produce(draft => {
           // Сбрасываем к начальным данным и применяем загруженные
@@ -227,11 +224,9 @@ export const useShutdownAct = (actId?: string) => {
 
   const saveAct = useCallback(async (): Promise<ActShutdownData | null> => {
     if (!validateForm()) {
-      console.log("no validate");
       return null;
     }
 
-    console.log("saveAct");
     setSaving(true);
 
     try {
@@ -242,7 +237,6 @@ export const useShutdownAct = (actId?: string) => {
 
       if (result.success) {
         showSuccess("Данные сохранены");
-        console.log(result);
         
         // Обновляем данные результатом с сервера
         setData(produce(draft => {

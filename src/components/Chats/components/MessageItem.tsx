@@ -35,9 +35,6 @@ const MessageItem: React.FC<MessageItemProps> = ({
     );
   }
   
-  console.log(message.is_own)
-  console.log(message.sender_name)
-  console.log(message.message_text)
 
   return (
     <div className={`message-container ${message.is_own ? 'own-message' : 'other-message'}`}>

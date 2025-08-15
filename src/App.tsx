@@ -60,9 +60,7 @@ const App: React.FC = () => {
 
     // Получаем роль пользователя для определения страницы по умолчанию
     const userRole = loginData?.role as UserRole;
-    console.log( userRole )
     const defaultPage = userRole ? getDefaultPage(userRole) : 'invoices';
-    console.log( defaultPage )
     
     // Если пользователь авторизован, показываем основное приложение
     return (
