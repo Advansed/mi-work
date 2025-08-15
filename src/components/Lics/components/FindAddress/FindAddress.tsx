@@ -10,11 +10,9 @@ import {
     IonButton,
     IonIcon,
     IonSpinner,
-    IonText,
-    IonList,
-    IonPopover
+    IonText
 } from '@ionic/react';
-import { locationOutline, ellipsisHorizontal, chevronDownOutline, saveOutline } from 'ionicons/icons';
+import { locationOutline, ellipsisHorizontal, saveOutline } from 'ionicons/icons';
 import './FindAddress.css';
 import { ConfidenceLevel, StandardizedAddress, useDaData } from '../../../dadata-component';
 import { useToast } from '../../../Toast/useToast';
@@ -42,8 +40,8 @@ export function AddressForm({
     const [suggestions, setSuggestions] = useState<StandardizedAddress[]>([]);
     const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
     
-    const suggestionsRef = useRef<HTMLIonPopoverElement>(null);
     const inputRef = useRef<HTMLIonInputElement>(null);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     const { standardizeAddress } = useDaData({
         apiKey: '50bfb3453a528d091723900fdae5ca5a30369832',
@@ -60,6 +58,23 @@ export function AddressForm({
             setStandardizedAddress('');
         }
     }, [initialAddress]);
+
+    // Обработка клика вне выпадающего списка
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setShowSuggestions(false);
+            }
+        };
+
+        if (showSuggestions) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [showSuggestions]);
 
     const handleAddressChange = (value: string) => {
         console.log(" handleAddress ")
@@ -174,52 +189,58 @@ export function AddressForm({
                 </IonCardHeader>
 
                 <IonCardContent className="address-form-content">
-                    {/* Поле ввода адреса */}
-                    <IonItem className="address-form-item" lines="none">
-                        <IonInput
-                            ref={inputRef}
-                            className="address-form-input"
-                            value={address}
-                            placeholder="Введите адрес (город, улица, дом, квартира)"
-                            onIonInput={(e) => handleAddressChange(e.detail.value!)}
-                            disabled={disabled || loading || saving}
-                            id="address-input"
-                        />
-                        <IonIcon icon={locationOutline} slot="end" />
-                    </IonItem>
-
-                    {/* Стандартизированный адрес */}
-                    {isStandardized && standardizedAddress && (
-                        <div className="standardized-address fade-in">
-                            <div className="standardized-label">
-                                Стандартизированный адрес
-                            </div>
+                    {/* Поле ввода адреса с выпадающим списком */}
+                    <div className="address-input-container" ref={dropdownRef}>
+                        <IonItem className="address-form-item" lines="none">
                             <IonInput
                                 ref={inputRef}
                                 className="address-form-input"
-                                value={ standardizedAddress }
+                                value={address}
                                 placeholder="Введите адрес (город, улица, дом, квартира)"
-                                onIonInput={(e) => {
-                                    const value = e.detail.value as string
-                                    setStandardizedAddress( value )
-                                }}
-                                disabled={disabled || loading || saving}
+                                onIonInput={(e) => handleAddressChange(e.detail.value!)}
+                                disabled={disabled || loading}
                                 id="address-input"
                             />
-                            {/* <div className="standardized-text">
+                            <IonIcon icon={locationOutline} slot="start" />
+                        </IonItem>
+
+                        {/* Выпадающий список предложений */}
+                        {showSuggestions && suggestions.length > 0 && (
+                            <div className="suggestions-dropdown">
+                                {suggestions.map((suggestion, index) => (
+                                    <div
+                                        key={index}
+                                        className="suggestion-item"
+                                        onClick={() => handleSuggestionSelect(suggestion)}
+                                    >
+                                        <IonText>
+                                            {`${suggestion.city}, ${suggestion.street}, д. ${suggestion.house}${suggestion.apartment ? `, кв. ${suggestion.apartment}` : ''}`}
+                                        </IonText>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Отображение стандартизированного адреса */}
+                    {isStandardized && standardizedAddress && (
+                        <div className="standardized-address">
+                            <div className="standardized-label">
+                                ✓ Стандартизированный адрес
+                            </div>
+                            <div className="standardized-text">
                                 {standardizedAddress}
-                            </div> */}
+                            </div>
                         </div>
                     )}
 
-                    {/* Кнопки действий */}
-                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '16px' }}>
+                    {/* Кнопки управления */}
+                    <div className="address-buttons">
                         <IonButton
-                            className="address-form-button"
                             onClick={handleStandardize}
-                            disabled={disabled || loading || saving || !address.trim()}
+                            disabled={disabled || loading || !address.trim()}
                             expand="block"
-                            fill="solid"
+                            className="address-form-button"
                         >
                             {loading ? (
                                 <>
@@ -236,7 +257,6 @@ export function AddressForm({
 
                         {onAddressSaved && (
                             <IonButton
-                                // className="address-form-button-outline"
                                 onClick={handleSave}
                                 disabled={disabled || loading || saving || !address.trim()}
                                 expand="block"
@@ -268,31 +288,6 @@ export function AddressForm({
                     )}
                 </IonCardContent>
             </IonCard>
-
-            {/* Попover с предложениями */}
-            <IonPopover
-                ref={suggestionsRef}
-                isOpen={showSuggestions}
-                onDidDismiss={() => setShowSuggestions(false)}
-                trigger="address-input"
-                // placement="bottom"
-                className="address-form-popover"
-            >
-                <IonList className="address-form-list">
-                    {suggestions.map((suggestion, index) => (
-                        <IonItem
-                            key={index}
-                            button
-                            onClick={() => handleSuggestionSelect(suggestion)}
-                            className="suggestion-item interactive"
-                        >
-                            <IonText>
-                                {`${suggestion.city}, ${suggestion.street}, д. ${suggestion.house}${suggestion.apartment ? `, кв. ${suggestion.apartment}` : ''}`}
-                            </IonText>
-                        </IonItem>
-                    ))}
-                </IonList>
-            </IonPopover>
         </div>
     );
 }
