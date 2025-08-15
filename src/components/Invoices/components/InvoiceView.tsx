@@ -4,7 +4,7 @@ import { IonButton, IonCard, IonChip, IonIcon, IonItem, IonLabel, IonList, IonMo
 import { callOutline, locationOutline, timeOutline, personCircleOutline, searchOutline, checkmarkCircleOutline, warningOutline, alertCircleOutline, ribbonOutline, calendarOutline, codeWorkingOutline, ellipsisHorizontalOutline } from 'ionicons/icons';
 import { Invoice, InvoiceStatus } from '../types';
 import styles from './InvoiceView.module.css';
-import { FindAddress } from '../../Lics/components/FindAddress/FindAddress';
+import { AddressForm } from '../../Lics/components/FindAddress/FindAddress';
 import FindLics from '../../Lics/components/FindLic/FindLics';
 
 interface InvoiceViewProps {
@@ -195,7 +195,7 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
 
             {/* Модальные окна */}
             <IonModal isOpen={isAddressSearchModalOpen} onDidDismiss={() => setIsAddressSearchModalOpen(false)}>
-                <FindAddress 
+                <AddressForm 
                     initialAddress={currentAddress}
                     invoiceId={invoice.id}
                     onAddressSaved={handleAddressUpdate}

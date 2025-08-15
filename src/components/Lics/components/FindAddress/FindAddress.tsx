@@ -1,51 +1,39 @@
-// src/components/Lics/components/FindAddress/FindAddress.tsx
+// src/components/Lics/AddressForm.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import {
-    IonModal,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonContent,
-    IonButton,
-    IonButtons,
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardTitle,
     IonItem,
     IonInput,
+    IonButton,
     IonIcon,
     IonSpinner,
     IonText,
-    IonLoading
+    IonList,
+    IonPopover
 } from '@ionic/react';
-import { 
-    close,
-    locationOutline, 
-    saveOutline, 
-    checkmarkCircleOutline,
-    warningOutline,
-    searchOutline
-} from 'ionicons/icons';
-import styles from './FindAddress.module.css';
+import { locationOutline, ellipsisHorizontal, chevronDownOutline, saveOutline } from 'ionicons/icons';
+import './FindAddress.css';
 import { ConfidenceLevel, StandardizedAddress, useDaData } from '../../../dadata-component';
 import { useToast } from '../../../Toast/useToast';
 
-interface FindAddressProps {
+interface LicsProps {
     initialAddress?: string;
     invoiceId?: string;
     onAddressChange?: (address: string, isStandardized: boolean) => void;
     onAddressSaved?: (address: string) => Promise<void>;
-    onClose?: () => void;
-    isOpen: boolean;
     disabled?: boolean;
 }
 
-export function FindAddress({ 
+export function AddressForm({ 
     initialAddress = '', 
     invoiceId,
     onAddressChange, 
     onAddressSaved,
-    onClose,
-    isOpen,
     disabled = false 
-}: FindAddressProps) {
+}: LicsProps) {
     const [address, setAddress] = useState<string>(initialAddress);
     const [standardizedAddress, setStandardizedAddress] = useState<string>('');
     const [isStandardized, setIsStandardized] = useState<boolean>(false);
@@ -54,6 +42,7 @@ export function FindAddress({
     const [suggestions, setSuggestions] = useState<StandardizedAddress[]>([]);
     const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
     
+    const suggestionsRef = useRef<HTMLIonPopoverElement>(null);
     const inputRef = useRef<HTMLIonInputElement>(null);
 
     const { standardizeAddress } = useDaData({
@@ -144,7 +133,6 @@ export function FindAddress({
         setStandardizedAddress(fullAddress);
         setIsStandardized(true);
         setShowSuggestions(false);
-        setSuggestions([]);
         
         onAddressChange?.(fullAddress, true);
         showSuccess('Адрес выбран из предложений');
@@ -171,164 +159,139 @@ export function FindAddress({
         }
     };
 
-    const handleClose = () => {
-        // Сброс состояния при закрытии
-        setAddress(initialAddress);
-        setStandardizedAddress('');
-        setIsStandardized(false);
-        setSuggestions([]);
-        setShowSuggestions(false);
-        onClose?.();
-    };
-
     return (
-        <>
-            <IonModal 
-                isOpen={isOpen} 
-                onDidDismiss={handleClose}
-                className={styles.addressFormModal}
-            >
-                <IonHeader>
-                    <IonToolbar>
-                        <IonTitle>Поиск и стандартизация адреса</IonTitle>
-                        <IonButtons slot="end">
-                            <IonButton 
-                                className={styles.closeButton}
-                                onClick={handleClose}
-                            >
-                                <IonIcon icon={close} />
-                            </IonButton>
-                        </IonButtons>
-                    </IonToolbar>
-                </IonHeader>
+        <div className="address-form">
+            <IonCard className="address-form-card">
+                <IonCardHeader className="address-form-header">
+                    <IonCardTitle className="address-form-title">
+                        <IonIcon icon={locationOutline} />
+                        Ввод и стандартизация адреса
+                    </IonCardTitle>
+                    <IonText className="description-text">
+                        Введите адрес и выполните стандартизацию для получения точного адреса
+                    </IonText>
+                </IonCardHeader>
 
-                <IonContent>
-                    {/* Контейнер ввода адреса */}
-                    <div className={styles.addressLevelContainer}>
-                        <label className={styles.addressLevelLabel}>
-                            Ввод адреса
-                        </label>
-                        <IonItem className={styles.addressInput} lines="none">
+                <IonCardContent className="address-form-content">
+                    {/* Поле ввода адреса */}
+                    <IonItem className="address-form-item" lines="none">
+                        <IonInput
+                            ref={inputRef}
+                            className="address-form-input"
+                            value={address}
+                            placeholder="Введите адрес (город, улица, дом, квартира)"
+                            onIonInput={(e) => handleAddressChange(e.detail.value!)}
+                            disabled={disabled || loading || saving}
+                            id="address-input"
+                        />
+                        <IonIcon icon={locationOutline} slot="end" />
+                    </IonItem>
+
+                    {/* Стандартизированный адрес */}
+                    {isStandardized && standardizedAddress && (
+                        <div className="standardized-address fade-in">
+                            <div className="standardized-label">
+                                Стандартизированный адрес
+                            </div>
                             <IonInput
                                 ref={inputRef}
-                                value={address}
+                                className="address-form-input"
+                                value={ standardizedAddress }
                                 placeholder="Введите адрес (город, улица, дом, квартира)"
-                                onIonInput={(e) => handleAddressChange(e.detail.value!)}
+                                onIonInput={(e) => {
+                                    const value = e.detail.value as string
+                                    setStandardizedAddress( value )
+                                }}
                                 disabled={disabled || loading || saving}
+                                id="address-input"
                             />
-                            <IonIcon icon={locationOutline} slot="end" />
-                        </IonItem>
-                    </div>
+                            {/* <div className="standardized-text">
+                                {standardizedAddress}
+                            </div> */}
+                        </div>
+                    )}
 
-                    {/* Контейнер стандартизации */}
-                    <div className={styles.addressLevelContainer}>
-                        <label className={styles.addressLevelLabel}>
-                            Стандартизация адреса
-                        </label>
+                    {/* Кнопки действий */}
+                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '16px' }}>
                         <IonButton
-                            className={styles.addressButton}
+                            className="address-form-button"
                             onClick={handleStandardize}
                             disabled={disabled || loading || saving || !address.trim()}
                             expand="block"
+                            fill="solid"
                         >
                             {loading ? (
                                 <>
-                                    <IonSpinner name="crescent" />
-                                    <span style={{ marginLeft: '8px' }}>Стандартизация...</span>
+                                    <IonSpinner name="crescent" className="address-form-spinner" />
+                                    Стандартизация...
                                 </>
                             ) : (
                                 <>
-                                    <IonIcon icon={searchOutline} slot="start" />
-                                    Стандартизировать адрес
+                                    <IonIcon icon={ellipsisHorizontal} slot="start" />
+                                    Стандартизировать
                                 </>
                             )}
                         </IonButton>
+
+                        {onAddressSaved && (
+                            <IonButton
+                                // className="address-form-button-outline"
+                                onClick={handleSave}
+                                disabled={disabled || loading || saving || !address.trim()}
+                                expand="block"
+                                fill="outline"
+                            >
+                                {saving ? (
+                                    <>
+                                        <IonSpinner name="crescent" className="address-form-spinner" />
+                                        Сохранение...
+                                    </>
+                                ) : (
+                                    <>
+                                        <IonIcon icon={saveOutline} slot="start" />
+                                        Сохранить
+                                    </>
+                                )}
+                            </IonButton>
+                        )}
                     </div>
 
-                    {/* Контейнер результата стандартизации */}
-                    {isStandardized && standardizedAddress && (
-                        <div className={`${styles.addressLevelContainer} ${styles.success}`}>
-                            <label className={styles.addressLevelLabel}>
-                                Стандартизированный адрес
-                            </label>
-                            <div className={styles.standardizedContainer}>
-                                <div className={styles.standardizedLabel}>
-                                    <IonIcon icon={checkmarkCircleOutline} />
-                                    Адрес успешно стандартизирован
-                                </div>
-                                <IonText>
-                                    <strong>{standardizedAddress}</strong>
-                                </IonText>
+                    {/* Индикатор загрузки */}
+                    {loading && (
+                        <div className="loading-container fade-in">
+                            <div className="loading-spinner"></div>
+                            <div className="loading-text">
+                                Выполняется стандартизация адреса...
                             </div>
                         </div>
                     )}
+                </IonCardContent>
+            </IonCard>
 
-                    {/* Контейнер предложений */}
-                    {showSuggestions && suggestions.length > 0 && (
-                        <div className={`${styles.addressLevelContainer} ${styles.warning}`}>
-                            <label className={styles.addressLevelLabel}>
-                                Варианты адресов ({suggestions.length})
-                            </label>
-                            <IonText color="warning" style={{ marginBottom: '12px', display: 'block' }}>
-                                <IonIcon icon={warningOutline} style={{ marginRight: '6px' }} />
-                                Выберите подходящий вариант из списка:
+            {/* Попover с предложениями */}
+            <IonPopover
+                ref={suggestionsRef}
+                isOpen={showSuggestions}
+                onDidDismiss={() => setShowSuggestions(false)}
+                trigger="address-input"
+                // placement="bottom"
+                className="address-form-popover"
+            >
+                <IonList className="address-form-list">
+                    {suggestions.map((suggestion, index) => (
+                        <IonItem
+                            key={index}
+                            button
+                            onClick={() => handleSuggestionSelect(suggestion)}
+                            className="suggestion-item interactive"
+                        >
+                            <IonText>
+                                {`${suggestion.city}, ${suggestion.street}, д. ${suggestion.house}${suggestion.apartment ? `, кв. ${suggestion.apartment}` : ''}`}
                             </IonText>
-                            <div className={styles.suggestionsList}>
-                                {suggestions.map((suggestion, index) => (
-                                    <div
-                                        key={index}
-                                        className={styles.suggestionItem}
-                                        onClick={() => handleSuggestionSelect(suggestion)}
-                                    >
-                                        <div className={styles.suggestionTitle}>
-                                            {suggestion.city}, {suggestion.street}
-                                        </div>
-                                        <div className={styles.suggestionAddress}>
-                                            д. {suggestion.house}{suggestion.apartment ? `, кв. ${suggestion.apartment}` : ''}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Контейнер действий */}
-                    {onAddressSaved && (
-                        <div className={styles.addressLevelContainer}>
-                            <label className={styles.addressLevelLabel}>
-                                Сохранение адреса
-                            </label>
-                            <div className={styles.actionsContainer}>
-                                <IonButton
-                                    className={styles.addressButtonOutline}
-                                    onClick={handleSave}
-                                    disabled={disabled || loading || saving || !address.trim()}
-                                    expand="block"
-                                >
-                                    {saving ? (
-                                        <>
-                                            <IonSpinner name="crescent" />
-                                            <span style={{ marginLeft: '8px' }}>Сохранение...</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <IonIcon icon={saveOutline} slot="start" />
-                                            Сохранить адрес
-                                        </>
-                                    )}
-                                </IonButton>
-                            </div>
-                        </div>
-                    )}
-                </IonContent>
-            </IonModal>
-
-            {/* Загрузка */}
-            <IonLoading
-                isOpen={loading}
-                message="Стандартизация адреса..."
-                spinner="crescent"
-            />
-        </>
+                        </IonItem>
+                    ))}
+                </IonList>
+            </IonPopover>
+        </div>
     );
 }
