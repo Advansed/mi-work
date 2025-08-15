@@ -64,17 +64,19 @@ const Page: React.FC = () => {
                         <IonMenuButton />
                     </IonButtons>
                     <IonTitle>
+                        
                         <div className="page-title">
-                            {/* {pageConfig?.icon && ( */}
-                                <IonIcon icon={pageConfig?.icon} className="page-title-icon" />
-                            {/* )} */}
+                                
+                            <IonIcon icon = { pageConfig?.icon } className="page-title-icon" />
+
                             <span>{pageTitle}</span>
-                            {/* {pageConfig?.badge && ( */}
-                                <IonBadge className="page-title-badge">
-                                    {pageConfig?.badge}
-                                </IonBadge>
-                            {/* )} */}
+                            
+                            <IonBadge className="page-title-badge">
+                                {pageConfig?.badge}
+                            </IonBadge>
+                            
                         </div>
+
                     </IonTitle>
                 </IonToolbar>
             </IonHeader>
