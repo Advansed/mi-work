@@ -3,8 +3,8 @@ import React, { useCallback, useState } from 'react';
 import { IonButton, IonCard, IonChip, IonIcon, IonItem, IonLabel, IonList, IonModal, IonSpinner } from '@ionic/react';
 import { callOutline, locationOutline, timeOutline, personCircleOutline, searchOutline, checkmarkCircleOutline, warningOutline, alertCircleOutline, ribbonOutline, calendarOutline, codeWorkingOutline, ellipsisHorizontalOutline } from 'ionicons/icons';
 import { Invoice, InvoiceStatus } from '../types';
-import './InvoiceView.css';
-import { AddressForm } from '../../Lics/components/FindAddress/FindAddress';
+import styles from './InvoiceView.module.css';
+import { FindAddress } from '../../Lics/components/FindAddress/FindAddress';
 import FindLics from '../../Lics/components/FindLic/FindLics';
 
 interface InvoiceViewProps {
@@ -83,29 +83,29 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
     };
 
     return (
-        <IonCard className="invoice-card-mobile">
+        <IonCard className={styles.invoiceCard}>
             {/* Компактный заголовок */}
-            <div className="invoice-header-mobile">
-                <div className="invoice-title-mobile">
+            <div className={styles.invoiceHeader}>
+                <div className={styles.invoiceTitle}>
                     <h2>Заявка №{invoice.number}</h2>
-                    <IonChip color={getStatusColor()} className="status-chip-mobile">
+                    <IonChip color={getStatusColor()} className={styles.statusChip}>
                         <IonIcon icon={getStatusIcon()} />
                         {invoiceStatus?.text || 'Неизвестно'}
                     </IonChip>
                 </div>
                 <IonButton 
-                    fill="outline" 
                     size="small" 
-                    className="acts-button-mobile"
+                    color="primary"
+                    className={styles.actsButton}
                     onClick={onNavigateToActs}
                 >
-                    Акты
+                    Акты...
                 </IonButton>
             </div>
 
             {/* Основная информация */}
-            <IonList className="invoice-list-mobile">
-                <IonItem className="invoice-item-mobile">
+            <IonList className={styles.invoiceList}>
+                <IonItem className={styles.invoiceItem}>
                     <IonIcon icon={timeOutline} slot="start" />
                     <IonLabel>
                         <h3>Дата заявки</h3>
@@ -113,7 +113,7 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
                     </IonLabel>
                 </IonItem>
 
-                <IonItem className="invoice-item-mobile">
+                <IonItem className={styles.invoiceItem}>
                     <IonIcon icon={personCircleOutline} slot="start" />
                     <IonLabel>
                         <h3>Заявитель</h3>
@@ -121,44 +121,54 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
                     </IonLabel>
                 </IonItem>
 
-                <IonItem 
-                    button 
-                    onClick={handleCall} 
-                    disabled={!invoice.phone}
-                    className="invoice-item-mobile"
-                >
-                    <IonIcon icon={callOutline} slot="start" />
-                    <IonLabel>
-                        <h3>Телефон</h3>
-                        <p>{formatPhone(invoice.phone)}</p>
-                    </IonLabel>
-                </IonItem>
-
-                <IonItem className="invoice-item-mobile">
+                <IonItem className={styles.invoiceItem}>
                     <IonIcon icon={locationOutline} slot="start" />
                     <IonLabel>
                         <h3>Адрес</h3>
                         <p>{currentAddress}</p>
                     </IonLabel>
                     <IonButton 
-                        fill="clear" 
-                        size="small"
-                        onClick={handleAddressSearch}
+                        fill="outline" 
+                        color={"primary"}
                         slot="end"
+                        onClick={handleAddressSearch}
+                        disabled={isUpdatingAddress}
                     >
-                        <IonIcon icon={searchOutline} />
+                        {isUpdatingAddress ? (
+                            <IonSpinner name="dots" />
+                        ) : (
+                            <IonIcon icon={searchOutline} />
+                        )}
                     </IonButton>
                 </IonItem>
 
-                <IonItem className="invoice-item-mobile">
+                {invoice.phone && (
+                    <IonItem className={styles.invoiceItem}>
+                        <IonIcon icon={callOutline} slot="start" />
+                        <IonLabel>
+                            <h3>Телефон</h3>
+                            <p>{formatPhone(invoice.phone)}</p>
+                        </IonLabel>
+                        <IonButton 
+                            fill="outline" 
+                            color={"primary"}
+                            slot="end"
+                            onClick={handleCall}
+                        >
+                            <IonIcon icon={callOutline} />
+                        </IonButton>
+                    </IonItem>
+                )}
+
+                <IonItem className={styles.invoiceItem}>
                     <IonIcon icon={codeWorkingOutline} slot="start" />
                     <IonLabel>
                         <h3>Лицевой счет</h3>
-                        <p>{invoice.lic.code || "НЕ УКАЗАНО"}</p>
+                        <p>{invoice.lic.code || 'Не указан'}</p>
                     </IonLabel>
                     <IonButton 
-                        fill="clear" 
-                        size="small"
+                        fill="outline" 
+                        color={"primary"}
                         onClick={handleAccountSearch}
                         slot="end"
                     >
@@ -166,7 +176,7 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
                     </IonButton>
                 </IonItem>
 
-                <IonItem className="invoice-item-mobile">
+                <IonItem className={styles.invoiceItem}>
                     <IonIcon icon={ribbonOutline} slot="start" />
                     <IonLabel>
                         <h3>Услуга</h3>
@@ -174,7 +184,7 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
                     </IonLabel>
                 </IonItem>
 
-                <IonItem className="invoice-item-mobile">
+                <IonItem className={styles.invoiceItem}>
                     <IonIcon icon={calendarOutline} slot="start" />
                     <IonLabel>
                         <h3>Срок выполнения</h3>
@@ -185,7 +195,7 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
 
             {/* Модальные окна */}
             <IonModal isOpen={isAddressSearchModalOpen} onDidDismiss={() => setIsAddressSearchModalOpen(false)}>
-                <AddressForm 
+                <FindAddress 
                     initialAddress={currentAddress}
                     invoiceId={invoice.id}
                     onAddressSaved={handleAddressUpdate}

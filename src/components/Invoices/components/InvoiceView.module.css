@@ -1,7 +1,7 @@
-/* src/components/Invoices/components/InvoiceView.css */
+/* src/components/Invoices/components/InvoiceView.module.css */
 
 /* Основная карточка */
-.invoice-card-mobile {
+.invoiceCard {
     /* margin: 1em; */
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -9,7 +9,7 @@
 }
 
 /* Компактный заголовок */
-.invoice-header-mobile {
+.invoiceHeader {
     padding: 1em;
     background: var(--ion-color-light);
     border-bottom: 1px solid var(--ion-color-step-150);
@@ -19,15 +19,15 @@
     gap: 12px;
 }
 
-.invoice-title-mobile {
-    display: flex;
+.invoiceTitle {
+    /* display: flex; */
     align-items: center;
     gap: 8px;
     flex: 1;
     min-width: 0;
 }
 
-.invoice-title-mobile h2 {
+.invoiceTitle h2 {
     margin: 0;
     font-size: 1.1rem;
     font-weight: 600;
@@ -38,7 +38,7 @@
 }
 
 /* Компактный статус чип */
-.status-chip-mobile {
+.statusChip {
     --border-radius: 16px;
     height: 28px;
     font-size: 0.75rem;
@@ -46,28 +46,29 @@
     flex-shrink: 0;
 }
 
-.status-chip-mobile ion-icon {
+.statusChip ion-icon {
     font-size: 14px;
     margin-right: 4px;
 }
 
 /* Кнопка актов */
-.acts-button-mobile {
+.actsButton {
     --border-radius: 8px;
     height: 32px;
     min-width: 60px;
     font-size: 0.85rem;
     flex-shrink: 0;
+    
 }
 
 /* Список информации */
-.invoice-list-mobile {
+.invoiceList {
     margin: 0;
     padding: 0;
     background: transparent;
 }
 
-.invoice-item-mobile {
+.invoiceItem {
     --padding-start: 1em;
     --padding-end: 1em;
     --padding-top: 12px;
@@ -78,12 +79,12 @@
     min-height: 48px;
 }
 
-.invoice-item-mobile:not(:last-child) {
+.invoiceItem:not(:last-child) {
     border-bottom: 1px solid var(--ion-color-step-100);
 }
 
 /* Иконки в списке */
-.invoice-item-mobile ion-icon[slot="start"] {
+.invoiceItem ion-icon[slot="start"] {
     color: var(--ion-color-medium);
     font-size: 20px;
     margin-right: 12px;
@@ -91,18 +92,18 @@
 }
 
 /* Лейблы */
-.invoice-item-mobile ion-label {
+.invoiceItem ion-label {
     margin: 0;
 }
 
-.invoice-item-mobile ion-label h3 {
+.invoiceItem ion-label h3 {
     margin: 0 0 2px 0;
     font-size: 0.85rem;
     font-weight: 500;
     color: var(--ion-color-medium);
 }
 
-.invoice-item-mobile ion-label p {
+.invoiceItem ion-label p {
     margin: 0;
     font-size: 0.95rem;
     font-weight: 400;
@@ -112,7 +113,7 @@
 }
 
 /* Кнопки в элементах списка */
-.invoice-item-mobile ion-button[slot="end"] {
+.invoiceItem ion-button[slot="end"] {
     margin: 0;
     --padding-start: 8px;
     --padding-end: 8px;
@@ -120,85 +121,34 @@
     width: 32px;
 }
 
-.invoice-item-mobile ion-button[slot="end"] ion-icon {
+.invoiceItem ion-button[slot="end"] ion-icon {
     font-size: 18px;
 }
 
 /* Адаптивность для очень маленьких экранов */
 @media (max-width: 360px) {
-    .invoice-card-mobile {
+    .invoiceCard {
         margin: 0.75em;
         border-radius: 8px;
     }
     
-    .invoice-header-mobile {
+    .invoiceHeader {
         padding: 0.75em;
-        flex-direction: column;
-        align-items: flex-start;
         gap: 8px;
     }
     
-    .invoice-title-mobile {
-        width: 100%;
-        justify-content: space-between;
-    }
-    
-    .acts-button-mobile {
-        align-self: flex-end;
-    }
-    
-    .invoice-title-mobile h2 {
+    .invoiceTitle h2 {
         font-size: 1rem;
     }
     
-    .status-chip-mobile {
-        height: 24px;
+    .statusChip {
+        height: 26px;
         font-size: 0.7rem;
     }
     
-    .invoice-item-mobile {
-        --padding-start: 0.75em;
-        --padding-end: 0.75em;
-        --padding-top: 10px;
-        --padding-bottom: 10px;
-        min-height: 44px;
-    }
-    
-    .invoice-item-mobile ion-icon[slot="start"] {
-        font-size: 18px;
-        margin-right: 10px;
-    }
-    
-    .invoice-item-mobile ion-label h3 {
+    .actsButton {
+        height: 30px;
+        min-width: 50px;
         font-size: 0.8rem;
-    }
-    
-    .invoice-item-mobile ion-label p {
-        font-size: 0.9rem;
-    }
-}
-
-/* Состояния нажатия для элементов с действиями */
-.invoice-item-mobile[button]:active {
-    --background: var(--ion-color-step-50);
-}
-
-.invoice-item-mobile[disabled] {
-    opacity: 0.6;
-}
-
-/* Анимации */
-.invoice-card-mobile {
-    animation: slideIn 0.3s ease-out;
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
     }
 }
