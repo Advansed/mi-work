@@ -42,6 +42,7 @@ export function AddressForm({
     
     const inputRef = useRef<HTMLIonInputElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const blurTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const { standardizeAddress } = useDaData({
         apiKey: '50bfb3453a528d091723900fdae5ca5a30369832',
@@ -76,8 +77,16 @@ export function AddressForm({
         };
     }, [showSuggestions]);
 
+    // Очистка таймера при размонтировании
+    useEffect(() => {
+        return () => {
+            if (blurTimeoutRef.current) {
+                clearTimeout(blurTimeoutRef.current);
+            }
+        };
+    }, []);
+
     const handleAddressChange = (value: string) => {
-        console.log(" handleAddress ")
         setAddress(value);
         if (isStandardized) {
             setIsStandardized(false);
@@ -86,11 +95,18 @@ export function AddressForm({
         setSuggestions([]);
         setShowSuggestions(false);
         onAddressChange?.(value, false);
+
+        handleStandardize();
+
     };
 
     const handleStandardize = async () => {
         if (!address.trim()) {
-            showWarning('Введите адрес для стандартизации');
+            return; // Не показываем предупреждение при автоматической стандартизации
+        }
+
+        // Если адрес уже стандартизирован, не стандартизируем повторно
+        if (isStandardized && standardizedAddress === address) {
             return;
         }
 
@@ -184,7 +200,7 @@ export function AddressForm({
                         Ввод и стандартизация адреса
                     </IonCardTitle>
                     <IonText className="description-text">
-                        Введите адрес и выполните стандартизацию для получения точного адреса
+                        Введите адрес. Стандартизация выполняется автоматически при потере фокуса.
                     </IonText>
                 </IonCardHeader>
 
@@ -202,6 +218,7 @@ export function AddressForm({
                                 id="address-input"
                             />
                             <IonIcon icon={locationOutline} slot="start" />
+                            {loading && <IonSpinner name="dots" slot="end" />}
                         </IonItem>
 
                         {/* Выпадающий список предложений */}
@@ -234,58 +251,29 @@ export function AddressForm({
                         </div>
                     )}
 
-                    {/* Кнопки управления */}
+                    {/* Кнопки управления (кнопка стандартизации удалена) */}
                     <div className="address-buttons">
-                        <IonButton
-                            onClick={handleStandardize}
-                            disabled={disabled || loading || !address.trim()}
-                            expand="block"
-                            className="address-form-button"
-                        >
-                            {loading ? (
-                                <>
-                                    <IonSpinner name="crescent" className="address-form-spinner" />
-                                    Стандартизация...
-                                </>
-                            ) : (
-                                <>
-                                    <IonIcon icon={ellipsisHorizontal} slot="start" />
-                                    Стандартизировать
-                                </>
-                            )}
-                        </IonButton>
-
                         {onAddressSaved && (
                             <IonButton
                                 onClick={handleSave}
-                                disabled={disabled || loading || saving || !address.trim()}
+                                disabled={disabled || saving || !address.trim()}
                                 expand="block"
-                                fill="outline"
+                                className="address-form-button"
                             >
                                 {saving ? (
                                     <>
-                                        <IonSpinner name="crescent" className="address-form-spinner" />
+                                        <IonSpinner name="dots" />
                                         Сохранение...
                                     </>
                                 ) : (
                                     <>
                                         <IonIcon icon={saveOutline} slot="start" />
-                                        Сохранить
+                                        Сохранить адрес
                                     </>
                                 )}
                             </IonButton>
                         )}
                     </div>
-
-                    {/* Индикатор загрузки */}
-                    {loading && (
-                        <div className="loading-container fade-in">
-                            <div className="loading-spinner"></div>
-                            <div className="loading-text">
-                                Выполняется стандартизация адреса...
-                            </div>
-                        </div>
-                    )}
                 </IonCardContent>
             </IonCard>
         </div>
