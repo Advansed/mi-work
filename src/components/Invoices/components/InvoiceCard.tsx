@@ -86,7 +86,7 @@ const InvoiceCard: React.FC<InvoiceCardProps> = ({
                         color={ status.color }
                         className="invoice-card-compact__status"
                     >
-                        { status.label }
+                        { status.text }
                     </IonBadge>
                 </div>
 

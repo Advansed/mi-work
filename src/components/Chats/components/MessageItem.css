@@ -1,0 +1,210 @@
+/* ============================================
+   КОРПОРАТИВНЫЙ СТИЛЬ ДЛЯ MESSAGEITEM - WhatsApp стиль
+   ============================================ */
+
+:root {
+  --message-own-bg: #1E3A8A;           /* Корпоративный темно-синий */
+  --message-other-bg: #FFFFFF;         /* Белый для входящих */
+  --message-own-text: #FFFFFF;         /* Белый текст для своих */
+  --message-other-text: #1F2937;       /* Темно-серый для чужих */
+  --message-meta: #667781;             /* Серый для метаданных */
+  --message-hover: #F97316;            /* Оранжевый акцент при hover */
+  --message-shadow: rgba(0, 0, 0, 0.1);
+  --message-border: #E5E7EB;
+  --message-deleted: #F3F4F6;          /* Серый для удаленных */
+  --message-deleted-text: #9CA3AF;     /* Светло-серый текст для удаленных */
+}
+
+/* ============================================
+   ОСНОВНОЙ КОНТЕЙНЕР СООБЩЕНИЯ
+   ============================================ */
+
+.message-container {
+  display: flex;
+  margin-bottom: 8px;
+  padding: 0 16px;
+  width: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.message-container.own-message {
+  justify-content: flex-end;
+}
+
+.message-container.other-message {
+  justify-content: flex-start;
+}
+
+/* ============================================
+   ПУЗЫРЬ СООБЩЕНИЯ
+   ============================================ */
+
+.message-bubble {
+  max-width: 70%;
+  min-width: 120px;
+  padding: 8px 12px;
+  border-radius: 18px;
+  position: relative;
+  word-wrap: break-word;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px var(--message-shadow);
+}
+
+/* Стили для своих сообщений */
+.own-message .message-bubble {
+  background-color: var(--message-own-bg);
+  color: var(--message-own-text);
+  border-bottom-right-radius: 4px;
+  margin-left: auto;
+}
+
+/* Стили для чужих сообщений */
+.other-message .message-bubble {
+  background-color: var(--message-other-bg);
+  color: var(--message-other-text);
+  border-bottom-left-radius: 4px;
+  border: 1px solid var(--message-border);
+}
+
+/* ============================================
+   УДАЛЕННЫЕ СООБЩЕНИЯ
+   ============================================ */
+
+.deleted-message {
+  background-color: var(--message-deleted) !important;
+  border: 1px dashed var(--message-deleted-text) !important;
+  opacity: 0.7;
+}
+
+.deleted-text {
+  color: var(--message-deleted-text) !important;
+  font-style: italic;
+  font-size: 13px;
+}
+
+/* ============================================
+   ТИПЫ СООБЩЕНИЙ
+   ============================================ */
+
+.message-type-1 {
+  /* Обычное текстовое сообщение - стили по умолчанию */
+}
+
+.message-type-2 {
+  /* Системное сообщение */
+  background-color: #FEF3C7 !important;
+  color: #92400E !important;
+  border: 1px solid #FCD34D !important;
+  text-align: center;
+  font-size: 12px;
+}
+
+.message-type-3 {
+  /* Файл/медиа */
+  border-left: 4px solid var(--message-hover);
+}
+
+/* Hover эффекты */
+.message-bubble:hover:not(.deleted-message) {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px var(--message-shadow);
+}
+
+.own-message .message-bubble:hover:not(.deleted-message) {
+  background-color: var(--message-hover);
+}
+
+.other-message .message-bubble:hover:not(.deleted-message) {
+  border-color: var(--message-hover);
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.2);
+}
+
+/* ============================================
+   ИМЯ ОТПРАВИТЕЛЯ
+   ============================================ */
+
+.sender-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--message-hover);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ============================================
+   ТЕКСТ СООБЩЕНИЯ
+   ============================================ */
+
+.message-text {
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 4px;
+  word-break: break-word;
+}
+
+/* ============================================
+   МЕТАДАННЫЕ СООБЩЕНИЯ
+   ============================================ */
+
+.message-meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.timestamp {
+  font-size: 11px;
+  color: var(--message-meta);
+  font-weight: 400;
+}
+
+.own-message .timestamp {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.deleted-message .timestamp {
+  color: var(--message-deleted-text);
+}
+
+/* ============================================
+   СТАТУСЫ ДОСТАВКИ
+   ============================================ */
+
+.status {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.status.sent {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.status.delivered {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.status.read {
+  color: #25D366; /* WhatsApp зеленый */
+}
+
+/* ============================================
+   АДАПТИВНОСТЬ
+   ============================================ */
+
+@media (max-width: 768px) {
+  .message-container {
+    padding: 0 12px;
+  }
+  
+  .message-bubble {
+    max-width: 85%;
+    padding: 6px 10px;
+  }
+  
+  .message-text {
+    font-size: 13px;
+  }
+}

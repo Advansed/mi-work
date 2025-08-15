@@ -2,37 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useChatWindow } from '../hooks/useChatWindow';
 import styles from '../styles/Chats.module.css';
 import { ChatMessage } from '../hooks/useChatMessages';
+import MessageItem from './MessageItem';
 
 interface ChatWindowProps {
   chatId: string;
+  chatName: string;
   onBack: () => void;
 }
-
-// Компонент отдельного сообщения
-const MessageItem: React.FC<{ message: ChatMessage; isOwn: boolean }> = ({ message, isOwn }) => {
-  const formatTime = (timestamp: string) => {
-    return new Date(timestamp).toLocaleTimeString('ru-RU', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  return (
-    <div className={`${styles.message} ${isOwn ? styles.messageOwn : styles.messageOther}`}>
-      {!isOwn && (
-        <div className={styles.messageSender}>
-          {message.sender_name || 'Пользователь'}
-        </div>
-      )}
-      <div className={styles.messageText}>
-        {message.message_text}
-      </div>
-      <div className={styles.messageTime}>
-        {formatTime(message.sent_at)}
-      </div>
-    </div>
-  );
-};
 
 // Компонент поля ввода сообщения
 const MessageInput: React.FC<{
@@ -152,7 +128,7 @@ const TypingIndicator: React.FC<{ typingUsers: string[] }> = ({ typingUsers }) =
 };
 
 // Основной компонент ChatWindow
-export const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, onBack }) => {
+export const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, chatName, onBack }) => {
   const {
     loading,
     error,
@@ -194,13 +170,6 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, onBack }) => {
     }
   };
 
-  // Определение владельца сообщения (заглушка - нужно получать current_user_id)
-  const isOwnMessage = (message: ChatMessage): boolean => {
-    // TODO: Сравнивать с текущим пользователем
-    // const currentUserId = getCurrentUserId();
-    // return message.sender_id === currentUserId;
-    return message.is_own || false;
-  };
 
   // Обработка отправки сообщения
   const handleSendMessage = async (text: string) => {
@@ -219,7 +188,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, onBack }) => {
         <button className={styles.backButton} onClick={onBack}>
           ←
         </button>
-        <h2>Чат {chatId}</h2>
+        <h2>{chatName}</h2>
         {loading && (
           <span className={styles.connectionStatus}>
             Загрузка...
@@ -262,9 +231,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, onBack }) => {
             )}
             {messages.map((message) => (
               <MessageItem
-                key={message.id}
-                message={message}
-                isOwn={isOwnMessage(message)}
+                message   = { message }
               />
             ))}
           </>

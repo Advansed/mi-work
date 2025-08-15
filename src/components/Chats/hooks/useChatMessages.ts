@@ -178,7 +178,7 @@ export const useChatMessages = ({ chatId }: UseChatMessagesProps): UseChatMessag
     }) => {
       if (data.chat_id === chatId) {
         console.log(`✅ Получены сообщения для чата ${data.chat_id}:`, data.messages.length);
-        
+        console.log()
         if (loadedRef.current) {
           // Это загрузка дополнительных сообщений (добавляем в начало)
           setMessages(prev => [...data.messages, ...prev]);

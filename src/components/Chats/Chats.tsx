@@ -7,11 +7,12 @@ import styles from './styles/Chats.module.css';
 
 export const Chats: React.FC = () => {
   const [currentView, setCurrentView] = useState<NavigationView>('chats-list');
-  const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
+  const [selectedChatId, setSelectedChatId] = useState<any | null>(null);
   
   const { chats, loading, error, refetchChats } = useChats();
 
-  const handleChatClick = (chatId: string) => {
+  const handleChatClick = (chatId: any) => {
+    console.log(chatId )
     setSelectedChatId(chatId);
     setCurrentView('chat-window');
   };
@@ -40,7 +41,8 @@ export const Chats: React.FC = () => {
           />
         ) : (
           <ChatWindow
-            chatId={selectedChatId!}
+            chatId={selectedChatId.chatId}
+            chatName={selectedChatId.name}
             onBack={handleBackToChats}
           />
         )}

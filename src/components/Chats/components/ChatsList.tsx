@@ -6,7 +6,7 @@ interface ChatsListProps {
   chats: Chat[];
   loading: boolean;
   error: string | null;
-  onChatClick: (chatId: string) => void;
+  onChatClick: (chatId: any) => void;
   onCreateGroup: () => void;
 }
 
@@ -50,7 +50,7 @@ export const ChatsList: React.FC<ChatsListProps> = ({
         <div 
           key={chat.chat_id}
           className={styles.chatItem}
-          onClick={() => onChatClick(chat.chat_id)}
+          onClick={() => onChatClick({chatId: chat.chat_id, name: chat.chat_name})}
         >
           <div className={styles.chatAvatar}>
             {chat.chat_name.charAt(0).toUpperCase()}
