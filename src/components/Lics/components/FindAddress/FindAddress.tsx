@@ -22,6 +22,7 @@ interface LicsProps {
     invoiceId?: string;
     onAddressChange?: (address: string, isStandardized: boolean) => void;
     onAddressSaved?: (address: string) => Promise<void>;
+    onAddressClosed?: () => void;
     disabled?: boolean;
 }
 
@@ -30,6 +31,7 @@ export function AddressForm({
     invoiceId,
     onAddressChange, 
     onAddressSaved,
+    onAddressClosed,
     disabled = false 
 }: LicsProps) {
     const [address, setAddress] = useState<string>(initialAddress);
@@ -39,10 +41,12 @@ export function AddressForm({
     const [saving, setSaving] = useState<boolean>(false);
     const [suggestions, setSuggestions] = useState<StandardizedAddress[]>([]);
     const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
+    const [isStandardizing, setIsStandardizing] = useState<boolean>(false);
     
     const inputRef = useRef<HTMLIonInputElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const blurTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const { standardizeAddress } = useDaData({
         apiKey: '50bfb3453a528d091723900fdae5ca5a30369832',
@@ -77,11 +81,14 @@ export function AddressForm({
         };
     }, [showSuggestions]);
 
-    // Очистка таймера при размонтировании
+    // Очистка таймеров при размонтировании
     useEffect(() => {
         return () => {
             if (blurTimeoutRef.current) {
                 clearTimeout(blurTimeoutRef.current);
+            }
+            if (debounceTimeoutRef.current) {
+                clearTimeout(debounceTimeoutRef.current);
             }
         };
     }, []);
@@ -96,13 +103,76 @@ export function AddressForm({
         setShowSuggestions(false);
         onAddressChange?.(value, false);
 
-        handleStandardize();
+        // Очищаем предыдущий таймер debounce
+        if (debounceTimeoutRef.current) {
+            clearTimeout(debounceTimeoutRef.current);
+        }
 
+        // Запускаем новый таймер для автоматической стандартизации
+        if (value.trim().length > 3) {
+            debounceTimeoutRef.current = setTimeout(() => {
+                handleAutoStandardize(value);
+            }, 800);
+        }
+    };
+
+    const handleAutoStandardize = async (addressValue: string) => {
+        if (!addressValue.trim() || isStandardizing || addressValue === standardizedAddress) {
+            return;
+        }
+
+        setIsStandardizing(true);
+        setLoading(true);
+        
+        try {
+            const result = await standardizeAddress(addressValue);
+
+            if (result.success && result.data) {
+                const { city, street, house, apartment } = result.data;
+                const fullAddress = `${city}, ${street}, д. ${house}${apartment ? `, кв. ${apartment}` : ''}`;
+                
+                setStandardizedAddress(fullAddress);
+                setAddress(fullAddress);
+                setIsStandardized(true);
+                
+                // Устанавливаем предложения
+                setSuggestions(result.suggestions || []);
+                
+                // Показываем выпадающий список если есть альтернативы
+                if (result.suggestions && result.suggestions.length > 1) {
+                    setShowSuggestions(true);
+                }
+                
+                onAddressChange?.(fullAddress, true);
+
+                // Определяем качество стандартизации
+                if (result.data.confidence_level >= ConfidenceLevel.GOOD_MATCH) {
+                    showSuccess('Адрес успешно стандартизирован');
+                } else if (result.data.confidence_level >= ConfidenceLevel.PARTIAL_MATCH) {
+                    showWarning('Адрес стандартизирован с низкой точностью');
+                } else {
+                    showWarning('Не удалось точно определить адрес');
+                }
+            } else {
+                // Если стандартизация не удалась, но есть предложения
+                if (result.suggestions && result.suggestions.length > 0) {
+                    setSuggestions(result.suggestions);
+                    setShowSuggestions(true);
+                    showWarning(`Найдено ${result.suggestions.length} вариантов. Выберите подходящий.`);
+                }
+            }
+        } catch (error) {
+            // Тихо обрабатываем ошибки автоматической стандартизации
+            console.error('Автоматическая стандартизация не удалась:', error);
+        } finally {
+            setLoading(false);
+            setIsStandardizing(false);
+        }
     };
 
     const handleStandardize = async () => {
         if (!address.trim()) {
-            return; // Не показываем предупреждение при автоматической стандартизации
+            return;
         }
 
         // Если адрес уже стандартизирован, не стандартизируем повторно
@@ -200,7 +270,7 @@ export function AddressForm({
                         Ввод и стандартизация адреса
                     </IonCardTitle>
                     <IonText className="description-text">
-                        Введите адрес. Стандартизация выполняется автоматически при потере фокуса.
+                        Введите адрес. Стандартизация выполняется автоматически через 0.8 сек после окончания ввода.
                     </IonText>
                 </IonCardHeader>
 
@@ -214,27 +284,34 @@ export function AddressForm({
                                 value={address}
                                 placeholder="Введите адрес (город, улица, дом, квартира)"
                                 onIonInput={(e) => handleAddressChange(e.detail.value!)}
-                                disabled={disabled || loading}
-                                id="address-input"
+                                disabled={disabled}
+                                clearInput={true}
                             />
-                            <IonIcon icon={locationOutline} slot="start" />
-                            {loading && <IonSpinner name="dots" slot="end" />}
+                            {loading && (
+                                <IonSpinner name="crescent" slot="end" className="address-form-spinner" />
+                            )}
                         </IonItem>
 
                         {/* Выпадающий список предложений */}
                         {showSuggestions && suggestions.length > 0 && (
                             <div className="suggestions-dropdown">
-                                {suggestions.map((suggestion, index) => (
-                                    <div
-                                        key={index}
-                                        className="suggestion-item"
-                                        onClick={() => handleSuggestionSelect(suggestion)}
-                                    >
-                                        <IonText>
-                                            {`${suggestion.city}, ${suggestion.street}, д. ${suggestion.house}${suggestion.apartment ? `, кв. ${suggestion.apartment}` : ''}`}
-                                        </IonText>
-                                    </div>
-                                ))}
+                                {suggestions.map((suggestion, index) => {
+                                    const { city, street, house, apartment } = suggestion;
+                                    const fullAddress = `${city}, ${street}, д. ${house}${apartment ? `, кв. ${apartment}` : ''}`;
+                                    
+                                    return (
+                                        <div
+                                            key={index}
+                                            className="suggestion-item"
+                                            onClick={() => handleSuggestionSelect(suggestion)}
+                                        >
+                                            <div className="suggestion-text">{fullAddress}</div>
+                                            <div className="suggestion-confidence">
+                                                Точность: {suggestion.confidence_level || 0}%
+                                            </div>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         )}
                     </div>
@@ -243,26 +320,43 @@ export function AddressForm({
                     {isStandardized && standardizedAddress && (
                         <div className="standardized-address">
                             <div className="standardized-label">
-                                ✓ Стандартизированный адрес
+                                <IonIcon icon={locationOutline} size="small" />
+                                Стандартизированный адрес
                             </div>
-                            <div className="standardized-text">
-                                {standardizedAddress}
-                            </div>
+                            <div className="standardized-text">{standardizedAddress}</div>
                         </div>
                     )}
 
-                    {/* Кнопки управления (кнопка стандартизации удалена) */}
+                    {/* Кнопки управления */}
                     <div className="address-buttons">
+                        <IonButton
+                            expand="block"
+                            onClick={handleStandardize}
+                            disabled={loading || disabled || !address.trim()}
+                        >
+                            {loading ? (
+                                <>
+                                    <IonSpinner name="crescent" className="address-form-spinner" />
+                                    Стандартизация...
+                                </>
+                            ) : (
+                                <>
+                                    <IonIcon icon={ellipsisHorizontal} slot="start" />
+                                    Стандартизировать вручную
+                                </>
+                            )}
+                        </IonButton>
+
                         {onAddressSaved && (
                             <IonButton
-                                onClick={handleSave}
-                                disabled={disabled || saving || !address.trim()}
                                 expand="block"
-                                className="address-form-button"
+                                fill="outline"
+                                onClick={handleSave}
+                                disabled={saving || disabled || !address.trim()}
                             >
                                 {saving ? (
                                     <>
-                                        <IonSpinner name="dots" />
+                                        <IonSpinner name="crescent" className="address-form-spinner" />
                                         Сохранение...
                                     </>
                                 ) : (
@@ -273,6 +367,24 @@ export function AddressForm({
                                 )}
                             </IonButton>
                         )}
+                            <IonButton
+                                expand="block"
+                                fill="outline"
+                                onClick={ onAddressClosed }
+                                disabled={saving || disabled || !address.trim()}
+                            >
+                                {saving ? (
+                                    <>
+                                        <IonSpinner name="crescent" className="address-form-spinner" />
+                                        Сохранение...
+                                    </>
+                                ) : (
+                                    <>
+                                        <IonIcon icon={saveOutline} slot="start" />
+                                        Закрыть
+                                    </>
+                                )}
+                            </IonButton>
                     </div>
                 </IonCardContent>
             </IonCard>

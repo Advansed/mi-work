@@ -200,6 +200,7 @@ export const InvoiceView: React.FC<InvoiceViewProps> = ({
                     invoiceId={invoice.id}
                     onAddressSaved={handleAddressUpdate}
                     disabled={isUpdatingAddress}
+                    onAddressClosed={ ()=>setIsAddressSearchModalOpen(false) }
                 />
             </IonModal>
 
